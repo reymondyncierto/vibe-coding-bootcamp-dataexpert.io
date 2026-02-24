@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Appointments API</domain>
             <estimated_time>40 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-015, HEALIO-016, HEALIO-025</dependencies>
             <prd_reference>Feature 2 API Endpoints</prd_reference>
         </metadata>
@@ -56,16 +56,21 @@
             <commit_message>feat(healio-appointments): appointments list create route</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>appointments-operations</owner>
+            <started_at>2026-02-24T17:27:05+08:00</started_at>
+            <completed_at>2026-02-24T17:27:05+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/appointments-route.test.ts</verification_command>
+            <verification_notes>Implemented protected appointments list/create route using middleware auth headers (`x-healio-*`) and standard API envelopes. Added in-memory internal appointment store + list/create service methods with scheduling validation integration. Route-handler tests exercise GET/POST endpoint behavior (including overlap conflict and unauthenticated rejection) without depending on middleware runtime.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/v1/appointments/route.ts, healio/services/appointmentService.ts, healio/tests/unit/appointments-route.test.ts.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Endpoint exercise (route-handler tests): `node --import tsx --test tests/unit/appointments-route.test.ts` passed; verifies POST create (201), GET day list (200), overlap rejection (409 `OVERLAPPING_APPOINTMENT`), and missing auth headers rejection (401).</item>
+                <item>Route uses middleware auth context headers (`x-healio-clinic-id`, `x-healio-user-id`, `x-healio-role`) and rejects direct calls without them to fail closed.</item>
+                <item>Implementation commit: 6b93d9d (feat(healio-appointments): appointments list create route).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
