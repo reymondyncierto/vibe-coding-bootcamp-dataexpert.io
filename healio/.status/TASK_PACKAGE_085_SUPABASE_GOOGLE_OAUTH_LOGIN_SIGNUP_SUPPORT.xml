@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-085</id>
+            <title>Supabase Google OAuth Support on Login and Signup Pages</title>
+            <domain>Auth and Access UX</domain>
+            <estimated_time>35 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-014</dependencies>
+            <prd_reference>Supabase auth + multi-user access onboarding/login flows</prd_reference>
+        </metadata>
+        <context>
+            <background>User wants Healio login to use Google via Supabase. Login page already has partial Google OAuth support; signup page needs parity and the flow should be verified.</background>
+            <files_involved>
+                <file>healio/app/(auth)/login/page.tsx</file>
+                <file>healio/app/(auth)/signup/page.tsx</file>
+                <file>healio/app/auth/callback/route.ts</file>
+            </files_involved>
+            <design_constraints>
+                <constraint>Keep auth UX in-context (Stripe-like) with clear error feedback when Supabase is not configured.</constraint>
+                <constraint>Preserve safe callback routing through `/auth/callback` and `next` path validation.</constraint>
+                <constraint>Avoid breaking local provisioning/test paths used for implementation demos.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Add or complete Google OAuth sign-in support on auth pages, including signup page parity where missing.</step>
+            <step>Ensure OAuth redirects route through `/auth/callback` and preserve safe `next` path behavior.</step>
+            <step>Run `npm run typecheck`.</step>
+            <step>Use Chrome DevTools MCP to verify login/signup UI surfaces the Google action and auth pages render without console errors.</step>
+            <validation_checklist>
+                <check>Login page exposes a working Google OAuth action using Supabase browser client.</check>
+                <check>Signup page exposes Google OAuth action or clearly integrated Google auth entry point.</check>
+                <check>Typecheck passes.</check>
+                <check>Chrome DevTools MCP verification is recorded for `/login` and `/signup`.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <acceptance_criteria>
+                <criterion>Google OAuth entry point is available on Healio auth pages and uses Supabase OAuth with provider=`google`.</criterion>
+                <criterion>Task XML is updated with evidence and renamed `DONE_` on completion.</criterion>
+            </acceptance_criteria>
+            <commit_message>feat(healio-auth): add supabase google oauth support on auth pages</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>Record changed auth files, typecheck command, Chrome DevTools MCP verification notes, and commit refs.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence is recorded.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>auth-rbac-security</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <task_slug>SUPABASE_GOOGLE_OAUTH_LOGIN_SIGNUP_SUPPORT</task_slug>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
+    </task_package>
+</task_packages>

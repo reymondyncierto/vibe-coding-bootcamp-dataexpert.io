@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-086</id>
+            <title>Document Supabase Google Auth Setup Instructions</title>
+            <domain>Developer Documentation</domain>
+            <estimated_time>30 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-085</dependencies>
+            <prd_reference>Deployment and third-party integration setup docs</prd_reference>
+        </metadata>
+        <context>
+            <background>User needs step-by-step instructions to configure Google login in Supabase for local and Vercel deployments.</background>
+            <files_involved>
+                <file>healio/README.md</file>
+                <file>healio/docs/supabase-google-auth-setup.md</file>
+            </files_involved>
+            <design_constraints>
+                <constraint>Document local and production callback URLs using Healio's `/auth/callback` route.</constraint>
+                <constraint>Clearly separate Google Cloud setup, Supabase provider configuration, and Healio env/app setup.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Add a dedicated step-by-step setup guide for Supabase Google OAuth (Google Cloud, Supabase Auth provider, env vars, callback URLs, test flow).</step>
+            <step>Link the new guide from `healio/README.md` in the Supabase/Auth setup sections.</step>
+            <step>Verify docs references are accurate to current Healio auth routes (`/auth/login`, `/auth/signup`, `/auth/callback`).</step>
+            <validation_checklist>
+                <check>Guide includes local and production redirect URL examples.</check>
+                <check>Guide includes Supabase and Google Cloud console steps.</check>
+                <check>README points users to the guide.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <acceptance_criteria>
+                <criterion>Repository contains a practical Google OAuth setup guide for Supabase + Healio.</criterion>
+                <criterion>Task XML is updated with evidence and renamed `DONE_` on completion.</criterion>
+            </acceptance_criteria>
+            <commit_message>docs(healio-auth): add supabase google auth setup guide</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>Record added docs files/sections, route references checked, and commit refs.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence is recorded.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>auth-rbac-security</agent_to_execute>
+            <estimated_complexity>low</estimated_complexity>
+            <task_slug>SUPABASE_GOOGLE_AUTH_SETUP_INSTRUCTIONS</task_slug>
+        </references>
+    </task_package>
+</task_packages>
