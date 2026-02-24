@@ -7,9 +7,9 @@
             <domain>Operations</domain>
             <estimated_time>40 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-016, HEALIO-072, HEALIO-073</dependencies>
             <prd_reference>6.3 Sentry; 6.4 Logging &amp; Monitoring; Vercel Analytics; UptimeRobot</prd_reference>
         </metadata>
@@ -57,16 +57,20 @@
             <commit_message>docs(healio): monitoring and observability setup</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>devops-release-ops</owner>
+            <started_at>2026-02-24T23:49:06+08:00</started_at>
+            <completed_at>2026-02-24T23:49:06+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx health route check (GET /api/v1/health)</verification_command>
+            <verification_notes>Added structured logging redaction and operational/health helpers, wired health endpoint to emit a dedicated observability log event, added lightweight Sentry client/server config placeholders, and injected optional frontend analytics bootstrap/script hooks in the root layout. README now includes a baseline monitoring and alerting runbook for health checks, logs, Sentry, analytics, and cron/webhook monitoring.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/lib/logger.ts, healio/app/api/v1/health/route.ts, healio/app/layout.tsx, healio/sentry.server.config.ts, healio/sentry.client.config.ts, healio/README.md.</item>
+                <item>Typecheck passed after instrumentation changes: `npm run typecheck`.</item>
+                <item>Direct health route verification returned 200 success envelope and emitted structured `healthcheck_observed` log event.</item>
+                <item>Feature commit: 0902d43 (docs(healio): monitoring and observability setup).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
