@@ -7,9 +7,9 @@
             <domain>Analytics Backend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-012, HEALIO-016, HEALIO-044</dependencies>
             <prd_reference>Feature 9 Analytics Dashboard; 6.2 Caching Strategy</prd_reference>
         </metadata>
@@ -53,16 +53,22 @@
             <commit_message>feat(healio-analytics): analytics service and cache</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>analytics-reporting</owner>
+            <started_at>2026-02-24T23:18:55+08:00</started_at>
+            <completed_at>2026-02-24T23:18:55+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/analytics-service.test.ts</verification_command>
+            <verification_notes>Added an in-memory TTL cache utility (`lib/cache.ts`) and clinic-scoped analytics aggregate service with cache-aware dashboard metrics, trend buckets, and service breakdowns sourced from the existing invoice/appointment/patient stores. The analytics unit test verifies tenant isolation, aggregation math, and cache-hit behavior on the second call.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/lib/cache.ts, healio/services/analyticsService.ts, healio/tests/unit/analytics-service.test.ts.</item>
+                <item>Cache behavior verification: analytics service returns `cache.hit=false` on first request and `cache.hit=true` on second identical request within TTL.</item>
+                <item>Tenant isolation verification: clinic_2 appointments/invoices seeded in the test do not affect clinic_1 analytics totals or service breakdown.</item>
+                <item>Aggregation verification: test asserts billed/collected/outstanding cents, paid/overdue invoice counts, completed/no-show appointment counts, and trend/service breakdown generation.</item>
+                <item>Typecheck/tests passed: `npm run typecheck`; `node --import tsx --test tests/unit/analytics-service.test.ts`.</item>
+                <item>Feature commit: 8eb1159 (feat(healio-analytics): analytics service and cache).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
