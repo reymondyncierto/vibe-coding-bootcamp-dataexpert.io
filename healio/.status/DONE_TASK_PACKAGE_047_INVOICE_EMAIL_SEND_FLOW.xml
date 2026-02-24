@@ -7,9 +7,9 @@
             <domain>Billing Notifications</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-046, HEALIO-052</dependencies>
             <prd_reference>Feature 4 send endpoint; Feature 5 notifications</prd_reference>
         </metadata>
@@ -62,17 +62,27 @@
             <commit_message>feat(healio-billing): invoice email send flow</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>notifications-messaging</owner>
+            <started_at>2026-02-24T19:02:45+08:00</started_at>
+            <completed_at>2026-02-24T19:02:45+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/invoice-send-route.test.ts; Chrome DevTools MCP evaluate_script fetch calls for POST /api/v1/invoices/:id/send</verification_command>
+            <verification_notes>Implemented invoice email send flow with a lightweight invoice email template, Resend adapter wrapper (runtime lazy import + fallback), notification service email send integration using idempotency (`invoice-send:{invoiceId}`), and protected `POST /api/v1/invoices/:id/send`. Endpoint generates/ensures a pay link first, sends via Resend fallback in local mode, and records notification status transitions.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/emails/invoice.tsx, healio/lib/resend.ts, healio/services/notificationService.ts, healio/app/api/v1/invoices/[id]/send/route.ts, healio/tests/unit/invoice-send-route.test.ts, healio/tsconfig.tsbuildinfo.</item>
+                <item>`emails/invoice.tsx` renders invoice send subject/html/text content with pay-link CTA and billing summary details using a PRD-aligned clean, legible card style.</item>
+                <item>`lib/resend.ts` provides `sendEmailWithResend` with runtime lazy import and local fallback response when `RESEND_API_KEY` or SDK is unavailable.</item>
+                <item>`notificationService.ts` now includes `sendInvoiceEmailNotificationForClinic` which queues notification records with idempotency, sends via Resend adapter, and marks SENT/FAILED state accordingly.</item>
+                <item>`POST /api/v1/invoices/:id/send` validates tenant-scoped invoice/patient lookup, requires patient email, ensures a pay link exists (via HEALIO-046 service), renders the email template, and returns send metadata (notification/provider/replay flags).</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Route tests: `node --import tsx --test tests/unit/invoice-send-route.test.ts` passed (send success, idempotent replay, pay-link persistence/status, invalid id, missing email, tenant mismatch).</item>
+                <item>Chrome DevTools MCP endpoint verification (on `http://localhost:4012/billing` via `evaluate_script`): created patient+invoice, called `POST /api/v1/invoices/:id/send` twice, observed `200/200` with second response `replayed=true`, provider `resend-fallback`, `notificationStatus=SENT`, and checkout URL present. Network log shows send endpoint requests `345` and `346`, both `200`; console check only React DevTools info.</item>
+                <item>Implementation commit: a258b5e (feat(healio-billing): invoice email send flow).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
