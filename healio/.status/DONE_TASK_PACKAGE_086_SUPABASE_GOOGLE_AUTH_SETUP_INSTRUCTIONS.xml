@@ -7,9 +7,9 @@
             <domain>Developer Documentation</domain>
             <estimated_time>30 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-085</dependencies>
             <prd_reference>Deployment and third-party integration setup docs</prd_reference>
         </metadata>
@@ -42,16 +42,20 @@
             <commit_message>docs(healio-auth): add supabase google auth setup guide</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>agent-router -> auth-rbac-security</owner>
+            <started_at>2026-02-25T01:22:00+08:00</started_at>
+            <completed_at>2026-02-25T01:22:55+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>rg route references in healio/docs/supabase-google-auth-setup.md and healio/README.md</verification_command>
+            <verification_notes>Added dedicated Supabase Google OAuth setup guide covering Google Cloud, Supabase provider config, redirect URLs (local + production), env vars, verification flow, and troubleshooting. Linked guide from README Supabase section.</verification_notes>
             <evidence>
-                <item>Record added docs files/sections, route references checked, and commit refs.</item>
+                <item>Added file: healio/docs/supabase-google-auth-setup.md</item>
+                <item>Updated file: healio/README.md (Supabase section link)</item>
+                <item>Task creation commit: 9725a9d (chore(status): add Google auth setup tasks)</item>
+                <item>Docs commit: 3d0beea (docs(healio-auth): add supabase google auth setup guide)</item>
+                <item>Reference verification: route/path mentions checked for `/login`, `/signup`, `/auth/callback` in README and guide.</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence is recorded.</completion_signal>
         </execution_tracking>
