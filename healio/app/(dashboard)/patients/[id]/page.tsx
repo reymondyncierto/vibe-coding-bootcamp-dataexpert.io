@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { PatientDemographicsCard } from "@/components/patients/patient-demographics-card";
+import { PatientBillingTab } from "@/components/patients/patient-billing-tab";
 import { PatientDocumentsTab } from "@/components/patients/patient-documents-tab";
 import { PatientMedicalSummaryCard } from "@/components/patients/patient-medical-summary-card";
 import { PatientProfileHeader } from "@/components/patients/patient-profile-header";
@@ -112,6 +113,7 @@ export default function PatientProfilePage({
         <PatientProfileTabs
           visitsContent={<VisitNoteTimeline patientId={patient.id} />}
           documentsContent={<PatientDocumentsTab patientId={patient.id} />}
+          billingContent={<PatientBillingTab patientId={patient.id} />}
         />
       </div>
 

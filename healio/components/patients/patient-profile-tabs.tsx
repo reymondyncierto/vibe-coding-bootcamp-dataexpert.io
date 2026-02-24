@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-type TabId = "overview" | "visits" | "documents";
+type TabId = "overview" | "visits" | "documents" | "billing";
 
 const tabs: Array<{ id: TabId; label: string; description: string }> = [
   {
@@ -24,20 +24,28 @@ const tabs: Array<{ id: TabId; label: string; description: string }> = [
     label: "Documents",
     description: "Upload list and preview workflow will appear here (HEALIO-041).",
   },
+  {
+    id: "billing",
+    label: "Billing",
+    description: "Related invoices will appear here (HEALIO-042).",
+  },
 ];
 
 export function PatientProfileTabs({
   visitsContent,
   documentsContent,
+  billingContent,
 }: {
   visitsContent?: ReactNode;
   documentsContent?: ReactNode;
+  billingContent?: ReactNode;
 }) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const active = tabs.find((item) => item.id === activeTab) ?? tabs[0];
   const activeHasImplementedContent =
     (active.id === "visits" && Boolean(visitsContent)) ||
-    (active.id === "documents" && Boolean(documentsContent));
+    (active.id === "documents" && Boolean(documentsContent)) ||
+    (active.id === "billing" && Boolean(billingContent));
 
   return (
     <Card>
@@ -79,6 +87,8 @@ export function PatientProfileTabs({
             <div className="mt-4">{visitsContent}</div>
           ) : active.id === "documents" && documentsContent ? (
             <div className="mt-4">{documentsContent}</div>
+          ) : active.id === "billing" && billingContent ? (
+            <div className="mt-4">{billingContent}</div>
           ) : active.id !== "overview" ? (
             <div className="mt-4 rounded-control border border-dashed border-border bg-white px-3 py-3 text-sm text-muted">
               Empty state scaffold is intentional so new clinics are not shown a blank area while the next patient-chart tabs are implemented.
