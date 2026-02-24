@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Backend Platform</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-012, HEALIO-015</dependencies>
             <prd_reference>1.4 API Design Principles; 6.3 Error Handling; 6.4 Monitoring; 4.2 Security Headers</prd_reference>
         </metadata>
@@ -57,16 +57,23 @@
             <commit_message>feat(healio): api helpers logger health headers</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>platform-foundation</owner>
+            <started_at>2026-02-24T16:42:19+08:00</started_at>
+            <completed_at>2026-02-24T16:42:19+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm install pino; npm run typecheck; Chrome DevTools MCP GET /api/v1/health + get_network_request(reqid=186)</verification_command>
+            <verification_notes>Added API success/error helpers, structured pino logger, utility helpers, /api/v1/health route, and global security headers in next.config.js. Verified /api/v1/health response envelope and response headers via Chrome DevTools MCP network inspection after exempting health from auth middleware.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/lib/api-helpers.ts, healio/lib/logger.ts, healio/lib/utils.ts, healio/app/api/v1/health/route.ts, healio/next.config.js, healio/middleware.ts, healio/package.json, healio/package-lock.json.</item>
+                <item>Dependency install: `pino@9` added.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Endpoint verification: Chrome DevTools MCP loaded `http://localhost:3000/api/v1/health` and snapshot showed `{"success":true,"data":...}` JSON envelope.</item>
+                <item>Security header verification (reqid=186): response includes CSP, X-Frame-Options=DENY, X-Content-Type-Options=nosniff, Referrer-Policy, Strict-Transport-Security, plus cache-control=no-store and x-request-id.</item>
+                <item>Middleware fix note: `/api/v1/health` explicitly treated as public to avoid Supabase env dependency in health checks.</item>
+                <item>Implementation commit: b6a04c9 (feat(healio-platform): add api helpers logger health endpoint and headers).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
