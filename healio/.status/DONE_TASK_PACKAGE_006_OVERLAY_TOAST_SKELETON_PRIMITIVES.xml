@@ -7,9 +7,9 @@
             <domain>Frontend Design System</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-004, HEALIO-005</dependencies>
             <prd_reference>5.3 Component Standards + user Stripe workflow guidance</prd_reference>
         </metadata>
@@ -43,7 +43,8 @@
             <validation_checklist>
                 <check>Run lint/typecheck or the smallest relevant test suite for the files changed by this task.</check>
                 <check>Manually verify desktop and mobile layouts plus focus/keyboard behavior for the primary interaction path.</check>
-                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check><check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
+                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check>
+                <check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
             </validation_checklist>
         </instruction>
         <output_spec>
@@ -59,17 +60,26 @@
             <commit_message>feat(healio): overlay toast skeleton primitives</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>frontend-design-system-shell</owner>
+            <started_at>2026-02-24T16:03:45+08:00</started_at>
+            <completed_at>2026-02-24T16:03:45+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; npm run dev; Chrome DevTools MCP reload/resize/snapshot/screenshot/click/press_key/list_console_messages</verification_command>
+            <verification_notes>Implemented modal, drawer, toast, skeleton, and toast provider primitives with Stripe-style in-context overlay patterns. Chrome DevTools MCP verified desktop/mobile rendering, toast display, modal/drawer open-close flows, Escape key handling, and clean console output.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/components/ui/modal.tsx, healio/components/ui/drawer.tsx, healio/components/ui/toast.tsx, healio/components/ui/skeleton.tsx, healio/components/ui/toast-provider.tsx, healio/app/page.tsx.</item>
+                <item>Typecheck: `npm run typecheck` passed after implementation and after demo field-name accessibility cleanup.</item>
+                <item>Chrome DevTools MCP desktop base snapshot captured and screenshot saved to /tmp/healio-healio006-desktop-base.png.</item>
+                <item>Chrome DevTools MCP modal verification: opened via "Open Modal", snapshot captured, screenshot saved to /tmp/healio-healio006-modal.png, Escape key closed modal successfully.</item>
+                <item>Chrome DevTools MCP drawer verification: opened via "Open Drawer", desktop snapshot+screenshot saved to /tmp/healio-healio006-drawer-desktop.png, mobile snapshot+screenshot saved to /tmp/healio-healio006-drawer-mobile.png, Escape key closed drawer successfully.</item>
+                <item>Chrome DevTools MCP toast verification: triggered via "Show Toast" and via drawer action; toast rendered with live region and dismiss button.</item>
+                <item>Console verification final pass after reload: no console messages.</item>
+                <item>Implementation commit: 29bbc99 (feat(healio-ui): add overlay toast and skeleton primitives).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
@@ -77,6 +87,8 @@
             <estimated_complexity>medium</estimated_complexity>
             <blocks_on>HEALIO-004, HEALIO-005</blocks_on>
             <task_slug>OVERLAY_TOAST_SKELETON_PRIMITIVES</task_slug>
-        <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool><verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref></references>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
     </task_package>
 </task_packages>
