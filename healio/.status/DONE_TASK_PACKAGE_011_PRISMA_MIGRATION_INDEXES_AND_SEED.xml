@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Database</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-010</dependencies>
             <prd_reference>3 Database Design; 9 Project Structure prisma/seed.ts</prd_reference>
         </metadata>
@@ -53,16 +53,24 @@
             <commit_message>feat(healio): prisma migration indexes and seed</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>data-tenancy-prisma</owner>
+            <started_at>2026-02-24T16:20:35+08:00</started_at>
+            <completed_at>2026-02-24T16:20:35+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm install; DATABASE_URL=... DIRECT_URL=... npx prisma validate; npx prisma migrate diff --from-empty --to-schema-datamodel ... --script &gt; prisma/migrations/.../migration.sql; node --import tsx prisma/seed.ts --dry-run; npm run typecheck</verification_command>
+            <verification_notes>Installed Prisma tooling, generated an offline initial migration SQL via prisma migrate diff, added migration lock and idempotent seed script, and updated package scripts. Prisma validate passed with dummy env URLs; seed dry-run succeeded using node --import tsx because tsx CLI IPC pipes are blocked in this sandbox.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/prisma/migrations/20260224_001_init/migration.sql, healio/prisma/migrations/migration_lock.toml, healio/prisma/seed.ts, healio/prisma/schema.prisma, healio/package.json, healio/package-lock.json.</item>
+                <item>Prisma validation: `DATABASE_URL=... DIRECT_URL=... npx prisma validate --schema prisma/schema.prisma` passed.</item>
+                <item>Migration artifact: `prisma/migrations/20260224_001_init/migration.sql` generated from empty schema (473 lines) using `prisma migrate diff --from-empty ... --script`.</item>
+                <item>Index evidence: migration SQL contains `Service_clinicId_name_key`, `OperatingHours_clinicId_dayOfWeek_key`, `Invoice_invoiceNumber_key`, and other expected unique indexes.</item>
+                <item>Seed dry-run artifact: `node --import tsx prisma/seed.ts --dry-run` output clinic `northview-clinic`, 3 staff, 3 services, 7 operating-hour rows.</item>
+                <item>Environment constraint note: `npx tsx prisma/seed.ts --dry-run` fails in sandbox with EPERM on /tmp/tsx-*.pipe; non-IPC execution path works.</item>
+                <item>Typecheck: `npm run typecheck` passed after Prisma tooling and seed additions.</item>
+                <item>Implementation commit: 4424f84 (feat(healio-db): add initial prisma migration and seed baseline).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
