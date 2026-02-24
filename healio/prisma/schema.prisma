@@ -145,17 +145,17 @@ model Staff {
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
 
-  clinic        Clinic         @relation(fields: [clinicId], references: [id])
-  appointments Appointment[]  @relation("AppointmentStaff")
-  visitNotes   VisitNote[]    @relation("VisitNoteStaff")
-  documents    Document[]     @relation("DocumentStaff")
-  auditLogs    AuditLog[]     @relation("AuditLogUser")
+  clinic       Clinic        @relation(fields: [clinicId], references: [id])
+  appointments Appointment[] @relation("AppointmentStaff")
+  visitNotes   VisitNote[]   @relation("VisitNoteStaff")
+  documents    Document[]    @relation("DocumentStaff")
+  auditLogs    AuditLog[]    @relation("AuditLogUser")
 
   @@index([clinicId])
 }
 
 model Patient {
-  id                    String        @id @default(uuid())
+  id                    String         @id @default(uuid())
   clinicId              String
   firstName             String
   lastName              String
@@ -170,32 +170,33 @@ model Patient {
   emergencyContactName  String?
   emergencyContactPhone String?
   notes                 String?
-  noShowCount           Int           @default(0)
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
+  noShowCount           Int            @default(0)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
   deletedAt             DateTime?
 
-  clinic        Clinic         @relation(fields: [clinicId], references: [id])
+  clinic       Clinic         @relation(fields: [clinicId], references: [id])
   appointments Appointment[]
   visitNotes   VisitNote[]
   documents    Document[]
   invoices     Invoice[]
+  notifications Notification[] @relation("NotificationPatient")
 
   @@index([clinicId])
   @@index([clinicId, createdAt])
 }
 
 model Service {
-  id              String      @id @default(uuid())
+  id              String    @id @default(uuid())
   clinicId        String
   name            String
   description     String?
-  durationMinutes Int         @default(30)
-  price           Decimal     @db.Decimal(10, 2)
-  color           String      @default("#3B82F6")
-  isActive        Boolean     @default(true)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  durationMinutes Int       @default(30)
+  price           Decimal   @db.Decimal(10, 2)
+  color           String    @default("#3B82F6")
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
   deletedAt       DateTime?
 
   clinic       Clinic        @relation(fields: [clinicId], references: [id])
@@ -204,23 +205,24 @@ model Service {
   @@index([clinicId])
   @@index([clinicId, isActive])
   @@index([clinicId, name])
+  @@unique([clinicId, name])
 }
 
 model OperatingHours {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   clinicId  String
   dayOfWeek Int
   openTime  String
   closeTime String
-  isClosed  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isClosed  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  clinic    Clinic   @relation(fields: [clinicId], references: [id])
+  clinic Clinic @relation(fields: [clinicId], references: [id])
 
-  @@index([clinicId])
   @@unique([clinicId, dayOfWeek])
+  @@index([clinicId])
 }
 
 model Appointment {
@@ -257,9 +259,9 @@ model Appointment {
 }
 
 model VisitNote {
-  id            String    @id @default(uuid())
+  id            String   @id @default(uuid())
   clinicId      String
-  appointmentId String    @unique
+  appointmentId String   @unique
   patientId     String
   staffId       String
   subjective    String?
@@ -267,15 +269,15 @@ model VisitNote {
   assessment    String?
   plan          String?
   prescriptions Json?
-  isAmendment   Boolean   @default(false)
+  isAmendment   Boolean  @default(false)
   amendsNoteId  String?
-  createdAt     DateTime  @default(now())
+  createdAt     DateTime @default(now())
 
-  clinic      Clinic     @relation(fields: [clinicId], references: [id])
+  clinic      Clinic      @relation(fields: [clinicId], references: [id])
   appointment Appointment @relation(fields: [appointmentId], references: [id])
-  patient     Patient    @relation(fields: [patientId], references: [id])
-  staff       Staff      @relation("VisitNoteStaff", fields: [staffId], references: [id])
-  amendsNote  VisitNote? @relation("VisitNoteAmendmentChain", fields: [amendsNoteId], references: [id])
+  patient     Patient     @relation(fields: [patientId], references: [id])
+  staff       Staff       @relation("VisitNoteStaff", fields: [staffId], references: [id])
+  amendsNote  VisitNote?  @relation("VisitNoteAmendmentChain", fields: [amendsNoteId], references: [id])
   amendments  VisitNote[] @relation("VisitNoteAmendmentChain")
 
   @@index([clinicId])
@@ -299,9 +301,9 @@ model Document {
   updatedAt   DateTime         @updatedAt
   deletedAt   DateTime?
 
-  clinic      Clinic           @relation(fields: [clinicId], references: [id])
-  patient     Patient          @relation(fields: [patientId], references: [id])
-  staff       Staff            @relation("DocumentStaff", fields: [staffId], references: [id])
+  clinic  Clinic  @relation(fields: [clinicId], references: [id])
+  patient Patient @relation(fields: [patientId], references: [id])
+  staff   Staff   @relation("DocumentStaff", fields: [staffId], references: [id])
 
   @@index([clinicId])
   @@index([patientId])
@@ -310,17 +312,17 @@ model Document {
 }
 
 model Invoice {
-  id                    String        @id @default(uuid())
+  id                    String         @id @default(uuid())
   clinicId              String
   patientId             String
-  appointmentId         String?       @unique
-  invoiceNumber         String        @unique
-  status                InvoiceStatus @default(DRAFT)
+  appointmentId         String?        @unique
+  invoiceNumber         String         @unique
+  status                InvoiceStatus  @default(DRAFT)
   currency              Currency
-  subtotal              Decimal       @db.Decimal(12, 2)
-  tax                   Decimal       @default(0) @db.Decimal(12, 2)
-  total                 Decimal       @db.Decimal(12, 2)
-  paidAmount            Decimal       @default(0) @db.Decimal(12, 2)
+  subtotal              Decimal        @db.Decimal(12, 2)
+  tax                   Decimal        @default(0) @db.Decimal(12, 2)
+  total                 Decimal        @db.Decimal(12, 2)
+  paidAmount            Decimal        @default(0) @db.Decimal(12, 2)
   paymentMethod         PaymentMethod?
   stripePaymentIntentId String?
   stripeCheckoutUrl     String?
@@ -328,13 +330,13 @@ model Invoice {
   dueDate               DateTime
   sentAt                DateTime?
   notes                 String?
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
   deletedAt             DateTime?
 
-  clinic      Clinic       @relation(fields: [clinicId], references: [id])
-  patient     Patient      @relation(fields: [patientId], references: [id])
-  appointment Appointment? @relation(fields: [appointmentId], references: [id])
+  clinic      Clinic        @relation(fields: [clinicId], references: [id])
+  patient     Patient       @relation(fields: [patientId], references: [id])
+  appointment Appointment?  @relation(fields: [appointmentId], references: [id])
   items       InvoiceItem[]
 
   @@index([clinicId])
@@ -354,13 +356,13 @@ model InvoiceItem {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
   @@index([invoiceId])
 }
 
 model Notification {
-  id             String             @id @default(uuid())
+  id             String              @id @default(uuid())
   clinicId       String
   appointmentId  String?
   patientId      String?
@@ -368,14 +370,14 @@ model Notification {
   channel        NotificationChannel
   recipientEmail String?
   recipientPhone String?
-  status         NotificationStatus @default(PENDING)
+  status         NotificationStatus  @default(PENDING)
   sentAt         DateTime?
   errorMessage   String?
-  createdAt      DateTime           @default(now())
+  createdAt      DateTime            @default(now())
 
-  clinic         Clinic             @relation(fields: [clinicId], references: [id])
-  appointment    Appointment?       @relation(fields: [appointmentId], references: [id])
-  patient        Patient?           @relation(fields: [patientId], references: [id])
+  clinic      Clinic       @relation(fields: [clinicId], references: [id])
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
+  patient     Patient?     @relation("NotificationPatient", fields: [patientId], references: [id])
 
   @@index([clinicId])
   @@index([appointmentId])
@@ -385,7 +387,7 @@ model Notification {
 }
 
 model AuditLog {
-  id        String     @id @default(uuid())
+  id        String      @id @default(uuid())
   clinicId  String
   userId    String
   action    AuditAction
@@ -394,10 +396,10 @@ model AuditLog {
   changes   Json
   ipAddress String?
   userAgent String?
-  createdAt DateTime   @default(now())
+  createdAt DateTime    @default(now())
 
-  clinic    Clinic     @relation(fields: [clinicId], references: [id])
-  user      Staff      @relation("AuditLogUser", fields: [userId], references: [id])
+  clinic Clinic @relation(fields: [clinicId], references: [id])
+  user   Staff  @relation("AuditLogUser", fields: [userId], references: [id])
 
   @@index([clinicId])
   @@index([userId])

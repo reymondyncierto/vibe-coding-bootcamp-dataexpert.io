@@ -8,6 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "prisma:generate": "prisma generate --schema prisma/schema.prisma",
+    "prisma:validate": "prisma validate --schema prisma/schema.prisma",
+    "prisma:migrate:diff": "prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script",
+    "db:seed": "prisma db seed",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "npm run test:unit",
@@ -16,6 +20,7 @@
     "e2e": "echo \"No E2E tests yet (see HEALIO-069)\""
   },
   "dependencies": {
+    "@prisma/client": "^5.17.0",
     "@tanstack/react-query": "^5.90.21",
     "next": "14.2.5",
     "react": "18.3.1",
@@ -30,7 +35,12 @@
     "eslint-config-next": "14.2.5",
     "postcss": "8.4.39",
     "prettier": "3.3.3",
+    "prisma": "^5.17.0",
     "tailwindcss": "3.4.7",
+    "tsx": "^4.19.1",
     "typescript": "5.5.4"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
