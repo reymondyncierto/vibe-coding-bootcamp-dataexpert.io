@@ -7,9 +7,9 @@
             <domain>Appointments Frontend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-028, HEALIO-029</dependencies>
             <prd_reference>Feature 2 Weekly Calendar View</prd_reference>
         </metadata>
@@ -59,17 +59,25 @@
             <commit_message>feat(healio-appointments): weekly calendar view ui</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>appointments-operations</owner>
+            <started_at>2026-02-24T17:44:13+08:00</started_at>
+            <completed_at>2026-02-24T17:44:13+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; Chrome DevTools MCP: /appointments (Day↔Week tabs, week navigation, desktop/mobile snapshots, network GETs for 7 day columns, console check)</verification_command>
+            <verification_notes>Added a weekly calendar bento view with Day/Week tabs on the appointments page. The weekly grid renders seven day columns, each using the protected appointments hook (and React Query caching/dev local auth shim from prior tasks) with explicit loading/empty/error states. During verification, an off-by-one date bug caused by UTC `toISOString()` was detected and fixed by generating local `YYYY-MM-DD` strings from local date parts; a console accessibility issue was also resolved by adding `name` attributes to Day View date/status inputs.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/components/appointments/weekly-calendar.tsx, healio/app/(dashboard)/appointments/page.tsx (Day/Week tab switcher), healio/components/appointments/daily-schedule.tsx (added `name` attrs to eliminate browser form-field console issue), plus generated healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed after weekly date-key timezone fix and Day View input-name patch.</item>
+                <item>Chrome DevTools MCP desktop verification: snapshot uid set 63 confirmed new Day/Week tab controls; snapshot uid set 66 confirmed weekly grid renders 7 day columns with correct `YYYY-MM-DD` values aligned to labels after the fix; snapshot uid set 69 confirmed success state on Tue column (3 appointments) after switching back from Day View with seeded data; snapshot uid set 70 confirmed week navigation to next week and empty-state columns.</item>
+                <item>Chrome DevTools MCP mobile verification: snapshot uid set 65 and later mobile snapshot on weekly view confirmed stacked responsive layout with visible week navigation buttons and mobile nav; full-page weekly mobile screenshot saved to `/tmp/healio-healio030-weekly-mobile.png`.</item>
+                <item>Console check (final clean pass after reload + Week View switch): `list_console_messages` returned no console messages. Earlier verification surfaced an expected `422` from demo-seed negative case and a form-field issue, both recorded and addressed where applicable.</item>
+                <item>Network evidence (`list_network_requests` preserved): weekly API GET fan-out for This Week reqid=112-118 [all 200] and final clean pass reqid=159-165 [all 200]; next-week navigation reqid=136-142 [all 200]. Request details reqid=160 show x-healio local dev headers and `{\"success\":true,\"data\":[]}` response body for an empty day column.</item>
+                <item>Implementation commit: 7caa8a8 (feat(healio-appointments): weekly calendar view ui).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
