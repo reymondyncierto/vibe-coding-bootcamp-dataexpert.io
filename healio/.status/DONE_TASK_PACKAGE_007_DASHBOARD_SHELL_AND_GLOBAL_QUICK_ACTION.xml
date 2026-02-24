@@ -7,9 +7,9 @@
             <domain>Frontend Layout</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-004, HEALIO-005, HEALIO-006</dependencies>
             <prd_reference>5.2 Layout Principles + user one-click rule</prd_reference>
         </metadata>
@@ -43,7 +43,8 @@
             <validation_checklist>
                 <check>Run lint/typecheck or the smallest relevant test suite for the files changed by this task.</check>
                 <check>Manually verify desktop and mobile layouts plus focus/keyboard behavior for the primary interaction path.</check>
-                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check><check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
+                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check>
+                <check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
             </validation_checklist>
         </instruction>
         <output_spec>
@@ -59,17 +60,26 @@
             <commit_message>feat(healio): dashboard shell and global quick action</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>frontend-design-system-shell</owner>
+            <started_at>2026-02-24T16:07:26+08:00</started_at>
+            <completed_at>2026-02-24T16:07:26+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; npm run dev; Chrome DevTools MCP navigate /demo, desktop/mobile resize, snapshots, screenshots, click/press_key, console checks</verification_command>
+            <verification_notes>Implemented dashboard shell route-group layout with sidebar, mobile nav, header, and floating global + quick action. Chrome DevTools MCP verified /demo on desktop and mobile, quick-action menu/drawer flows, and Escape keyboard close behavior with clean console output.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/app/(dashboard)/layout.tsx, healio/components/layout/sidebar.tsx, healio/components/layout/mobile-nav.tsx, healio/components/layout/header.tsx, healio/components/layout/global-quick-action.tsx, healio/app/(dashboard)/demo/page.tsx.</item>
+                <item>Typecheck: `npm run typecheck` passed for dashboard shell implementation.</item>
+                <item>Chrome DevTools MCP desktop verification on /demo: snapshot captured, screenshot saved to /tmp/healio-healio007-desktop.png.</item>
+                <item>Chrome DevTools MCP quick action menu verification: opened floating + menu on desktop and mobile, menu items visible and keyboard focus preserved.</item>
+                <item>Chrome DevTools MCP quick action drawer verification: selected Add Appointment, drawer opened with in-context workflow content, desktop screenshot saved to /tmp/healio-healio007-drawer-desktop.png, Escape key closed drawer.</item>
+                <item>Chrome DevTools MCP mobile verification: resized to 390x844, bottom mobile nav visible, screenshot saved to /tmp/healio-healio007-mobile.png, Escape closes quick-action menu after accessibility patch.</item>
+                <item>Console verification: no console messages during final /demo verification pass.</item>
+                <item>Implementation commit: fcf36ed (feat(healio-dashboard): add shell navigation and global quick action).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
@@ -77,6 +87,8 @@
             <estimated_complexity>medium</estimated_complexity>
             <blocks_on>HEALIO-004, HEALIO-005, HEALIO-006</blocks_on>
             <task_slug>DASHBOARD_SHELL_AND_GLOBAL_QUICK_ACTION</task_slug>
-        <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool><verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref></references>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
     </task_package>
 </task_packages>
