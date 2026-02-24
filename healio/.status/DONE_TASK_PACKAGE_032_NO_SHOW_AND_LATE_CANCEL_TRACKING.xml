@@ -7,9 +7,9 @@
             <domain>Appointments Backend</domain>
             <estimated_time>40 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-025, HEALIO-027</dependencies>
             <prd_reference>Feature 2 Business Rules</prd_reference>
         </metadata>
@@ -57,16 +57,22 @@
             <commit_message>feat(healio-appointments): no show and late cancel tracking</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>appointments-operations</owner>
+            <started_at>2026-02-24T17:54:24+08:00</started_at>
+            <completed_at>2026-02-24T17:54:24+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/appointment-no-show.test.ts; node --import tsx --test tests/unit/appointment-detail-route.test.ts</verification_command>
+            <verification_notes>Added no-show and late-cancel tracking side effects in appointmentService for PATCH/DELETE flows and a lightweight patient attendance metrics store in patientService. Tracking is idempotent per appointment using internal flags (noShowTrackedAt/lateCancelTrackedAt) and uses a 24-hour late-cancel window. Included unit tests covering no-show increments, late-cancel window behavior, and delete-triggered late-cancel tracking, plus route-detail tests for endpoint PATCH/DELETE coverage.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/services/appointmentService.ts, healio/services/patientService.ts, healio/tests/unit/appointment-no-show.test.ts, plus generated healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>No-show/late-cancel rule tests: `node --import tsx --test tests/unit/appointment-no-show.test.ts` passed; verifies (1) no-show counter increments once per appointment, (2) late-cancel counter increments only within 24h window, and (3) deleting a near-term appointment counts as late cancel.</item>
+                <item>Endpoint coverage (PATCH/DELETE): `node --import tsx --test tests/unit/appointment-detail-route.test.ts` passed and exercised GET/PATCH/DELETE `/api/v1/appointments/:id` route behavior with success and validation/error cases.</item>
+                <item>Side-effect persistence is recorded in patient attendance metrics store (`getPatientAttendanceMetrics`) keyed by clinicId+patientId; tests reset and assert counts/last event timestamps.</item>
+                <item>Implementation commit: 54be207 (feat(healio-appointments): no show and late cancel tracking).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
