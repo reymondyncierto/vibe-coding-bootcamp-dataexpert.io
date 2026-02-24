@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -27,6 +28,14 @@ type SubmitState =
   | { kind: "error"; message: string };
 
 export default function SignupPage() {
+  return (
+    <Suspense fallback={<AuthPageFallback title="Preparing signup..." />}>
+      <SignupPageContent />
+    </Suspense>
+  );
+}
+
+function SignupPageContent() {
   const searchParams = useSearchParams();
   const { pushToast } = useToast();
   const nextPath = useMemo(() => {
@@ -283,6 +292,24 @@ export default function SignupPage() {
             </CardContent>
           </Card>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function AuthPageFallback({ title }: { title: string }) {
+  return (
+    <div className="min-h-screen bg-app px-4 py-10 sm:px-6">
+      <div className="mx-auto w-full max-w-3xl">
+        <Card>
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+            <CardDescription>Loading onboarding form state and redirect parameters.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted">Please wait a moment…</p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

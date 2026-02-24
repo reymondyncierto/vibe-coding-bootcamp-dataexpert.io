@@ -84,7 +84,15 @@ export type AnalyticsServiceResult<T> =
 const DEFAULT_RANGE_DAYS = 14;
 const MIN_RANGE_DAYS = 1;
 const MAX_RANGE_DAYS = 90;
-const ANALYTICS_CACHE_TTL_MS = 30_000;
+function readAnalyticsCacheTtlMs() {
+  const raw = process.env.HEALIO_ANALYTICS_CACHE_TTL_MS;
+  if (!raw) return 30_000;
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return 30_000;
+  return Math.min(5 * 60_000, Math.max(5_000, Math.floor(parsed)));
+}
+
+const ANALYTICS_CACHE_TTL_MS = readAnalyticsCacheTtlMs();
 
 function readInvoiceStore(): InvoiceAnalyticsRecord[] {
   const globalScope = globalThis as typeof globalThis & {
@@ -300,7 +308,8 @@ export async function getAnalyticsDashboardForClinic(input: {
   try {
     const days = normalizeRangeDays(input.days);
     const now = input.now ?? new Date();
-    const cacheKey = `analytics:${input.clinicId}:days=${days}`;
+    const cacheBucketMinute = Math.floor(now.getTime() / 60_000);
+    const cacheKey = `analytics:${input.clinicId}:days=${days}:m=${cacheBucketMinute}`;
     const cached = await getOrSetInMemoryCache({
       key: cacheKey,
       ttlMs: ANALYTICS_CACHE_TTL_MS,
@@ -333,3 +342,6 @@ export function invalidateAnalyticsCacheForClinic(clinicId: string) {
   return invalidateInMemoryCacheByPrefix(`analytics:${clinicId}:`);
 }
 
+export function getAnalyticsCacheTtlMs() {
+  return ANALYTICS_CACHE_TTL_MS;
+}

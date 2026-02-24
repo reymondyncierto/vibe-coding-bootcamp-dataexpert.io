@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -25,6 +26,14 @@ type ProvisionLookupState =
   | { kind: "error"; message: string };
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<AuthPageFallback title="Preparing login..." />}>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
+function LoginPageContent() {
   const searchParams = useSearchParams();
   const { pushToast } = useToast();
   const nextPath = useMemo(() => {
@@ -260,6 +269,24 @@ export default function LoginPage() {
             </CardContent>
           </Card>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function AuthPageFallback({ title }: { title: string }) {
+  return (
+    <div className="min-h-screen bg-app px-4 py-10 sm:px-6">
+      <div className="mx-auto w-full max-w-3xl">
+        <Card>
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+            <CardDescription>Loading auth context and safe redirect parameters.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted">Please wait a moment…</p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

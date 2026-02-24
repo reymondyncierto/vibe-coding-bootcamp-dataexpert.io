@@ -61,3 +61,12 @@ Healio is a clinic management SaaS planned as a unified Next.js monolith (fronte
   - Health endpoint downtime / non-200
   - Error-rate spikes in API routes (via log aggregation/Sentry)
   - Cron failures (`/api/cron/*`) and webhook signature failures (`/api/v1/webhooks/stripe`)
+
+## Release Readiness & Performance Notes
+
+- Use `docs/release-checklist.md` before shipping a release candidate.
+- Current performance-oriented defaults:
+  - React Query stale time defaults to 2 minutes (`NEXT_PUBLIC_QUERY_STALE_MS` override)
+  - React Query garbage collection defaults to 10 minutes (`NEXT_PUBLIC_QUERY_GC_MS` override)
+  - Analytics dashboard responses are cached in-memory with a configurable TTL (`HEALIO_ANALYTICS_CACHE_TTL_MS`)
+- Run `npm run build` after any cross-cutting UI, analytics, or config change to catch regressions early.
