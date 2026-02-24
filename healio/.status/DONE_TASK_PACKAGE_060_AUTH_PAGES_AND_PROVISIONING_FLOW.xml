@@ -7,9 +7,9 @@
             <domain>Authentication Frontend &amp; Backend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-014, HEALIO-015, HEALIO-056</dependencies>
             <prd_reference>Feature 7 Auth Flows</prd_reference>
         </metadata>
@@ -63,17 +63,28 @@
             <commit_message>feat(healio-auth): auth pages and provisioning flow</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>auth-rbac-security</owner>
+            <started_at>2026-02-24T23:15:07+08:00</started_at>
+            <completed_at>2026-02-24T23:15:07+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/auth-provision-route.test.ts; Chrome DevTools MCP on /login, /signup, /auth/callback</verification_command>
+            <verification_notes>Implemented bento-style login/signup pages with Supabase magic-link/OAuth hooks plus local-safe fallback provisioning preview, a replay-safe `POST /api/auth/provision` route/service that initializes clinic settings, and `/auth/callback` code/error redirect handling. Chrome DevTools MCP validation also caught and confirmed fixes for client `server-only` import bundling (`lib/supabase/client.ts`) and missing `autocomplete` attributes on auth form inputs.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Changed files: healio/app/(auth)/login/page.tsx, healio/app/(auth)/signup/page.tsx, healio/app/auth/login/page.tsx, healio/app/auth/signup/page.tsx, healio/app/auth/callback/route.ts, healio/app/api/auth/provision/route.ts, healio/services/authProvisioningService.ts, healio/services/clinicService.ts, healio/lib/supabase/client.ts, healio/tests/unit/auth-provision-route.test.ts.</item>
+                <item>Provisioning API verification (unit test): `tests/unit/auth-provision-route.test.ts` confirms `POST /api/auth/provision` returns `201` on first provision and `200` on replay, with updated clinic name replay behavior and payload validation `400`.</item>
+                <item>Chrome DevTools MCP login page (`/login`): desktop render verified (`uid 17_*`), local provisioning preview button exercised successfully, and onboarding handoff link surfaced.</item>
+                <item>Chrome DevTools MCP signup page (`/signup`): desktop + mobile (390x844) render verified (`uid 20_*`, `24_*`), submit action produced provisioning success then replay success state (`uid 21_*`, `25_*`).</item>
+                <item>Chrome DevTools MCP network evidence: `POST /api/auth/provision` observed with `201` (reqid=206) and replay `200` (reqid=235); `GET /auth/callback?...` observed `307` redirect (reqid=207) to `/auth/login?...` `200` (reqid=208).</item>
+                <item>Chrome DevTools MCP callback UI verification: navigating to `/auth/callback?error=access_denied&amp;next=%2Fsettings` redirected to `/auth/login?...` and displayed callback error banner (`uid 23_*`).</item>
+                <item>Chrome DevTools MCP console check passed after final patch: `list_console_messages` returned no console messages (autocomplete warning removed by adding `autoComplete` attrs).</item>
+                <item>Quality fix found during verification: replaced `server-only` env import in `healio/lib/supabase/client.ts` with browser-safe `NEXT_PUBLIC_*` env reads to prevent client bundle compile failure on auth pages.</item>
+                <item>Typecheck/tests passed: `npm run typecheck`; `node --import tsx --test tests/unit/auth-provision-route.test.ts`.</item>
+                <item>Feature commit: 1061b2c (feat(healio-auth): auth pages and provisioning flow).</item>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
