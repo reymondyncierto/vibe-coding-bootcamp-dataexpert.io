@@ -143,7 +143,7 @@ export function PublicBookingPatientFormDrawer({
         </label>
 
         {submitError ? (
-          <div className="rounded-control border border-danger/20 bg-danger/5 p-4">
+          <div className="rounded-control border border-danger/20 bg-danger/5 p-4" role="alert">
             <p className="text-sm font-semibold text-danger">Booking could not be completed</p>
             <p className="mt-1 text-sm text-muted">{submitError}</p>
           </div>

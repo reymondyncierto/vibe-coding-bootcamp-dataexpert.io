@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 
 const navItems = [
-  { href: "/demo", label: "Dashboard", icon: "⌂" },
-  { href: "/demo/schedule", label: "Schedule", icon: "🗓" },
-  { href: "/demo/patients", label: "Patients", icon: "👥" },
-  { href: "/demo/billing", label: "Billing", icon: "₱" },
+  { href: "/appointments", label: "Schedule", icon: "🗓" },
+  { href: "/patients", label: "Patients", icon: "👥" },
+  { href: "/billing", label: "Billing", icon: "₱" },
+  { href: "/analytics", label: "Analytics", icon: "▦" },
+  { href: "/settings", label: "Settings", icon: "⚙" },
 ];
 
 export function Sidebar() {
@@ -28,8 +29,7 @@ export function Sidebar() {
       <nav className="mt-5 space-y-1" aria-label="Sidebar">
         {navItems.map((item) => {
           const active =
-            pathname === item.href ||
-            (item.href !== "/demo" && pathname.startsWith(item.href));
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
               key={item.href}
@@ -40,6 +40,7 @@ export function Sidebar() {
                   ? "bg-primary/10 text-primary"
                   : "text-ink hover:bg-slate-100",
               ].join(" ")}
+              aria-current={active ? "page" : undefined}
             >
               <span aria-hidden="true" className="text-base">
                 {item.icon}

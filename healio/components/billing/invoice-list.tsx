@@ -107,9 +107,9 @@ export function InvoiceList(props: Props) {
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3 pt-0">
+      <CardContent className="space-y-3 pt-0" aria-busy={props.isLoading}>
         {props.isLoading ? (
-          <div className="space-y-3">
+          <div className="space-y-3" role="status" aria-live="polite" aria-label="Loading invoices">
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className="rounded-card border border-border bg-white p-4">
                 <Skeleton className="h-4 w-44" />
@@ -121,7 +121,7 @@ export function InvoiceList(props: Props) {
         ) : null}
 
         {!props.isLoading && props.isError ? (
-          <div className="rounded-card border border-danger/20 bg-danger/5 p-4">
+          <div className="rounded-card border border-danger/20 bg-danger/5 p-4" role="alert">
             <p className="text-sm font-semibold text-danger">Unable to load invoices</p>
             <p className="mt-1 text-sm text-muted">{props.errorMessage || "Please retry."}</p>
             <div className="mt-3">
@@ -131,7 +131,7 @@ export function InvoiceList(props: Props) {
         ) : null}
 
         {!props.isLoading && !props.isError && props.invoices.length === 0 ? (
-          <div className="rounded-card border border-border bg-app/60 p-4">
+          <div className="rounded-card border border-border bg-app/60 p-4" role="status" aria-live="polite">
             <p className="text-sm font-semibold text-ink">No invoices yet</p>
             <p className="mt-1 text-sm text-muted">
               Your revenue dashboard will populate after the first invoice is created. Use the global + flow or patient billing tab to start billing.
@@ -140,7 +140,7 @@ export function InvoiceList(props: Props) {
         ) : null}
 
         {!props.isLoading && !props.isError && props.invoices.length > 0 && filtered.length === 0 ? (
-          <div className="rounded-card border border-border bg-app/60 p-4">
+          <div className="rounded-card border border-border bg-app/60 p-4" role="status" aria-live="polite">
             <p className="text-sm font-semibold text-ink">No invoices match this filter</p>
             <p className="mt-1 text-sm text-muted">
               Adjust the search text or status filter to see matching invoice records.

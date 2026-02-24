@@ -38,7 +38,7 @@ export function GlobalQuickAction() {
     <>
       <div className="fixed bottom-20 right-4 z-30 lg:bottom-6 lg:right-6">
         {menuOpen ? (
-          <div className="mb-3 w-72 healio-card p-3 shadow-xl">
+          <div id="healio-quick-actions-menu" className="mb-3 w-72 healio-card p-3 shadow-xl" role="menu" aria-label="Quick actions">
             <p className="px-2 pb-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted">
               Quick Actions
             </p>
@@ -47,6 +47,7 @@ export function GlobalQuickAction() {
                 <button
                   key={action.label}
                   type="button"
+                  role="menuitem"
                   className="w-full rounded-control px-3 py-2 text-left hover:bg-slate-100"
                   onClick={() => {
                     setMenuOpen(false);
@@ -67,6 +68,8 @@ export function GlobalQuickAction() {
           size="icon"
           className="h-14 w-14 rounded-full text-xl shadow-lg shadow-primary/20"
           aria-label={menuOpen ? "Close quick actions" : "Open quick actions"}
+          aria-expanded={menuOpen}
+          aria-controls="healio-quick-actions-menu"
           onClick={() => setMenuOpen((value) => !value)}
         >
           {menuOpen ? "×" : "+"}

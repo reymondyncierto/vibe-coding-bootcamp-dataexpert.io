@@ -11,6 +11,9 @@ type ViewMode = "day" | "week";
 export default function AppointmentsPage() {
   const [view, setView] = useState<ViewMode>("day");
 
+  const dayPanelId = "appointments-panel-day";
+  const weekPanelId = "appointments-panel-week";
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -33,6 +36,8 @@ export default function AppointmentsPage() {
             size="sm"
             role="tab"
             aria-selected={view === "day"}
+            aria-controls={dayPanelId}
+            id="appointments-tab-day"
             onClick={() => setView("day")}
           >
             Day View
@@ -43,6 +48,8 @@ export default function AppointmentsPage() {
             size="sm"
             role="tab"
             aria-selected={view === "week"}
+            aria-controls={weekPanelId}
+            id="appointments-tab-week"
             onClick={() => setView("week")}
           >
             Week View
@@ -50,7 +57,13 @@ export default function AppointmentsPage() {
         </div>
       </div>
 
-      {view === "day" ? <DailySchedule /> : <WeeklyCalendar />}
+      <section
+        role="tabpanel"
+        id={view === "day" ? dayPanelId : weekPanelId}
+        aria-labelledby={view === "day" ? "appointments-tab-day" : "appointments-tab-week"}
+      >
+        {view === "day" ? <DailySchedule /> : <WeeklyCalendar />}
+      </section>
     </div>
   );
 }

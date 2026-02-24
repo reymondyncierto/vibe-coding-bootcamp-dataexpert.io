@@ -99,15 +99,15 @@ export function PatientList({
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4 pt-0">
+      <CardContent className="space-y-4 pt-0" aria-busy={isLoading || isFetching}>
         {isLoading ? (
-          <div className="space-y-3" aria-label="Loading patients">
+          <div className="space-y-3" aria-label="Loading patients" role="status" aria-live="polite">
             {renderLoadingRows()}
           </div>
         ) : null}
 
         {!isLoading && error ? (
-          <div className="rounded-card border border-danger/20 bg-danger/5 p-5">
+          <div className="rounded-card border border-danger/20 bg-danger/5 p-5" role="alert">
             <p className="text-sm font-semibold text-danger">Unable to load patients</p>
             <p className="mt-1 text-sm text-muted">
               {error.message}. Try refreshing. If this continues, check the API route and auth headers.
@@ -121,7 +121,7 @@ export function PatientList({
         ) : null}
 
         {!isLoading && !error && items.length === 0 ? (
-          <div className="rounded-card border border-border bg-app/70 p-6">
+          <div className="rounded-card border border-border bg-app/70 p-6" role="status" aria-live="polite">
             <p className="text-sm font-semibold text-ink">
               {activeSearch ? "No matching patients yet" : "Your patient list is empty"}
             </p>

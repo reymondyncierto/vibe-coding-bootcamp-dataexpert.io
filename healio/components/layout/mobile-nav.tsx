@@ -4,10 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/demo", label: "Home", icon: "⌂" },
-  { href: "/demo/schedule", label: "Schedule", icon: "🗓" },
-  { href: "/demo/patients", label: "Patients", icon: "👥" },
-  { href: "/demo/billing", label: "Billing", icon: "₱" },
+  { href: "/appointments", label: "Schedule", icon: "🗓" },
+  { href: "/patients", label: "Patients", icon: "👥" },
+  { href: "/billing", label: "Billing", icon: "₱" },
+  { href: "/analytics", label: "Analytics", icon: "▦" },
 ];
 
 export function MobileNav() {
@@ -21,8 +21,7 @@ export function MobileNav() {
       <ul className="grid grid-cols-4 gap-1">
         {navItems.map((item) => {
           const active =
-            pathname === item.href ||
-            (item.href !== "/demo" && pathname.startsWith(item.href));
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <li key={item.href}>
               <Link
@@ -31,6 +30,7 @@ export function MobileNav() {
                   "flex min-h-12 flex-col items-center justify-center rounded-control px-2 py-1 text-xs font-medium",
                   active ? "bg-primary/10 text-primary" : "text-muted hover:text-ink",
                 ].join(" ")}
+                aria-current={active ? "page" : undefined}
               >
                 <span aria-hidden="true" className="text-sm">
                   {item.icon}

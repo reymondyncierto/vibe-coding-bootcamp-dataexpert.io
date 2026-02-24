@@ -31,7 +31,7 @@ export default function BillingDashboardPage() {
 
   return (
     <>
-      <div className="space-y-4">
+      <div className="space-y-4" aria-busy={invoicesQuery.isLoading || invoicesQuery.isFetching}>
         <Card>
           <CardHeader>
             <div className="flex flex-wrap items-start justify-between gap-3">
