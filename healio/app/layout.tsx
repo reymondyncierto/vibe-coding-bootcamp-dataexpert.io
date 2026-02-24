@@ -5,7 +5,11 @@ import "../styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Healio",
-  description: "The simplest way to run your clinic."
+  description: "The simplest way to run your clinic.",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: ["/icon.svg"],
+  },
 };
 
 export default function RootLayout({
