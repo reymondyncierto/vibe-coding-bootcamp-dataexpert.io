@@ -7,9 +7,9 @@
             <domain>Patient Records Frontend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-034, HEALIO-038</dependencies>
             <prd_reference>Feature 3 Patient Profile Page</prd_reference>
         </metadata>
@@ -62,17 +62,26 @@
             <commit_message>feat(healio-patients): patient profile bento shell ui</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>patient-records-lite-emr</owner>
+            <started_at>2026-02-24T18:24:32+08:00</started_at>
+            <completed_at>2026-02-24T18:24:32+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/patient-detail-route.test.ts; Chrome DevTools MCP on http://localhost:4011/patients/:id</verification_command>
+            <verification_notes>Implemented the patient chart shell at `/patients/[id]` using a Viedoc-style bento layout (header metrics + demographics + medical summary + tabs) with a Stripe-style in-context edit drawer placeholder. Added `usePatientDetail` and validated the chart on a fresh dev server (`4011`) after a transient Next.js dev/HMR API bundling corruption on an earlier server process (`4010`) caused a false 500 unrelated to the task code.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/app/(dashboard)/patients/[id]/page.tsx, healio/components/patients/patient-profile-header.tsx, healio/components/patients/patient-demographics-card.tsx, healio/components/patients/patient-medical-summary-card.tsx, healio/components/patients/patient-profile-tabs.tsx, healio/hooks/usePatients.ts, healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>API regression check: `node --import tsx --test tests/unit/patient-detail-route.test.ts` passed (GET/PATCH patient detail route behavior unchanged).</item>
+                <item>Chrome DevTools MCP verification on `http://localhost:4011/patients/pat_...`: confirmed GET `/api/v1/patients/:id` = 200 success state; tabs (Overview/Visits/Documents) switch correctly; edit drawer opens in-context and closes via `Escape`; desktop and mobile layouts render with bottom nav visible on mobile.</item>
+                <item>Chrome DevTools MCP not-found verification on `http://localhost:4011/patients/pat_missing`: GET `/api/v1/patients/pat_missing` = 404 and the page shows the intended educational empty state with Retry/Go Back actions.</item>
+                <item>Chrome DevTools MCP console check: only expected messages (React DevTools dev info and a single expected 404 console entry during the intentional not-found verification). Screenshot captured for not-found mobile state.</item>
+                <item>Operational note: an earlier dev process on `4010` produced a Next.js HMR/runtime bundling error (`__webpack_modules__[moduleId] is not a function`) for `/api/v1/patients/[id]`; verification was rerun successfully on a fresh dev process (`4011`) to avoid a false blocker.</item>
+                <item>Implementation commit: 4d2a174 (feat(healio-patients): patient profile bento shell ui).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
