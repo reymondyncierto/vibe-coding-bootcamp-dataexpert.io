@@ -7,9 +7,9 @@
             <domain>Billing Frontend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-007, HEALIO-008, HEALIO-044, HEALIO-045</dependencies>
             <prd_reference>Feature 4 Invoice List + Revenue Dashboard</prd_reference>
         </metadata>
@@ -61,17 +61,26 @@
             <commit_message>feat(healio-billing): billing dashboard ui</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>billing-invoicing-payments</owner>
+            <started_at>2026-02-24T18:55:07+08:00</started_at>
+            <completed_at>2026-02-24T18:55:07+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; Chrome DevTools MCP on http://localhost:4012/billing (summary cards, filters, invoice list, responsive checks)</verification_command>
+            <verification_notes>Built the Billing Dashboard page with Viedoc-style bento summary cards, filterable invoice list, and a `useInvoices` React Query hook bound to `GET /api/v1/invoices`. Verified empty/stateful list behavior, status filter/search interactions, responsive layout, and console cleanliness via Chrome DevTools MCP. Create Invoice CTA is intentionally disabled pending HEALIO-050 invoice drawer workflow.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/app/(dashboard)/billing/page.tsx, healio/components/billing/invoice-list.tsx, healio/components/billing/billing-summary-cards.tsx, healio/hooks/useInvoices.ts, healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed after building the billing dashboard page and after the filter-control `name` attribute console warning fix.</item>
+                <item>Chrome DevTools MCP verification on `http://localhost:4012/billing`: page loads and renders bento summary cards + invoice list + filter controls with `GET /api/v1/invoices?page=1&amp;pageSize=50` = 200.</item>
+                <item>Chrome DevTools MCP data-state verification: seeded additional invoices via in-page fetch calls (`POST /api/v1/invoices`, `PATCH /api/v1/invoices/:id`) to create DRAFT/PAID/OVERDUE records, clicked `Refresh Data`, and confirmed summary cards updated (page count, outstanding, collected, overdue).</item>
+                <item>Chrome DevTools MCP filter/search verification: selected `Paid` in the status filter (triggering `GET /api/v1/invoices?status=PAID&amp;page=1&amp;pageSize=50` = 200) and entered `zzz` in search to confirm the “No invoices match this filter” empty state.</item>
+                <item>Chrome DevTools MCP responsive check: resized to mobile `390x844` and back to desktop `1280x900`; billing page remained usable and mobile bottom navigation stayed visible.</item>
+                <item>Chrome DevTools MCP console check: after adding `name` attributes to filter controls and reloading, console returned no app warnings/errors.</item>
+                <item>Implementation commit: ecc7e22 (feat(healio-billing): billing dashboard ui).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
