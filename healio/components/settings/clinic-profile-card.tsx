@@ -35,14 +35,16 @@ type Props = {
 export function ClinicProfileCard({ clinic, loading, error, onEdit, onRefresh }: Props) {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-start justify-between gap-3 pb-3">
-        <div>
+      <CardHeader className="pb-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1">
           <CardTitle>Clinic Profile</CardTitle>
           <CardDescription>Core identity and booking defaults used across public booking and staff workflows.</CardDescription>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" size="sm" onClick={onRefresh}>Refresh</Button>
-          <Button size="sm" onClick={onEdit}>Edit Profile</Button>
+          </div>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:justify-end sm:self-start">
+            <Button className="w-full whitespace-nowrap sm:w-auto sm:shrink-0" variant="secondary" size="sm" onClick={onRefresh}>Refresh</Button>
+            <Button className="w-full whitespace-nowrap sm:w-auto sm:shrink-0" size="sm" onClick={onEdit}>Edit Profile</Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

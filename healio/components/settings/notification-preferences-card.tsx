@@ -6,12 +6,16 @@ type NotificationPref = { key: string; label: string; enabled: boolean; descript
 export function NotificationPreferencesCard({ items, onEdit }: { items: NotificationPref[]; onEdit: () => void }) {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-start justify-between gap-3 pb-3">
-        <div>
+      <CardHeader className="pb-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1">
           <CardTitle>Notification Preferences</CardTitle>
           <CardDescription>Reminder and billing notification defaults used by cron routes and outbound messaging.</CardDescription>
+          </div>
+          <div className="w-full sm:w-auto sm:self-start">
+            <Button className="w-full whitespace-nowrap sm:w-auto sm:shrink-0" size="sm" onClick={onEdit}>Edit Preferences</Button>
+          </div>
         </div>
-        <Button size="sm" onClick={onEdit}>Edit Preferences</Button>
       </CardHeader>
       <CardContent className="space-y-2">
         {items.map((item) => (

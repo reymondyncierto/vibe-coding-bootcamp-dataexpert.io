@@ -9,12 +9,16 @@ const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export function OperatingHoursCard({ rows, loading, onEdit }: { rows: HoursRow[]; loading: boolean; onEdit: () => void }) {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-start justify-between gap-3 pb-3">
-        <div>
+      <CardHeader className="pb-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0 flex-1">
           <CardTitle>Operating Hours</CardTitle>
           <CardDescription>Quick scan of weekly clinic availability used by the slot engine and public booking.</CardDescription>
+          </div>
+          <div className="w-full sm:w-auto sm:self-start">
+            <Button className="w-full whitespace-nowrap sm:w-auto sm:shrink-0" size="sm" onClick={onEdit}>Edit Hours</Button>
+          </div>
         </div>
-        <Button size="sm" onClick={onEdit}>Edit Hours</Button>
       </CardHeader>
       <CardContent>
         {loading ? (
