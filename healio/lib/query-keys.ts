@@ -7,6 +7,14 @@ export const queryKeys = {
     details: () => [...queryKeys.appointments.all, "detail"] as const,
     detail: (id: string) => [...queryKeys.appointments.details(), id] as const,
   },
+  patients: {
+    all: ["patients"] as const,
+    lists: () => [...queryKeys.patients.all, "list"] as const,
+    list: (params: { q?: string; page: number; pageSize: number }) =>
+      [...queryKeys.patients.lists(), params] as const,
+    details: () => [...queryKeys.patients.all, "detail"] as const,
+    detail: (id: string) => [...queryKeys.patients.details(), id] as const,
+  },
 };
 
 export function appointmentsListSearchParams(params: {
@@ -18,5 +26,17 @@ export function appointmentsListSearchParams(params: {
   search.set("date", params.date);
   if (params.staffId) search.set("staffId", params.staffId);
   if (params.status) search.set("status", params.status);
+  return search;
+}
+
+export function patientsListSearchParams(params: {
+  q?: string;
+  page: number;
+  pageSize: number;
+}) {
+  const search = new URLSearchParams();
+  if (params.q) search.set("q", params.q);
+  search.set("page", String(params.page));
+  search.set("pageSize", String(params.pageSize));
   return search;
 }
