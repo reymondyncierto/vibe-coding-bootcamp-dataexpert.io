@@ -16,6 +16,7 @@
     "e2e": "echo \"No E2E tests yet (see HEALIO-069)\""
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
     "next": "14.2.5",
     "react": "18.3.1",
     "react-dom": "18.3.1"

@@ -17,14 +17,10 @@ import { Drawer } from "@/components/ui/drawer";
 import { Modal, ModalBody } from "@/components/ui/modal";
 import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ToastProvider, useToast } from "@/components/ui/toast-provider";
+import { useToast } from "@/components/ui/toast-provider";
 
 export default function HomePage() {
-  return (
-    <ToastProvider>
-      <PrimitivesShowcase />
-    </ToastProvider>
-  );
+  return <PrimitivesShowcase />;
 }
 
 function PrimitivesShowcase() {
