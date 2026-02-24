@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
+import { HealioLogo } from "@/components/shared/healio-logo";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 
@@ -13,9 +14,16 @@ export function Header() {
     <header className="sticky top-0 z-10 border-b border-border bg-app/95 px-4 py-4 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl items-center gap-3">
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">
-            Healio Workspace
-          </p>
+          <div className="mb-1">
+            <HealioLogo
+              href="/appointments"
+              label="Healio Workspace"
+              showLabel
+              iconClassName="h-6 w-6 rounded-md"
+              className="gap-2"
+              labelClassName="leading-none"
+            />
+          </div>
           <h1 className="truncate text-lg font-semibold text-ink md:text-xl">
             {title}
           </h1>

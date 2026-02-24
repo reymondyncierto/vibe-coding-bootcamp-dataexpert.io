@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { HealioLogo } from "@/components/shared/healio-logo";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -41,12 +42,7 @@ export function LandingHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/70 bg-app/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 text-sm font-semibold text-ink">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-white shadow-sm">
-            H
-          </span>
-          <span>Healio</span>
-        </Link>
+        <HealioLogo href="/" />
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
           {navItems.map((item) => (

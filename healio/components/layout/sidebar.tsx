@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { HealioLogo } from "@/components/shared/healio-logo";
 import { Badge } from "@/components/ui/badge";
 
 const navItems = [
@@ -19,9 +20,11 @@ export function Sidebar() {
   return (
     <aside className="hidden w-72 shrink-0 border-r border-border bg-surface/80 p-5 lg:flex lg:flex-col">
       <div className="healio-card p-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-          Healio
-        </p>
+        <HealioLogo
+          href="/appointments"
+          subtitle="Clinic Workspace"
+          iconClassName="h-7 w-7 rounded-lg"
+        />
         <p className="mt-2 text-lg font-semibold text-ink">Northview Clinic</p>
         <p className="text-sm text-muted">Reception Desk Workspace</p>
       </div>

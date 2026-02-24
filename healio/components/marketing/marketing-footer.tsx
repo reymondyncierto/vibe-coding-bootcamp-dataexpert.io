@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { HealioLogo } from "@/components/shared/healio-logo";
+
 const groups = [
   {
     title: "Product",
@@ -43,10 +45,7 @@ export function MarketingFooter() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 md:grid-cols-[1.1fr_1.9fr]">
           <div>
-            <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-primary text-white">H</span>
-              Healio
-            </div>
+            <HealioLogo href="/" />
             <p className="mt-3 max-w-sm text-sm leading-6 text-muted">
               Multi-tenant clinic operations software for appointments, patient records, billing, reminders, and day-to-day team workflows.
             </p>
