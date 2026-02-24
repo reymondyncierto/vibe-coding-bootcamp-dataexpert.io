@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Public Booking API</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-019, HEALIO-020</dependencies>
             <prd_reference>Feature 1 Rules &amp; Validation; 1.4 Idempotency</prd_reference>
         </metadata>
@@ -53,16 +53,20 @@
             <commit_message>feat(healio-booking): public booking validation and idempotency</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>public-booking</owner>
+            <started_at>2026-02-24T16:58:30+08:00</started_at>
+            <completed_at>2026-02-24T16:58:30+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/booking-validation.test.ts</verification_command>
+            <verification_notes>Implemented public booking business-rule validation (past time, lead time, max advance window, duplicate prevention by patient email + local day + service) and in-memory idempotency reservation/replay helpers. Extended appointment schemas with public booking payload/result contracts for downstream route implementation.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/services/bookingService.ts, healio/schemas/appointment.ts, healio/tests/unit/booking-validation.test.ts.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Unit tests: `node --import tsx --test tests/unit/booking-validation.test.ts` passed (runner summary reports one file-level line; direct execution confirmed 4 named test cases covering lead/past checks, duplicate detection, advance limit, and idempotency replay behavior).</item>
+                <item>Implementation commit: aa976b2 (feat(healio-booking): add public booking validation and idempotency).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
