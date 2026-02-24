@@ -7,9 +7,9 @@
             <domain>Platform &amp; Security</domain>
             <estimated_time>35 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-001, HEALIO-002</dependencies>
             <prd_reference>7.5 Environment Variables; 4.3 Data Security</prd_reference>
         </metadata>
@@ -52,16 +52,18 @@
             <commit_message>feat(healio-security): env example and runtime validation</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>platform-foundation</owner>
+            <started_at>2026-02-24T15:03:13+08:00</started_at>
+            <completed_at>2026-02-24T15:04:00+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>python3 checks for .env.example required keys and lib/env.ts helper signatures/messages</verification_command>
+            <verification_notes>.env.example covers PRD env variables and lib/env.ts provides server/public runtime validation with ENCRYPTION_KEY format enforcement. Typecheck not run because dependencies are not installed yet.</verification_notes>
             <evidence>
-                <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Implementation commit: d676461 (feat(healio-security): env example and runtime validation)</item>
+                <item>Changed files: healio/.env.example, healio/lib/env.ts, healio/README.md</item>
+                <item>Verification artifacts: required env key coverage check for .env.example; static content check for getPublicEnv/getServerEnv and encryption validation in lib/env.ts.</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
