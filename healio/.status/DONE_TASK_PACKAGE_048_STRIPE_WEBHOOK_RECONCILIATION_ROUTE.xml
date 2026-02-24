@@ -7,9 +7,9 @@
             <domain>Payments Integration</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-046, HEALIO-047</dependencies>
             <prd_reference>Feature 4 Stripe webhooks; 4.5 Stripe Webhook Security</prd_reference>
         </metadata>
@@ -56,16 +56,23 @@
             <commit_message>feat(healio-billing): stripe webhook reconciliation route</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>billing-invoicing-payments</owner>
+            <started_at>2026-02-24T19:05:27+08:00</started_at>
+            <completed_at>2026-02-24T19:05:27+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/stripe-webhook-route.test.ts</verification_command>
+            <verification_notes>Implemented `POST /api/v1/webhooks/stripe` with signature verification (HMAC-based local verifier using `STRIPE_WEBHOOK_SECRET`), JSON event parsing, processed-event idempotency, and invoice reconciliation for `checkout.session.completed`. Added webhook processing helpers to `stripeService.ts` and invoice payment reconciliation helper to `invoiceService.ts`.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/v1/webhooks/stripe/route.ts, healio/services/stripeService.ts, healio/services/invoiceService.ts, healio/tests/unit/stripe-webhook-route.test.ts, healio/tsconfig.tsbuildinfo.</item>
+                <item>`stripeService.ts` now includes webhook signature verification, webhook JSON parsing, processed-event dedupe state, and `checkout.session.completed` reconciliation logic that marks invoices paid from Stripe metadata (`metadata.invoiceId`).</item>
+                <item>`invoiceService.ts` now includes `markInvoicePaidFromStripeWebhook` to set `status=PAID`, `paidAmount=total`, `paymentMethod=STRIPE`, and persist Stripe payment intent id.</item>
+                <item>`POST /api/v1/webhooks/stripe` verifies signature before parsing/processing and returns standardized success/error envelopes with request logging.</item>
+                <item>Typecheck: `npm run typecheck` passed after narrowing webhook event object types for strict TypeScript compatibility.</item>
+                <item>Route tests: `node --import tsx --test tests/unit/stripe-webhook-route.test.ts` passed (valid signature reconciliation, duplicate webhook replay ignored, invalid signature rejection, malformed JSON rejection).</item>
+                <item>Implementation commit: eb10447 (feat(healio-billing): stripe webhook reconciliation route).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
