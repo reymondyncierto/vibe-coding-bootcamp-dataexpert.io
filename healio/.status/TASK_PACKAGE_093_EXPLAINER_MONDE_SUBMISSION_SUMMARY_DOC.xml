@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-093</id>
+            <title>Create explainer_monde Submission Summary Document</title>
+            <domain>Developer Documentation</domain>
+            <estimated_time>20 mins</estimated_time>
+            <priority>medium</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-091</dependencies>
+            <prd_reference>PRD Project Name, Description, and Objective/Problem context</prd_reference>
+        </metadata>
+        <context>
+            <background>User requested `explainer_monde.md` with product name, team member info, deployment/repo URLs, and a 2–3 sentence problem description derived from the PRD.</background>
+            <files_involved>
+                <file>explainer_monde.md</file>
+                <file>healio/prd.md</file>
+            </files_involved>
+            <design_constraints>
+                <constraint>Use PRD as the source for product name/description/problem framing.</constraint>
+                <constraint>Preserve user-provided team member and URLs exactly.</constraint>
+                <constraint>Keep the document clear and submission-ready.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Create `explainer_monde.md` at repository root with the requested sections and values.</step>
+            <step>Derive the product name, one-line description, and 2–3 sentence problem description from `healio/prd.md`.</step>
+            <step>Review content for correctness against PRD wording and user-provided links.</step>
+            <validation_checklist>
+                <check>Document includes product name, one-line description, team members, live URL, GitHub URL, and 2–3 sentence problem description.</check>
+                <check>Problem/description content is grounded in the PRD.</check>
+                <check>Task XML is updated and renamed `DONE_` when complete.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <acceptance_criteria>
+                <criterion>`explainer_monde.md` exists and contains the requested submission summary content.</criterion>
+                <criterion>Task XML is updated with evidence and renamed `DONE_` on completion.</criterion>
+            </acceptance_criteria>
+            <commit_message>docs(healio): add explainer monde submission summary</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>Record created file, PRD sections referenced, and commit refs.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence is recorded.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>task-architect</agent_to_execute>
+            <estimated_complexity>low</estimated_complexity>
+            <task_slug>EXPLAINER_MONDE_SUBMISSION_SUMMARY_DOC</task_slug>
+        </references>
+    </task_package>
+</task_packages>
