@@ -7,9 +7,9 @@
             <domain>Settings API</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-015, HEALIO-016, HEALIO-018</dependencies>
             <prd_reference>Feature 6 Services Manager</prd_reference>
         </metadata>
@@ -58,16 +58,22 @@
             <commit_message>feat(healio): services manager api</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>clinic-settings-admin</owner>
+            <started_at>2026-02-24T22:56:45+08:00</started_at>
+            <completed_at>2026-02-24T22:56:45+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/services-routes.test.ts</verification_command>
+            <verification_notes>Implemented protected services manager endpoints (`GET/POST/PATCH`) with tenant scoping and OWNER/ADMIN authorization, backed by an in-memory `serviceService` store that also powers the public services route via `getPublicServicesByClinicSlug`. Supports create, update, and deactivate (`isActive=false`) flows plus `includeInactive=true` listing for settings UIs.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/schemas/service.ts, healio/services/serviceService.ts, healio/app/api/v1/services/route.ts, healio/app/api/v1/services/[id]/route.ts, healio/tests/unit/services-routes.test.ts.</item>
+                <item>Route verification: `GET /api/v1/services` lists clinic-scoped services; `POST /api/v1/services` creates a service (`201`); `PATCH /api/v1/services/:id` updates and deactivates service successfully.</item>
+                <item>Behavior verification: duplicate service names return `409 SERVICE_NAME_EXISTS`; deactivated services are hidden from default list and included when `includeInactive=true`.</item>
+                <item>Security/tenant verification: missing auth returns `401`, FRONT_DESK create returns `403`, and cross-clinic patch returns `404` (tenant isolation).</item>
+                <item>Typecheck/tests passed: `npm run typecheck`; `node --import tsx --test tests/unit/services-routes.test.ts`.</item>
+                <item>Feature commit: d2accac (feat(healio): services manager api).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
