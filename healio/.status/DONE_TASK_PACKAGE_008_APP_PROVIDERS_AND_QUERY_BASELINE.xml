@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Frontend Platform</domain>
             <estimated_time>35 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-006, HEALIO-007</dependencies>
             <prd_reference>6.2 Caching Strategy; 5.3 Toast Notifications</prd_reference>
         </metadata>
@@ -52,16 +52,22 @@
             <commit_message>feat(healio): app providers and query baseline</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>platform-foundation</owner>
+            <started_at>2026-02-24T16:09:46+08:00</started_at>
+            <completed_at>2026-02-24T16:09:46+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm install @tanstack/react-query@5; npm run typecheck; Chrome DevTools MCP navigate http://localhost:3001/demo + console/snapshot check</verification_command>
+            <verification_notes>Installed React Query and added root Providers wrapper with QueryClientProvider + ToastProvider. Sandbox curl could not reach localhost in this shell context, so runtime verification used Chrome DevTools MCP page load and console checks on the live app instead.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/providers.tsx, healio/lib/query-client.ts, healio/app/layout.tsx, healio/app/page.tsx, healio/package.json, healio/package-lock.json.</item>
+                <item>Dependency install: `npm install @tanstack/react-query@5` succeeded.</item>
+                <item>Typecheck: `npm run typecheck` passed after provider/query baseline wiring.</item>
+                <item>Runtime verification artifact: Chrome DevTools MCP successfully navigated to http://localhost:3001/demo and snapshot confirmed app renders under root Providers with no console messages.</item>
+                <item>Local shell curl artifact: curl to localhost:3001 returned connection error in sandbox context; treated as environment limitation, not app failure.</item>
+                <item>Implementation commit: debc95c (feat(healio-platform): add app providers and react query baseline).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
