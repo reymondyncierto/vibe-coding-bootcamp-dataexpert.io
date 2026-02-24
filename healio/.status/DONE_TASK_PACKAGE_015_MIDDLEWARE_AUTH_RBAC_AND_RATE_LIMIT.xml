@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Security &amp; Middleware</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-014</dependencies>
             <prd_reference>4.2 API Security; 7 RBAC Implementation</prd_reference>
         </metadata>
@@ -56,16 +56,22 @@
             <commit_message>feat(healio-security): middleware auth rbac and rate limit</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>auth-rbac-security</owner>
+            <started_at>2026-02-24T16:39:26+08:00</started_at>
+            <completed_at>2026-02-24T16:39:26+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/rate-limit.test.ts</verification_command>
+            <verification_notes>Added Next.js edge middleware baseline for dashboard/API auth checks, RBAC entry gating, Supabase session refresh, and fixed-window in-memory rate limiting for public/auth/private API buckets. Verification used typecheck plus rate-limit helper unit tests covering route policy mapping and over-limit rejection behavior.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/middleware.ts, healio/lib/rate-limit.ts, healio/lib/supabase/middleware.ts (integration via imports), healio/tests/unit/rate-limit.test.ts.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Rate-limit test artifact: `node --import tsx --test tests/unit/rate-limit.test.ts` passed.</item>
+                <item>Negative security artifact: rate-limit helper blocks after exceeding max requests in the same window (`allowed=false`, remaining=0).</item>
+                <item>Design note: middleware is fail-closed for authenticated routes without valid Supabase claims and returns standard JSON error envelope for API routes.</item>
+                <item>Implementation commit: 0e6da73 (feat(healio-security): add middleware auth rbac and rate limit baseline).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
