@@ -7,9 +7,9 @@
             <domain>Frontend UI Polish</domain>
             <estimated_time>30 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-059</dependencies>
             <prd_reference>Settings dashboard UX polish and high-legibility, fast-action interaction design</prd_reference>
         </metadata>
@@ -45,16 +45,20 @@
             <commit_message>refactor(healio-settings): polish card action button layouts</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>agent-router -> frontend-design-system-shell</owner>
+            <started_at>2026-02-25T01:36:00+08:00</started_at>
+            <completed_at>2026-02-25T01:40:05+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>cd healio &amp;&amp; npm run typecheck; Chrome DevTools MCP desktop/mobile snapshots + button dimension checks on http://localhost:3000/settings</verification_command>
+            <verification_notes>Refactored settings card headers to responsive stacked layouts with non-wrapping action buttons. MCP verified `/settings` on desktop (1440x900) and mobile (390x844). Button labels render single-line with `white-space: nowrap`; measured heights remained 36px. Existing unrelated `/settings` API 500 errors were present during local data loading and do not affect button layout styling.</verification_notes>
             <evidence>
-                <item>Record changed components, typecheck result, MCP desktop/mobile verification, and commit refs.</item>
+                <item>Changed files: healio/components/settings/clinic-profile-card.tsx; healio/components/settings/operating-hours-card.tsx; healio/components/settings/notification-preferences-card.tsx</item>
+                <item>Task creation commit: 77318a6 (chore(status): add HEALIO-089 settings action layout polish task)</item>
+                <item>Feature commit: c0aad1c (refactor(healio-settings): polish card action button layouts)</item>
+                <item>Typecheck: `cd healio &amp;&amp; npm run typecheck` passed.</item>
+                <item>Chrome DevTools MCP: snapshots on `/settings` desktop+mobile; buttons `Edit Profile`, `Edit Hours`, `Edit Preferences` measured 36px height with `whiteSpace=nowrap` (desktop widths ~93-131px; mobile full-width ~316px).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence is recorded.</completion_signal>
         </execution_tracking>
