@@ -7,9 +7,9 @@
             <domain>Patient Documents Backend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-003, HEALIO-014, HEALIO-016</dependencies>
             <prd_reference>Feature 3 Documents Tab; 4.4 File Upload Security</prd_reference>
         </metadata>
@@ -54,16 +54,21 @@
             <commit_message>feat(healio-patients): document storage service</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>patient-documents-storage</owner>
+            <started_at>2026-02-24T18:08:13+08:00</started_at>
+            <completed_at>2026-02-24T18:08:13+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/document-validation.test.ts</verification_command>
+            <verification_notes>Built a document storage service with strict file validation (MIME allowlist, 10MB cap, magic-byte signature checks), UUID-based private object paths, filename sanitization, and signed private URL generation. Added a Supabase service-role client helper in `lib/supabase/server.ts` and a lazy-loaded storage adapter with in-memory fallback so local/test flows work without env secrets. Also added reusable metadata/list/sign helpers in documentService to support the upcoming patient documents API route task.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/services/documentService.ts, healio/lib/supabase/server.ts, healio/lib/utils.ts, healio/tests/unit/document-validation.test.ts, plus generated healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Validation tests: `node --import tsx --test tests/unit/document-validation.test.ts` passed; verifies allowed MIME types + magic bytes, oversized/unsupported/mismatch rejection, filename sanitization, private object path generation, and signed URL generation via in-memory private storage fallback.</item>
+                <item>Security constraints enforced: only `application/pdf`, `image/jpeg`, `image/png`; max size 10MB; content-sniffing via magic bytes; sanitized UUID-based object paths; signed download URLs (default 1-hour expiry).</item>
+                <item>Implementation commit: 3b8ecf5 (feat(healio-patients): document storage service).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
