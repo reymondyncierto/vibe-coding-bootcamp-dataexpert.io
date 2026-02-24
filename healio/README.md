@@ -157,6 +157,9 @@ Healio uses Supabase for authentication and reads custom claims (`clinicId`, `ro
    - `clinicId`
    - `role` (`OWNER`, `DOCTOR`, or `RECEPTIONIST`)
 
+Detailed setup (Google OAuth + Supabase + Healio callback URLs):
+- `healio/docs/supabase-google-auth-setup.md`
+
 Notes:
 - Login/signup pages support local-safe provisioning previews even if Supabase is not fully configured.
 - `app/auth/callback/route.ts` handles auth code exchange and safe redirecting.
