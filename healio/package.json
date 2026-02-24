@@ -25,6 +25,7 @@
     "@supabase/supabase-js": "^2.97.0",
     "@tanstack/react-query": "^5.90.21",
     "next": "14.2.5",
+    "pino": "^9.14.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "server-only": "^0.0.1"

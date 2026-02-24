@@ -15,7 +15,7 @@ function isApiRoute(pathname: string) {
 }
 
 function isPublicApi(pathname: string) {
-  return pathname.startsWith("/api/v1/public/");
+  return pathname.startsWith("/api/v1/public/") || pathname === "/api/v1/health";
 }
 
 function isProtectedDashboard(pathname: string) {
