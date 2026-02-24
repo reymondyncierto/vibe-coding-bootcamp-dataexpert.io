@@ -7,9 +7,9 @@
             <domain>Frontend Design System</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
+            <status>BLOCKED</status>
             <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <verification_status>BLOCKED</verification_status>
             <dependencies>HEALIO-001</dependencies>
             <prd_reference>5 Frontend Design Guidelines + user Healio UI pillars</prd_reference>
         </metadata>
@@ -57,17 +57,17 @@
             <commit_message>feat(healio): healio design tokens and global styles</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
+            <state>BLOCKED</state>
             <is_done>false</is_done>
-            <owner />
-            <started_at />
+            <owner>frontend-design-system-shell</owner>
+            <started_at>2026-02-24T15:07:42+08:00</started_at>
             <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <verification_status>BLOCKED</verification_status>
+            <verification_command>npm run dev (approved); npm run typecheck; Chrome DevTools MCP new_page http://localhost:3000</verification_command>
+            <verification_notes>Implementation is committed and typecheck passes, but required Chrome DevTools MCP verification is blocked because the MCP tool cannot start a headful browser in this environment (missing X server).</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item><item>Implementation commit: 2a95b97 (feat(healio-ui): add design tokens and global styles)</item><item>Verification artifact: `npm run typecheck` passed.</item><item>Blocked verification: Chrome DevTools MCP `new_page` failed with Missing X server to start the headful browser.</item></evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
