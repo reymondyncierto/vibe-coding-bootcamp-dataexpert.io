@@ -417,6 +417,38 @@ export function markInvoicePaidFromStripeWebhook(input: {
   return { ok: true, data: structuredClone(updated) };
 }
 
+export function markOverdueInvoicesForClinicSweep(input?: { now?: Date }) {
+  const now = input?.now ?? new Date();
+  const nowMs = now.getTime();
+  let checked = 0;
+  let updated = 0;
+  const updatedInvoiceIds: string[] = [];
+
+  for (const invoice of getInvoiceStore()) {
+    if (invoice.deletedAt !== null) continue;
+    checked += 1;
+    if (invoice.status === "PAID" || invoice.status === "VOID" || invoice.status === "REFUNDED") continue;
+
+    const balanceCents = moneyToCents(invoice.total) - moneyToCents(invoice.paidAmount);
+    if (balanceCents <= 0) continue;
+
+    const dueMs = new Date(invoice.dueDate).getTime();
+    if (!Number.isFinite(dueMs) || dueMs >= nowMs) continue;
+    if (invoice.status === "OVERDUE") continue;
+
+    invoice.status = "OVERDUE";
+    invoice.updatedAt = now.toISOString();
+    updated += 1;
+    updatedInvoiceIds.push(invoice.id);
+  }
+
+  return {
+    checked,
+    updated,
+    updatedInvoiceIds,
+  };
+}
+
 export function resetInvoiceStoresForTests() {
   getInvoiceStore().length = 0;
   getInvoiceSequenceStore().clear();

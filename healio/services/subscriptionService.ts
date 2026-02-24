@@ -125,6 +125,45 @@ export async function createSubscriptionCheckoutForClinic(input: {
   };
 }
 
+export function runSubscriptionGracePeriodCheck(input?: {
+  now?: Date;
+  graceDays?: number;
+}) {
+  const now = input?.now ?? new Date();
+  const graceDays = Math.max(0, input?.graceDays ?? 3);
+  const cutoffMs = now.getTime() - graceDays * 24 * 60 * 60_000;
+
+  let checked = 0;
+  let markedPastDue = 0;
+  const updatedClinicIds: string[] = [];
+
+  for (const [clinicId, record] of getStore().entries()) {
+    checked += 1;
+    if (!record.pendingUpgradePlan) continue;
+    if (record.status === "PAST_DUE") continue;
+
+    const updatedMs = new Date(record.updatedAt).getTime();
+    if (!Number.isFinite(updatedMs) || updatedMs > cutoffMs) continue;
+
+    const next: ClinicSubscriptionRecord = {
+      ...record,
+      status: "PAST_DUE",
+      updatedAt: now.toISOString(),
+    };
+    getStore().set(clinicId, next);
+    markedPastDue += 1;
+    updatedClinicIds.push(clinicId);
+  }
+
+  return {
+    checked,
+    markedPastDue,
+    updatedClinicIds,
+    graceDays,
+    now: now.toISOString(),
+  };
+}
+
 export function resetSubscriptionStoreForTests() {
   getStore().clear();
 }
