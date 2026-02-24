@@ -160,3 +160,32 @@ export function getWeekdayIndexForDate(date: string, timeZone: string): number {
   }
   return value;
 }
+
+export function moneyToCents(value: string | number): number {
+  const normalized =
+    typeof value === "number"
+      ? value.toFixed(2)
+      : value.trim();
+
+  if (!/^(0|[1-9]\d*)(\.\d{1,2})?$/.test(normalized)) {
+    throw new Error(`Invalid money amount: ${value}`);
+  }
+
+  const [wholePart, fractionalPart = ""] = normalized.split(".");
+  const cents = Number(wholePart) * 100 + Number(fractionalPart.padEnd(2, "0"));
+  if (!Number.isSafeInteger(cents)) {
+    throw new Error(`Money amount out of range: ${value}`);
+  }
+  return cents;
+}
+
+export function centsToMoney(cents: number): string {
+  if (!Number.isInteger(cents)) {
+    throw new Error(`Invalid cents amount: ${cents}`);
+  }
+  const sign = cents < 0 ? "-" : "";
+  const absolute = Math.abs(cents);
+  const whole = Math.floor(absolute / 100);
+  const fractional = String(absolute % 100).padStart(2, "0");
+  return `${sign}${whole}.${fractional}`;
+}
