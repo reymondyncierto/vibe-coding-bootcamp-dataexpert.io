@@ -7,9 +7,9 @@
             <domain>Notifications Backend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-010, HEALIO-016</dependencies>
             <prd_reference>Feature 5 Implementation; Notification table; 3/day cap</prd_reference>
         </metadata>
@@ -52,16 +52,22 @@
             <commit_message>feat(healio): notification service core</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>notifications-messaging</owner>
+            <started_at>2026-02-24T18:59:26+08:00</started_at>
+            <completed_at>2026-02-24T18:59:26+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/notification-service.test.ts</verification_command>
+            <verification_notes>Implemented notification service core with in-memory persistence, idempotency-key replay, per-recipient/per-type/per-channel 3/day cap enforcement, tenant-scoped status transitions, and list helpers. Tests cover idempotency replay, daily cap reset by day, tenant-scoped updates, and required recipient validation for EMAIL/SMS channels.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/services/notificationService.ts, healio/tests/unit/notification-service.test.ts, healio/tsconfig.tsbuildinfo.</item>
+                <item>`notificationService.ts` provides queue/list/status-update operations with idempotency replay (`clinicId + idempotencyKey`), a `DAILY_NOTIFICATION_CAP_REACHED` guard (3/day), and tenant-scoped mutation helpers for follow-on notification/email/SMS flows.</item>
+                <item>Assumption documented in implementation behavior: daily cap is enforced per `clinicId + recipient (patient/email/phone fallback) + notification type + channel + UTC day`, excluding FAILED records from the cap count.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Unit tests: `node --import tsx --test tests/unit/notification-service.test.ts` passed (idempotency, cap, status transitions, tenant scoping, validation).</item>
+                <item>Implementation commit: 5aa30f0 (feat(healio): notification service core).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
