@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { sendEmailWithResend } from "@/lib/resend";
 
 export type NotificationType =
   | "BOOKING_CONFIRMATION"
@@ -37,6 +38,26 @@ export type QueueNotificationResult = {
   notification: NotificationRecord;
   replayed: boolean;
   dailyCountForRecipient: number;
+};
+
+export type InvoiceEmailDeliveryPayload = {
+  clinicId: string;
+  invoiceId: string;
+  invoiceNumber: string;
+  patientId: string;
+  patientEmail: string;
+  patientName: string;
+  subject: string;
+  html: string;
+  text?: string;
+  idempotencyKey?: string | null;
+};
+
+export type InvoiceEmailDeliveryResult = {
+  notification: NotificationRecord;
+  replayed: boolean;
+  provider: "resend" | "resend-fallback";
+  providerMessageId: string | null;
 };
 
 const DAILY_NOTIFICATION_CAP = 3;
@@ -300,4 +321,76 @@ export function getDailyNotificationCap() {
 export function resetNotificationStoresForTests() {
   getNotificationStore().length = 0;
   getNotificationIdempotencyStore().clear();
+}
+
+export async function sendInvoiceEmailNotificationForClinic(
+  input: InvoiceEmailDeliveryPayload,
+): Promise<NotificationServiceResult<InvoiceEmailDeliveryResult>> {
+  const queued = queueNotificationForClinic({
+    clinicId: input.clinicId,
+    type: "INVOICE_SENT",
+    channel: "EMAIL",
+    patientId: input.patientId,
+    recipientEmail: input.patientEmail,
+    idempotencyKey: input.idempotencyKey ?? `invoice-send:${input.invoiceId}`,
+    metadata: {
+      invoiceId: input.invoiceId,
+      invoiceNumber: input.invoiceNumber,
+    },
+  });
+  if (!queued.ok) return queued;
+
+  if (queued.data.replayed) {
+    return {
+      ok: true,
+      data: {
+        notification: queued.data.notification,
+        replayed: true,
+        provider: "resend-fallback",
+        providerMessageId: null,
+      },
+    };
+  }
+
+  const from = process.env.RESEND_FROM_EMAIL?.trim() || "Healio Billing <billing@healio.local>";
+  try {
+    const delivery = await sendEmailWithResend({
+      from,
+      to: input.patientEmail,
+      subject: input.subject,
+      html: input.html,
+      text: input.text,
+    });
+    const sent = markNotificationSentForClinic({
+      clinicId: input.clinicId,
+      notificationId: queued.data.notification.id,
+    });
+    if (!sent.ok) return sent;
+    return {
+      ok: true,
+      data: {
+        notification: sent.data,
+        replayed: false,
+        provider: delivery.provider,
+        providerMessageId: delivery.id,
+      },
+    };
+  } catch (error) {
+    const failed = markNotificationFailedForClinic({
+      clinicId: input.clinicId,
+      notificationId: queued.data.notification.id,
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
+    if (!failed.ok) return failed;
+    return {
+      ok: false,
+      code: "NOTIFICATION_DELIVERY_FAILED",
+      message: "Invoice email could not be sent.",
+      status: 502,
+      details: {
+        notificationId: failed.data.id,
+        error: failed.data.errorMessage,
+      },
+    };
+  }
 }
