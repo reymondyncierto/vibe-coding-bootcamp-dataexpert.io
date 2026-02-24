@@ -7,9 +7,9 @@
             <domain>Patient Records Frontend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-006, HEALIO-037, HEALIO-039</dependencies>
             <prd_reference>Feature 3 Documents Tab</prd_reference>
         </metadata>
@@ -61,17 +61,29 @@
             <commit_message>feat(healio-patients): patient documents tab ui</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>patient-records-lite-emr</owner>
+            <started_at>2026-02-24T18:37:05+08:00</started_at>
+            <completed_at>2026-02-24T18:37:05+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/patient-documents-route.test.ts; Chrome DevTools MCP on http://localhost:4012/patients/:id (documents tab upload/list/preview)</verification_command>
+            <verification_notes>Implemented the patient chart Documents tab with a Stripe-style upload drawer, bento-style document list, and in-context preview modal. Preview gracefully falls back to a metadata + signed URL message in local memory storage mode (`memory://signed/...`) while still supporting real HTTP/Supabase signed URL inline previews later. Chrome DevTools MCP verification covered empty state, upload flow, preview modal, keyboard dismissal, responsive layout, and console/network checks.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/components/patients/patient-documents-tab.tsx, healio/components/patients/document-upload-drawer.tsx, healio/hooks/usePatientDocuments.ts, healio/app/(dashboard)/patients/[id]/page.tsx, healio/components/patients/patient-profile-tabs.tsx, healio/lib/query-keys.ts, healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed after wiring the documents tab and after tab header copy/status polish.</item>
+                <item>API regression/route tests: `node --import tsx --test tests/unit/patient-documents-route.test.ts` passed.</item>
+                <item>Chrome DevTools MCP verification on `http://localhost:4012/patients/pat_0d410ad9-12f0-47ae-97a4-cb205177f559`: opened the Documents tab and confirmed the educational empty state (`No documents yet`) plus in-context Upload CTA.</item>
+                <item>Chrome DevTools MCP upload flow: opened `Upload Patient Document` drawer, uploaded `/tmp/healio-mcp-fixtures/test-lab.pdf` via file input, submitted successfully, observed success toast, and verified the new document card rendered in the list.</item>
+                <item>Chrome DevTools MCP preview flow: opened `Document Preview` modal from the list card, verified metadata, and confirmed local-mode fallback preview messaging for `memory://signed/...` URLs with an `Open Link` action (future Supabase-signed HTTP URLs can inline preview).</item>
+                <item>Chrome DevTools MCP interaction checks: `Escape` closes the preview modal; drawer/modal remain in-context without navigating away from the patient chart.</item>
+                <item>Chrome DevTools MCP responsive check: resized to mobile `390x844` and back to desktop `1280x900`; Documents tab list/actions remained usable and mobile bottom navigation stayed visible.</item>
+                <item>Chrome DevTools MCP network checks (expected): GET `/api/v1/patients/:id` = 200; GET `/api/v1/patients/:id/documents` = 200; POST `/api/v1/patients/:id/documents` = 201; refetch GET `/api/v1/patients/:id/documents` = 200.</item>
+                <item>Chrome DevTools MCP console check: only expected React DevTools informational message; no application errors during documents tab verification.</item>
+                <item>Implementation commit: 0569c22 (feat(healio-patients): patient documents tab ui).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
