@@ -85,6 +85,21 @@ export type PublicBookingAppointmentRecord = {
   createdAt: string;
 };
 
+export type PublicBookingReminderCandidate = {
+  appointmentId: string;
+  bookingId: string;
+  clinicId: string;
+  clinicSlug: string;
+  clinicName: string;
+  timezone: string;
+  patientId: string;
+  patientEmail: string;
+  serviceId: string;
+  serviceName: string;
+  slotStartTime: string;
+  slotEndTime: string;
+};
+
 export const DEFAULT_BOOKING_RULES: SlotEngineBookingRules = {
   leadTimeMinutes: 60,
   maxAdvanceDays: 30,
@@ -375,6 +390,52 @@ export async function createAppointmentFromPublicBooking(input: {
   };
   publicBookingAppointmentStore.push(record);
   return record;
+}
+
+export async function listPublicBookingReminderCandidates(input: {
+  now?: Date;
+  leadMinutes: number;
+  windowMinutes?: number;
+}): Promise<PublicBookingReminderCandidate[]> {
+  const now = input.now ?? new Date();
+  const windowMinutes = Math.max(1, input.windowMinutes ?? 10);
+  const windowStart = now.getTime() + input.leadMinutes * 60_000;
+  const windowEnd = windowStart + windowMinutes * 60_000;
+
+  const dueRecords = publicBookingAppointmentStore
+    .filter((record) => record.status === "SCHEDULED")
+    .filter((record) => {
+      const start = new Date(record.slotStartTime).getTime();
+      return start >= windowStart && start < windowEnd;
+    });
+
+  const clinicCache = new Map<string, Awaited<ReturnType<typeof getPublicClinicProfileBySlug>>>();
+  const candidates: PublicBookingReminderCandidate[] = [];
+
+  for (const record of dueRecords) {
+    if (!clinicCache.has(record.clinicSlug)) {
+      clinicCache.set(record.clinicSlug, await getPublicClinicProfileBySlug(record.clinicSlug));
+    }
+    const clinic = clinicCache.get(record.clinicSlug);
+    if (!clinic) continue;
+
+    candidates.push({
+      appointmentId: record.id,
+      bookingId: record.bookingId,
+      clinicId: clinic.id,
+      clinicSlug: record.clinicSlug,
+      clinicName: clinic.name,
+      timezone: clinic.timezone,
+      patientId: record.patientId,
+      patientEmail: record.patientEmail,
+      serviceId: record.serviceId,
+      serviceName: record.serviceName,
+      slotStartTime: record.slotStartTime,
+      slotEndTime: record.slotEndTime,
+    });
+  }
+
+  return candidates.sort((a, b) => a.slotStartTime.localeCompare(b.slotStartTime));
 }
 
 type SchedulingRuleExistingAppointment = {
@@ -829,6 +890,10 @@ export async function deleteAppointmentForClinic(input: {
 
 export function resetInternalAppointmentStoreForTests() {
   internalAppointmentStore.length = 0;
+}
+
+export function resetPublicBookingAppointmentStoreForTests() {
+  publicBookingAppointmentStore.length = 0;
 }
 
 export function seedInternalAppointmentStoreForTests(records: InternalAppointmentRecord[]) {

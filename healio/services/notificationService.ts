@@ -61,6 +61,27 @@ export type InvoiceEmailDeliveryResult = {
   providerMessageId: string | null;
 };
 
+export type EmailDeliveryPayload = {
+  clinicId: string;
+  type: NotificationType;
+  patientId?: string | null;
+  appointmentId?: string | null;
+  recipientEmail: string;
+  subject: string;
+  html: string;
+  text?: string;
+  from?: string;
+  idempotencyKey?: string | null;
+  metadata?: Record<string, string> | null;
+};
+
+export type EmailDeliveryResult = {
+  notification: NotificationRecord;
+  replayed: boolean;
+  provider: "resend" | "resend-fallback";
+  providerMessageId: string | null;
+};
+
 export type SmsDeliveryPayload = {
   clinicId: string;
   type: NotificationType;
@@ -342,20 +363,18 @@ export function resetNotificationStoresForTests() {
   getNotificationIdempotencyStore().clear();
 }
 
-export async function sendInvoiceEmailNotificationForClinic(
-  input: InvoiceEmailDeliveryPayload,
-): Promise<NotificationServiceResult<InvoiceEmailDeliveryResult>> {
+export async function sendEmailNotificationForClinic(
+  input: EmailDeliveryPayload,
+): Promise<NotificationServiceResult<EmailDeliveryResult>> {
   const queued = queueNotificationForClinic({
     clinicId: input.clinicId,
-    type: "INVOICE_SENT",
+    type: input.type,
     channel: "EMAIL",
+    appointmentId: input.appointmentId,
     patientId: input.patientId,
-    recipientEmail: input.patientEmail,
-    idempotencyKey: input.idempotencyKey ?? `invoice-send:${input.invoiceId}`,
-    metadata: {
-      invoiceId: input.invoiceId,
-      invoiceNumber: input.invoiceNumber,
-    },
+    recipientEmail: input.recipientEmail,
+    idempotencyKey: input.idempotencyKey ?? null,
+    metadata: input.metadata ?? null,
   });
   if (!queued.ok) return queued;
 
@@ -371,11 +390,14 @@ export async function sendInvoiceEmailNotificationForClinic(
     };
   }
 
-  const from = process.env.RESEND_FROM_EMAIL?.trim() || "Healio Billing <billing@healio.local>";
+  const from =
+    input.from?.trim() ||
+    process.env.RESEND_FROM_EMAIL?.trim() ||
+    "Healio Notifications <notifications@healio.local>";
   try {
     const delivery = await sendEmailWithResend({
       from,
-      to: input.patientEmail,
+      to: input.recipientEmail,
       subject: input.subject,
       html: input.html,
       text: input.text,
@@ -404,7 +426,7 @@ export async function sendInvoiceEmailNotificationForClinic(
     return {
       ok: false,
       code: "NOTIFICATION_DELIVERY_FAILED",
-      message: "Invoice email could not be sent.",
+      message: "Email notification could not be sent.",
       status: 502,
       details: {
         notificationId: failed.data.id,
@@ -412,6 +434,44 @@ export async function sendInvoiceEmailNotificationForClinic(
       },
     };
   }
+}
+
+export async function sendInvoiceEmailNotificationForClinic(
+  input: InvoiceEmailDeliveryPayload,
+): Promise<NotificationServiceResult<InvoiceEmailDeliveryResult>> {
+  const delivery = await sendEmailNotificationForClinic({
+    clinicId: input.clinicId,
+    type: "INVOICE_SENT",
+    patientId: input.patientId,
+    recipientEmail: input.patientEmail,
+    subject: input.subject,
+    html: input.html,
+    text: input.text,
+    from: process.env.RESEND_FROM_EMAIL?.trim() || "Healio Billing <billing@healio.local>",
+    idempotencyKey: input.idempotencyKey ?? `invoice-send:${input.invoiceId}`,
+    metadata: {
+      invoiceId: input.invoiceId,
+      invoiceNumber: input.invoiceNumber,
+    },
+  });
+  if (!delivery.ok) {
+    return {
+      ok: false,
+      code: delivery.code,
+      message: "Invoice email could not be sent.",
+      status: delivery.status,
+      details: delivery.details,
+    };
+  }
+  return {
+    ok: true,
+    data: {
+      notification: delivery.data.notification,
+      replayed: delivery.data.replayed,
+      provider: delivery.data.provider,
+      providerMessageId: delivery.data.providerMessageId,
+    },
+  };
 }
 
 export async function sendSmsNotificationForClinic(
