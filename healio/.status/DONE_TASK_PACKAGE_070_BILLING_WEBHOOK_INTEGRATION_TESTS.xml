@@ -7,9 +7,9 @@
             <domain>Testing</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-047, HEALIO-048, HEALIO-068</dependencies>
             <prd_reference>8.2 Critical Flow invoice-&gt;payment-&gt;webhook</prd_reference>
         </metadata>
@@ -56,16 +56,21 @@
             <commit_message>test(healio): billing webhook integration tests</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>quality-engineering</owner>
+            <started_at>2026-02-24T23:42:41+08:00</started_at>
+            <completed_at>2026-02-24T23:42:41+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npx vitest run tests/integration/invoices-api.test.ts tests/integration/stripe-webhook.test.ts --config vitest.config.ts; npm run typecheck</verification_command>
+            <verification_notes>Added Vitest integration coverage for invoice send/pay-link and Stripe webhook reconciliation by executing route handlers against the shared in-memory stores. Tests cover idempotent invoice email sends, tenant mismatch/invalid ID rejections, webhook signature validation, payment reconciliation, and duplicate webhook replay handling.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/tests/integration/invoices-api.test.ts, healio/tests/integration/stripe-webhook.test.ts.</item>
+                <item>Verification passed: `npx vitest run tests/integration/invoices-api.test.ts tests/integration/stripe-webhook.test.ts --config vitest.config.ts`.</item>
+                <item>Typecheck passed after adding integration suites: `npm run typecheck`.</item>
+                <item>Coverage includes POST /api/v1/invoices/:id/send, POST /api/v1/invoices/:id/pay-link, and POST /api/v1/webhooks/stripe, including duplicate/idempotency and invalid-signature scenarios.</item>
+                <item>Feature commit: 4ba7e8a (test(healio): billing webhook integration tests).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
