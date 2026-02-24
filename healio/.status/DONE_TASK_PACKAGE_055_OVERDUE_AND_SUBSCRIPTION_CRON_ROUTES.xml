@@ -7,9 +7,9 @@
             <domain>Cron Jobs</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-045, HEALIO-048, HEALIO-061</dependencies>
             <prd_reference>1.2 Cron Jobs; Feature 4 overdue invoices; Feature 8 grace period</prd_reference>
         </metadata>
@@ -58,16 +58,22 @@
             <commit_message>feat(healio-cron): overdue and subscription cron routes</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>automation-cron-jobs</owner>
+            <started_at>2026-02-24T19:33:12+08:00</started_at>
+            <completed_at>2026-02-24T19:33:12+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/overdue-subscription-cron-routes.test.ts</verification_command>
+            <verification_notes>Implemented protected cron routes for overdue invoice status sweeps and subscription grace-period checks, backed by service helpers in `invoiceService` and `subscriptionService`. Both routes support `GET/POST`, validate `CRON_SECRET`, and accept an injectable `now` query parameter for deterministic testing.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/cron/overdue-invoices/route.ts, healio/app/api/cron/subscription-check/route.ts, healio/services/invoiceService.ts, healio/services/subscriptionService.ts, healio/tests/unit/overdue-subscription-cron-routes.test.ts.</item>
+                <item>Overdue cron verification: seeded a sent invoice with a past due date, ran `/api/cron/overdue-invoices`, and confirmed sweep updated invoice status to `OVERDUE` with `updated=1`.</item>
+                <item>Subscription cron verification: seeded a pending upgrade checkout, ran `/api/cron/subscription-check` with a large grace window (no change), then reran with `graceDays=0` and future `now`, confirming subscription transitioned to `PAST_DUE` and `markedPastDue=1`.</item>
+                <item>Security verification: cron routes reject missing/invalid secrets with `403 FORBIDDEN` in unit tests.</item>
+                <item>Typecheck/tests passed: `npm run typecheck`; `node --import tsx --test tests/unit/overdue-subscription-cron-routes.test.ts`.</item>
+                <item>Feature commit: 8b4388b (feat(healio-cron): overdue and subscription cron routes).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
