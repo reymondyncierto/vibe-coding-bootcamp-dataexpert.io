@@ -218,7 +218,6 @@ Behavior notes:
 
 `vercel.json` defines cron schedules for:
 - `/api/cron/reminders?lead=24h`
-- `/api/cron/reminders?lead=1h`
 - `/api/cron/overdue-invoices`
 - `/api/cron/subscription-check`
 
@@ -229,6 +228,26 @@ Behavior notes:
 
 Cron auth notes:
 - Cron routes accept `Authorization: Bearer <CRON_SECRET>` (Vercel-compatible) or `x-cron-secret`.
+
+### Vercel Hobby plan note (important)
+
+Vercel Hobby only supports cron jobs that run at most once per day. This repo is patched to a Hobby-safe `vercel.json` (daily jobs only).
+
+- Included on Hobby:
+  - `24h` reminders (daily)
+  - overdue invoice sweep (daily)
+  - subscription check (daily)
+- Not included on Hobby:
+  - `1h` reminder cron (`/api/cron/reminders?lead=1h`)
+
+If you need hourly reminders on Hobby, use an external scheduler (GitHub Actions cron, cron-job.org, EasyCron, etc.) and call:
+
+```bash
+curl -H "Authorization: Bearer YOUR_CRON_SECRET" \
+  "https://your-domain.vercel.app/api/cron/reminders?lead=1h"
+```
+
+Upgrade to Vercel Pro if you want Vercel-managed hourly cron schedules.
 
 ## Sentry / Observability (Optional Baseline)
 
