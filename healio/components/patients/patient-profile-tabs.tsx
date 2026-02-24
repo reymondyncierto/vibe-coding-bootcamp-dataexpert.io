@@ -35,6 +35,9 @@ export function PatientProfileTabs({
 }) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const active = tabs.find((item) => item.id === activeTab) ?? tabs[0];
+  const activeHasImplementedContent =
+    (active.id === "visits" && Boolean(visitsContent)) ||
+    (active.id === "documents" && Boolean(documentsContent));
 
   return (
     <Card>
@@ -62,11 +65,15 @@ export function PatientProfileTabs({
         <div className="rounded-card border border-border bg-app/50 p-4">
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm font-semibold text-ink">{active.label}</p>
-            <Badge variant={active.id === "overview" ? "success" : "neutral"}>
-              {active.id === "overview" ? "Ready" : "Coming next"}
+            <Badge variant={active.id === "overview" || activeHasImplementedContent ? "success" : "neutral"}>
+              {active.id === "overview" || activeHasImplementedContent ? "Ready" : "Coming next"}
             </Badge>
           </div>
-          <p className="mt-2 text-sm text-muted">{active.description}</p>
+          <p className="mt-2 text-sm text-muted">
+            {activeHasImplementedContent
+              ? `In-context ${active.label.toLowerCase()} workflow is available in this chart tab.`
+              : active.description}
+          </p>
 
           {active.id === "visits" && visitsContent ? (
             <div className="mt-4">{visitsContent}</div>

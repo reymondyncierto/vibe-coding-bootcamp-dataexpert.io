@@ -20,6 +20,11 @@ export const queryKeys = {
     lists: () => [...queryKeys.patientVisits.all, "list"] as const,
     list: (patientId: string) => [...queryKeys.patientVisits.lists(), patientId] as const,
   },
+  patientDocuments: {
+    all: ["patientDocuments"] as const,
+    lists: () => [...queryKeys.patientDocuments.all, "list"] as const,
+    list: (patientId: string) => [...queryKeys.patientDocuments.lists(), patientId] as const,
+  },
 };
 
 export function appointmentsListSearchParams(params: {
