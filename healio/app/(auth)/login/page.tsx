@@ -154,6 +154,27 @@ function LoginPageContent() {
     }
   }
 
+  async function continueWithGoogle() {
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
+      callbackUrl.searchParams.set("next", nextPath);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: callbackUrl.toString() },
+      });
+      if (error) {
+        pushToast({ title: "Google sign-in unavailable", description: error.message, variant: "error" });
+      }
+    } catch (error) {
+      pushToast({
+        title: "Supabase auth unavailable",
+        description: error instanceof Error ? error.message : "OAuth not configured in this environment.",
+        variant: "error",
+      });
+    }
+  }
+
   return (
     <div className="min-h-screen bg-app px-4 py-10 sm:px-6">
       <div className="mx-auto grid w-full max-w-5xl gap-6 lg:grid-cols-[1.15fr_0.85fr]">
@@ -164,7 +185,7 @@ function LoginPageContent() {
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Healio Access</p>
                 <CardTitle className="mt-2 text-2xl">Welcome back</CardTitle>
                 <CardDescription className="mt-1">
-                  Sign in with email and password or a magic link, then continue to your clinic workspace without losing context.
+                  Sign in with email and password, a magic link, or Google, then continue to your clinic workspace without losing context.
                 </CardDescription>
               </div>
               <Badge variant="primary">Auth Flow</Badge>
@@ -227,7 +248,7 @@ function LoginPageContent() {
                   placeholder="Dr. Andrea Reyes"
                 />
               </label>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 <Button onClick={() => void sendMagicLink()} disabled={magicLinkState.kind === "loading"}>
                   {magicLinkState.kind === "loading" ? "Sending..." : "Send Magic Link"}
                 </Button>
@@ -237,6 +258,9 @@ function LoginPageContent() {
                   disabled={passwordSignInState.kind === "loading"}
                 >
                   {passwordSignInState.kind === "loading" ? "Signing in..." : "Sign In with Password"}
+                </Button>
+                <Button variant="secondary" onClick={() => void continueWithGoogle()}>
+                  Continue with Google
                 </Button>
               </div>
               <Button variant="ghost" onClick={() => void localProvisionPreview()} disabled={lookupState.kind === "loading"}>
@@ -298,7 +322,7 @@ function LoginPageContent() {
             <CardHeader>
               <CardTitle className="text-lg">Callback Path</CardTitle>
               <CardDescription>
-                Email/password sign-in stays on-page, while magic-link redirects return through a local callback handler before continuing to the selected page.
+                Email/password sign-in stays on-page, while magic-link and Google OAuth redirects return through a local callback handler before continuing to the selected page.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted">

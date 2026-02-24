@@ -155,6 +155,31 @@ function SignupPageContent() {
     }
   }
 
+  async function continueWithGoogle() {
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
+      callbackUrl.searchParams.set("next", nextPath);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: callbackUrl.toString() },
+      });
+      if (error) {
+        pushToast({
+          title: "Google sign-up unavailable",
+          description: error.message,
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      pushToast({
+        title: "Supabase auth unavailable",
+        description: error instanceof Error ? error.message : "OAuth not configured in this environment.",
+        variant: "error",
+      });
+    }
+  }
+
   return (
     <div className="min-h-screen bg-app px-4 py-10 sm:px-6">
       <div className="mx-auto grid w-full max-w-6xl gap-6 xl:grid-cols-[1.1fr_0.9fr]">
@@ -275,7 +300,7 @@ function SignupPageContent() {
                 </ul>
               </div>
 
-              <div className="flex flex-col gap-2 sm:flex-row">
+              <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                 <Button type="submit" disabled={submitState.kind === "loading"} className="sm:min-w-[220px]">
                   {submitState.kind === "loading" ? "Provisioning..." : "Create Account & Provision Clinic"}
                 </Button>
@@ -289,6 +314,9 @@ function SignupPageContent() {
                   disabled={passwordSignupState.kind === "loading"}
                 >
                   {passwordSignupState.kind === "loading" ? "Creating login..." : "Create Email + Password Login"}
+                </Button>
+                <Button type="button" variant="secondary" onClick={() => void continueWithGoogle()}>
+                  Continue with Google
                 </Button>
                 <Link href={`/login?next=${encodeURIComponent(nextPath)}`} className="sm:ml-auto">
                   <Button type="button" variant="ghost">Back to Login</Button>
@@ -368,7 +396,7 @@ function SignupPageContent() {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Callback readiness</CardTitle>
-              <CardDescription>Email/password signup stays on-page, while magic-link redirects return through the local callback endpoint before routing to the requested page.</CardDescription>
+              <CardDescription>Email/password signup stays on-page, while magic-link and Google OAuth redirects return through the local callback endpoint before routing to the requested page.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted">
               <p><code>/auth/callback</code> safely validates the `next` path and redirects back to login on provider errors.</p>
