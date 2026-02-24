@@ -7,9 +7,9 @@
             <domain>Patient Records API</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-012, HEALIO-013, HEALIO-015, HEALIO-016</dependencies>
             <prd_reference>Feature 3 API Endpoints</prd_reference>
         </metadata>
@@ -57,16 +57,21 @@
             <commit_message>feat(healio-patients): patients list create route</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>patient-records-lite-emr</owner>
+            <started_at>2026-02-24T18:00:22+08:00</started_at>
+            <completed_at>2026-02-24T18:00:22+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/patients-route.test.ts</verification_command>
+            <verification_notes>Implemented protected patients list/create API route with pagination and search query validation, standard success/error envelopes, and middleware auth-header enforcement. Added patient schemas plus patientService in-memory clinic-scoped patient records with encrypted-at-rest sensitive fields (phone/allergies/chronicConditions/currentMedications/dateOfBirth) using the existing AES helpers and a deterministic dev/test key for local in-memory storage. Added route tests covering POST create, GET list pagination/search, unauthenticated request rejection, invalid query, and clinic scope mismatch.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/v1/patients/route.ts, healio/services/patientService.ts, healio/schemas/patient.ts, healio/tests/unit/patients-route.test.ts, plus generated healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Endpoint verification via route tests: `node --import tsx --test tests/unit/patients-route.test.ts` passed; covers POST /api/v1/patients (201), GET /api/v1/patients pagination/search (200), unauthenticated GET (401), invalid page query (400), and POST clinic scope mismatch (403).</item>
+                <item>Persistence/side-effect evidence: patientService stores clinic-scoped patient records in a global in-memory store for dev/test and decrypts sensitive fields on API output while keeping encrypted payloads at rest in the store.</item>
+                <item>Implementation commit: c368e33 (feat(healio-patients): patients list create route).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
