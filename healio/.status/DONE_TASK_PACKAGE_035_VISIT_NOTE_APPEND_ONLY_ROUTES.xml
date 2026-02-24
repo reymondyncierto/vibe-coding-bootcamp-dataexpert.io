@@ -7,9 +7,9 @@
             <domain>Patient Records API</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-034</dependencies>
             <prd_reference>Feature 3 Visit Note Editor + append-only rule</prd_reference>
         </metadata>
@@ -57,16 +57,21 @@
             <commit_message>feat(healio-patients): visit note append only routes</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>patient-records-lite-emr</owner>
+            <started_at>2026-02-24T18:04:07+08:00</started_at>
+            <completed_at>2026-02-24T18:04:07+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/patient-visits-route.test.ts</verification_command>
+            <verification_notes>Implemented protected patient visit-note list/create APIs with append-only amendment support. Added clinic/patient-scoped visit note storage in patientService, append-only amendment validation (`amendmentToVisitId` must reference an existing note for the same patient), and list ordering by newest first. Route tests cover create/list success, amendment creation, missing patient, invalid amendment target, and missing auth behavior.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/v1/patients/[id]/visits/route.ts, healio/services/patientService.ts, healio/tests/unit/patient-visits-route.test.ts, plus generated healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Endpoint verification: `node --import tsx --test tests/unit/patient-visits-route.test.ts` passed; covers POST /api/v1/patients/:id/visits (base note + amendment note, both 201), GET /api/v1/patients/:id/visits list (200), missing auth (401), missing patient (404), and invalid amendment target (404).</item>
+                <item>Append-only rule enforcement: amendments are created as new records linked by `amendmentToVisitId`; no mutation endpoint is introduced, preserving append-only history semantics.</item>
+                <item>Implementation commit: a302d25 (feat(healio-patients): visit note append only routes).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
