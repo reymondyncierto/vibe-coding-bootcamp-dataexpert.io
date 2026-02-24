@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { sendEmailWithResend } from "@/lib/resend";
+import { sendSmsWithTwilio } from "@/lib/twilio";
 
 export type NotificationType =
   | "BOOKING_CONFIRMATION"
@@ -57,6 +58,24 @@ export type InvoiceEmailDeliveryResult = {
   notification: NotificationRecord;
   replayed: boolean;
   provider: "resend" | "resend-fallback";
+  providerMessageId: string | null;
+};
+
+export type SmsDeliveryPayload = {
+  clinicId: string;
+  type: NotificationType;
+  patientId?: string | null;
+  appointmentId?: string | null;
+  recipientPhone: string;
+  body: string;
+  idempotencyKey?: string | null;
+  metadata?: Record<string, string> | null;
+};
+
+export type SmsDeliveryResult = {
+  notification: NotificationRecord;
+  replayed: boolean;
+  provider: "twilio" | "twilio-fallback";
   providerMessageId: string | null;
 };
 
@@ -386,6 +405,72 @@ export async function sendInvoiceEmailNotificationForClinic(
       ok: false,
       code: "NOTIFICATION_DELIVERY_FAILED",
       message: "Invoice email could not be sent.",
+      status: 502,
+      details: {
+        notificationId: failed.data.id,
+        error: failed.data.errorMessage,
+      },
+    };
+  }
+}
+
+export async function sendSmsNotificationForClinic(
+  input: SmsDeliveryPayload,
+): Promise<NotificationServiceResult<SmsDeliveryResult>> {
+  const queued = queueNotificationForClinic({
+    clinicId: input.clinicId,
+    type: input.type,
+    channel: "SMS",
+    patientId: input.patientId,
+    appointmentId: input.appointmentId,
+    recipientPhone: input.recipientPhone,
+    idempotencyKey: input.idempotencyKey ?? null,
+    metadata: input.metadata ?? null,
+  });
+  if (!queued.ok) return queued;
+
+  if (queued.data.replayed) {
+    return {
+      ok: true,
+      data: {
+        notification: queued.data.notification,
+        replayed: true,
+        provider: "twilio-fallback",
+        providerMessageId: null,
+      },
+    };
+  }
+
+  try {
+    const delivery = await sendSmsWithTwilio({
+      to: input.recipientPhone,
+      body: input.body,
+    });
+    const sent = markNotificationSentForClinic({
+      clinicId: input.clinicId,
+      notificationId: queued.data.notification.id,
+    });
+    if (!sent.ok) return sent;
+    return {
+      ok: true,
+      data: {
+        notification: sent.data,
+        replayed: false,
+        provider: delivery.provider,
+        providerMessageId: delivery.sid,
+      },
+    };
+  } catch (error) {
+    const failed = markNotificationFailedForClinic({
+      clinicId: input.clinicId,
+      notificationId: queued.data.notification.id,
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
+    if (!failed.ok) return failed;
+    return {
+      ok: false,
+      code: "NOTIFICATION_DELIVERY_FAILED",
+      message: "SMS notification could not be sent.",
       status: 502,
       details: {
         notificationId: failed.data.id,
