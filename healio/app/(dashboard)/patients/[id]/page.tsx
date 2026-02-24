@@ -6,6 +6,7 @@ import { PatientDemographicsCard } from "@/components/patients/patient-demograph
 import { PatientMedicalSummaryCard } from "@/components/patients/patient-medical-summary-card";
 import { PatientProfileHeader } from "@/components/patients/patient-profile-header";
 import { PatientProfileTabs } from "@/components/patients/patient-profile-tabs";
+import { VisitNoteTimeline } from "@/components/patients/visit-note-timeline";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -107,7 +108,7 @@ export default function PatientProfilePage({
           <PatientMedicalSummaryCard patient={patient} />
         </div>
 
-        <PatientProfileTabs />
+        <PatientProfileTabs visitsContent={<VisitNoteTimeline patientId={patient.id} />} />
       </div>
 
       <Drawer

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,13 @@ const tabs: Array<{ id: TabId; label: string; description: string }> = [
   },
 ];
 
-export function PatientProfileTabs() {
+export function PatientProfileTabs({
+  visitsContent,
+  documentsContent,
+}: {
+  visitsContent?: ReactNode;
+  documentsContent?: ReactNode;
+}) {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const active = tabs.find((item) => item.id === activeTab) ?? tabs[0];
 
@@ -62,7 +68,11 @@ export function PatientProfileTabs() {
           </div>
           <p className="mt-2 text-sm text-muted">{active.description}</p>
 
-          {active.id !== "overview" ? (
+          {active.id === "visits" && visitsContent ? (
+            <div className="mt-4">{visitsContent}</div>
+          ) : active.id === "documents" && documentsContent ? (
+            <div className="mt-4">{documentsContent}</div>
+          ) : active.id !== "overview" ? (
             <div className="mt-4 rounded-control border border-dashed border-border bg-white px-3 py-3 text-sm text-muted">
               Empty state scaffold is intentional so new clinics are not shown a blank area while the next patient-chart tabs are implemented.
             </div>
