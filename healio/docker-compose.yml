@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  app:
+    image: node:20-bookworm
+    working_dir: /workspace
+    command: sh -lc "npm install && npm run dev -- --hostname 0.0.0.0 --port 3000"
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/healio
+      DIRECT_URL: postgresql://postgres:postgres@db:5432/healio
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    volumes:
+      - .:/workspace
+      - healio_node_modules:/workspace/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: healio
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - healio_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d healio"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  healio_node_modules:
+  healio_postgres_data:
