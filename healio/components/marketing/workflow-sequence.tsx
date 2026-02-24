@@ -55,10 +55,6 @@ export function WorkflowSequence() {
           </Card>
         ))}
       </div>
-
-      <div className="mt-6 rounded-2xl border border-primary/15 bg-primary/5 px-4 py-3 text-sm text-ink">
-        <span className="font-semibold">Frictionless workflow:</span> common tasks open in focused drawers and dialogs so staff stay oriented while the schedule remains visible.
-      </div>
     </section>
   );
 }
