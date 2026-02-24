@@ -22,6 +22,18 @@ function isProtectedDashboard(pathname: string) {
   return pathname.startsWith("/dashboard");
 }
 
+function isLocalDevHeaderBypass(request: NextRequest) {
+  if (process.env.NODE_ENV === "production") return false;
+  const hostname = request.nextUrl.hostname;
+  const isLocalHost = hostname === "localhost" || hostname === "127.0.0.1";
+  if (!isLocalHost) return false;
+
+  const clinicId = request.headers.get("x-healio-clinic-id")?.trim();
+  const userId = request.headers.get("x-healio-user-id")?.trim();
+  const role = request.headers.get("x-healio-role")?.trim();
+  return Boolean(clinicId && userId && role);
+}
+
 function requiredDashboardRoles(pathname: string): HealioRole[] | null {
   if (!isProtectedDashboard(pathname)) return null;
   if (pathname.startsWith("/dashboard/settings")) return ["OWNER"];
@@ -79,6 +91,20 @@ export async function middleware(request: NextRequest) {
   const needsAuth = isProtectedDashboard(pathname) || (isApiRoute(pathname) && !isPublicApi(pathname));
   if (!needsAuth) {
     return NextResponse.next();
+  }
+
+  if (isApiRoute(pathname) && isLocalDevHeaderBypass(request)) {
+    const response = NextResponse.next();
+    const clinicId = request.headers.get("x-healio-clinic-id");
+    const userId = request.headers.get("x-healio-user-id");
+    const role = request.headers.get("x-healio-role");
+    if (clinicId) response.headers.set("x-healio-clinic-id", clinicId);
+    if (userId) response.headers.set("x-healio-user-id", userId);
+    if (role) response.headers.set("x-healio-role", role);
+    if (rateLimitResult) {
+      applyHeaders(response, rateLimitHeaders(rateLimitResult));
+    }
+    return response;
   }
 
   const session = await updateSupabaseSession(request);

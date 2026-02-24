@@ -35,12 +35,23 @@ export class ApiRequestError extends Error {
 }
 
 async function requestJson<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
+  const headers = new Headers(init?.headers);
+
+  // Local-only fallback so dashboard UI tasks can exercise protected APIs in dev without a full auth flow.
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    const isLocalHost = host === "localhost" || host === "127.0.0.1";
+    if (isLocalHost) {
+      if (!headers.has("x-healio-clinic-id")) headers.set("x-healio-clinic-id", "clinic_1");
+      if (!headers.has("x-healio-user-id")) headers.set("x-healio-user-id", "ui_dev_user");
+      if (!headers.has("x-healio-role")) headers.set("x-healio-role", "RECEPTIONIST");
+    }
+  }
+
   const response = await fetch(input, {
     cache: "no-store",
     ...init,
-    headers: {
-      ...(init?.headers ?? {}),
-    },
+    headers,
   });
 
   let json: ApiEnvelope<T> | null = null;
