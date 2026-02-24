@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Backend Platform</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-010</dependencies>
             <prd_reference>1.3 Multi-Tenancy Strategy; 9 lib/prisma.ts</prd_reference>
         </metadata>
@@ -52,16 +52,22 @@
             <commit_message>feat(healio): prisma singleton and tenant scoping</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>platform-foundation</owner>
+            <started_at>2026-02-24T16:23:12+08:00</started_at>
+            <completed_at>2026-02-24T16:23:12+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx -e "tenant-context mergeTenantWhere positive + mismatch negative"</verification_command>
+            <verification_notes>Added Prisma singleton and fail-closed tenant-scoping extension baseline that injects clinicId into safe read/create operations for tenant-scoped models and rejects unsafe unique ops to prevent cross-tenant leakage. Added tenant DB service helpers plus pure tenant-context utilities with a negative mismatch verification artifact.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/lib/prisma.ts, healio/lib/tenant-context.ts, healio/services/tenant-db.ts.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Negative tenant test artifact (runtime helper check): `node --import tsx ...` returned `TenantScopingError:Tenant scope mismatch: expected clinicId=clinic_a.` when payload clinicId mismatched tenant context.</item>
+                <item>Positive tenant merge artifact: helper returned `{"id":"p1","clinicId":"clinic_a"}` for a tenant-scoped where clause.</item>
+                <item>Design decision: extension rejects unsafe tenant-scoped `findUnique`/`update`/`delete`/`upsert` and requires clinic-safe patterns (`findFirst`, `updateMany`, `deleteMany`) until model-specific wrappers are added in later service tasks.</item>
+                <item>Implementation commit: dbca91b (feat(healio-platform): add prisma tenant scoping baseline).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
