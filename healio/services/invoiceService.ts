@@ -359,6 +359,36 @@ export function updateInvoiceForClinic(input: {
   return { ok: true, data: structuredClone(updated) };
 }
 
+export function setInvoiceStripeCheckoutLinkForClinic(input: {
+  clinicId: string;
+  invoiceId: string;
+  stripeCheckoutUrl: string;
+  stripePaymentIntentId?: string | null;
+}): InvoiceServiceResult<InvoiceDetail> {
+  const store = getInvoiceStore();
+  const index = store.findIndex(
+    (invoice) => invoice.id === input.invoiceId && invoice.clinicId === input.clinicId && invoice.deletedAt === null,
+  );
+  if (index === -1) {
+    return { ok: false, code: "INVOICE_NOT_FOUND", message: "Invoice not found.", status: 404 };
+  }
+
+  const current = store[index];
+  const nowIso = new Date().toISOString();
+  const updated: InvoiceRecord = {
+    ...current,
+    stripeCheckoutUrl: input.stripeCheckoutUrl,
+    stripePaymentIntentId:
+      input.stripePaymentIntentId !== undefined ? input.stripePaymentIntentId : current.stripePaymentIntentId,
+    status: current.status === "DRAFT" ? "SENT" : current.status,
+    sentAt: current.sentAt ?? nowIso,
+    updatedAt: nowIso,
+  };
+
+  store[index] = updated;
+  return { ok: true, data: structuredClone(updated) };
+}
+
 export function resetInvoiceStoresForTests() {
   getInvoiceStore().length = 0;
   getInvoiceSequenceStore().clear();
