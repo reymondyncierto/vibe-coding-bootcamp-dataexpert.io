@@ -14,10 +14,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Drawer } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AppointmentDetailDrawer } from "./appointment-detail-drawer";
 import { AppointmentRowCard } from "./appointment-row-card";
 
 type StatusFilter = "ALL" | AppointmentStatus;
@@ -53,7 +53,7 @@ async function safeCreateDemoDay(
   create: ReturnType<typeof useCreateAppointment>,
 ) {
   const demoRows = [
-    { hhmm: "09:00", durationMinutes: 30, patientId: "maria_santos", serviceId: "follow_up_consult", staffId: "dr_reyes" },
+    { hhmm: "11:00", durationMinutes: 30, patientId: "maria_santos", serviceId: "follow_up_consult", staffId: "dr_reyes" },
     { hhmm: "10:30", durationMinutes: 45, patientId: "john_cruz", serviceId: "initial_assessment", staffId: "dr_reyes" },
     { hhmm: "13:00", durationMinutes: 60, patientId: "ava_reyes", serviceId: "therapy_session", staffId: "dr_co" },
     { hhmm: "15:30", durationMinutes: 30, patientId: "walk_in_slot", serviceId: "open_slot", staffId: "dr_co" },
@@ -361,53 +361,11 @@ export function DailySchedule() {
         </Card>
       </div>
 
-      <Drawer
-        open={Boolean(selected)}
+      <AppointmentDetailDrawer
+        appointmentId={selected?.id ?? null}
+        appointmentDate={date}
         onClose={() => setSelected(null)}
-        title={selected ? `Appointment: ${selected.patientId.replace(/[_-]+/g, " ")}` : "Appointment"}
-        description="In-context drawer keeps workflows fast; richer quick actions land in the next task."
-        footer={
-          <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="secondary" onClick={() => setSelected(null)}>
-              Close
-            </Button>
-            <Button type="button" disabled>
-              Quick Actions (Next Task)
-            </Button>
-          </div>
-        }
-      >
-        {selected ? (
-          <div className="space-y-4">
-            <div className="grid gap-2 rounded-control border border-border bg-app p-4 text-sm">
-              <p>
-                <span className="font-semibold text-ink">Time:</span>{" "}
-                <span className="text-muted">
-                  {formatTime(selected.startTime)} - {formatTime(selected.endTime)}
-                </span>
-              </p>
-              <p>
-                <span className="font-semibold text-ink">Status:</span>{" "}
-                <span className="text-muted">{selected.status}</span>
-              </p>
-              <p>
-                <span className="font-semibold text-ink">Staff:</span>{" "}
-                <span className="text-muted">{selected.staffId}</span>
-              </p>
-              <p>
-                <span className="font-semibold text-ink">Service:</span>{" "}
-                <span className="text-muted">{selected.serviceId}</span>
-              </p>
-            </div>
-            <div className="rounded-control border border-border bg-surface p-4">
-              <p className="text-sm font-semibold text-ink">Notes</p>
-              <p className="mt-2 text-sm text-muted">
-                {selected.notes?.trim() || "No notes yet. Use the next task drawer quick actions to update status and notes."}
-              </p>
-            </div>
-          </div>
-        ) : null}
-      </Drawer>
+      />
     </>
   );
 }

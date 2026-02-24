@@ -99,14 +99,33 @@ const DEV_FALLBACK_OPERATING_HOURS: SlotEngineOperatingHours[] = [
   { dayOfWeek: 6, openTime: "09:00", closeTime: "12:00" },
   { dayOfWeek: 0, openTime: "00:00", closeTime: "00:00", isClosed: true },
 ];
-const publicBookingAppointmentStore: PublicBookingAppointmentRecord[] = [];
 type InternalAppointmentRecord = AppointmentSummary & {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
   isWalkIn?: boolean;
 };
-const internalAppointmentStore: InternalAppointmentRecord[] = [];
+
+type AppointmentServiceMemoryStores = {
+  publicBookingAppointmentStore: PublicBookingAppointmentRecord[];
+  internalAppointmentStore: InternalAppointmentRecord[];
+};
+
+function getAppointmentServiceMemoryStores(): AppointmentServiceMemoryStores {
+  const globalScope = globalThis as typeof globalThis & {
+    __healioAppointmentServiceStores?: AppointmentServiceMemoryStores;
+  };
+  if (!globalScope.__healioAppointmentServiceStores) {
+    globalScope.__healioAppointmentServiceStores = {
+      publicBookingAppointmentStore: [],
+      internalAppointmentStore: [],
+    };
+  }
+  return globalScope.__healioAppointmentServiceStores;
+}
+
+const { publicBookingAppointmentStore, internalAppointmentStore } =
+  getAppointmentServiceMemoryStores();
 
 type PrismaAppointmentRow = {
   startTime: Date;
