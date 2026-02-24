@@ -7,9 +7,9 @@
             <domain>Notifications Integration</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-052</dependencies>
             <prd_reference>Feature 5 Channels and Notification Types</prd_reference>
         </metadata>
@@ -60,17 +60,24 @@
             <commit_message>feat(healio): templates and twilio adapter</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>notifications-messaging</owner>
+            <started_at>2026-02-24T19:21:03+08:00</started_at>
+            <completed_at>2026-02-24T19:21:03+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/notification-service.test.ts tests/unit/notification-templates-twilio.test.ts</verification_command>
+            <verification_notes>Added string-based email templates (booking confirmation, reminder, welcome), a fallback-safe Twilio SMS adapter, and a reusable SMS delivery helper in `notificationService` that preserves queue/idempotency/status behavior. This is a service/template task, so Chrome DevTools MCP UI verification is not applicable.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/emails/booking-confirmation.tsx, healio/emails/reminder.tsx, healio/emails/welcome.tsx, healio/lib/twilio.ts, healio/services/notificationService.ts, healio/tests/unit/notification-templates-twilio.test.ts.</item>
+                <item>Template coverage: unit tests assert booking confirmation/reminder/welcome subjects and body content render expected data fields.</item>
+                <item>Twilio adapter coverage: unit test verifies fallback behavior and mock SID generation when credentials/SDK are unavailable.</item>
+                <item>Notification service coverage: unit test verifies `sendSmsNotificationForClinic` queues + marks sent via Twilio adapter fallback and replays idempotently on duplicate keys.</item>
+                <item>Typecheck and tests passed: `npm run typecheck`; `node --import tsx --test tests/unit/notification-service.test.ts tests/unit/notification-templates-twilio.test.ts`.</item>
+                <item>Feature commit: 682ae9f (feat(healio): templates and twilio adapter).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
