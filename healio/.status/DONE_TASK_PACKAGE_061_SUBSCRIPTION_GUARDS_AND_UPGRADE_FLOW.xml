@@ -7,9 +7,9 @@
             <domain>Subscription Billing</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-046, HEALIO-048, HEALIO-056</dependencies>
             <prd_reference>Feature 8 Subscription &amp; Pricing</prd_reference>
         </metadata>
@@ -62,17 +62,25 @@
             <commit_message>feat(healio-billing): subscription guards and upgrade flow</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>subscription-pricing</owner>
+            <started_at>2026-02-24T19:31:05+08:00</started_at>
+            <completed_at>2026-02-24T19:31:05+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/subscription-checkout-route.test.ts; Chrome DevTools MCP on /settings/billing (load + upgrade action + mobile)</verification_command>
+            <verification_notes>Implemented subscription plan catalog + in-memory subscription state, feature guards (`lib/feature-flags.ts` / `canAccessFeature`), protected upgrade checkout route, and a Settings Billing page that triggers Stripe-fallback checkout in-context. Chrome DevTools MCP verified the UI load, upgrade POST request, pending-plan badge, feature preview changes, mock checkout tab open, mobile layout, and clean console.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/services/subscriptionService.ts, healio/lib/feature-flags.ts, healio/app/api/v1/subscription/checkout/route.ts, healio/app/(dashboard)/settings/billing/page.tsx, healio/tests/unit/subscription-checkout-route.test.ts.</item>
+                <item>Route test verification: `GET /api/v1/subscription/checkout` returns current subscription + plan catalog; `POST` creates upgrade checkout and blocks same-plan checkout (`409 PLAN_ALREADY_ACTIVE`); auth/RBAC/payload validation cases return `401/403/400` as expected.</item>
+                <item>Chrome DevTools MCP page verification on `http://localhost:4012/settings/billing`: subscription page rendered current plan, plan cards, and feature-access preview with no console errors.</item>
+                <item>Chrome DevTools MCP upgrade verification: triggered `Upgrade to Growth` (via DOM click evaluation due tool-click flake), observed `POST /api/v1/subscription/checkout` = 200 (reqid=11), mock checkout tab opened, pending plan badge (`Pending GROWTH`) displayed, provider updated to `stripe-fallback`, and feature preview switched to Growth-enabled features.</item>
+                <item>Chrome DevTools MCP responsive verification: resized to `390x844` and confirmed settings billing content/CTAs/feature list remained usable with mobile navigation visible.</item>
+                <item>Typecheck/tests passed: `npm run typecheck`; `node --import tsx --test tests/unit/subscription-checkout-route.test.ts`.</item>
+                <item>Feature commit: 051fef4 (feat(healio-billing): subscription guards and upgrade flow).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
