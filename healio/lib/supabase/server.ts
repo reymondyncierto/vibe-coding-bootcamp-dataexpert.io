@@ -1,8 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 import type { User } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
-import { getPublicEnv } from "@/lib/env";
+import { getPublicEnv, getServerEnv } from "@/lib/env";
 import {
   parseHealioAuthContextFromUser,
   type HealioAuthContext,
@@ -52,4 +53,15 @@ export async function getAuthenticatedUserOrThrow() {
 export async function getHealioAuthContextOrThrow() {
   const user = await getAuthenticatedUserOrThrow();
   return parseHealioAuthContextFromUser(user);
+}
+
+export function createSupabaseServiceRoleClient() {
+  const env = getServerEnv();
+  return createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
 }

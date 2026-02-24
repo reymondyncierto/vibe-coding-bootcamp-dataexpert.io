@@ -2,6 +2,16 @@ export function cn(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
+export function sanitizeFilenameSegment(value: string) {
+  return value
+    .normalize("NFKD")
+    .replace(/[^\x00-\x7F]/g, "")
+    .replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^[-._]+|[-._]+$/g, "")
+    .toLowerCase();
+}
+
 export function getRequestId(headers: Headers) {
   return (
     headers.get("x-request-id") ||
