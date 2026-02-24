@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-082</id>
+            <title>Use Healio SVG Logo Mark in Site UI Branding (Header/Footer/Dashboard)</title>
+            <domain>Frontend Branding UI</domain>
+            <estimated_time>35 mins</estimated_time>
+            <priority>medium</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-081</dependencies>
+            <prd_reference>Frontend polish and trust-oriented presentation for production-readiness</prd_reference>
+        </metadata>
+        <context>
+            <background>The favicon/tab icon now uses a Healio-branded SVG mark. This task reuses that logo mark within the visible site UI (marketing header/footer and/or dashboard branding) so the product has consistent branding instead of placeholder letter blocks.</background>
+            <files_involved>
+                <file>healio/components/marketing/landing-header.tsx</file>
+                <file>healio/components/marketing/marketing-footer.tsx</file>
+                <file>healio/components/layout/sidebar.tsx</file>
+                <file>healio/components/layout/header.tsx</file>
+                <file>healio/components/shared (new logo component if needed)</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>none</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Use the same SVG logo mark as the favicon (`/icon.svg`) or an equivalent shared logo component to ensure brand consistency.</constraint>
+                <constraint>Logo treatment must remain legible on light backgrounds and at small sizes in headers/navigation.</constraint>
+                <constraint>Preserve existing layout spacing and CTA hierarchy while replacing placeholder text blocks/letter badges with a proper logo treatment.</constraint>
+                <constraint>Changes should be production-facing only (no dev/instructional UI additions).</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Create a reusable Healio logo UI component (or equivalent pattern) that renders the SVG logo mark plus optional wordmark text.</step>
+            <step>Replace placeholder branding in visible site UI areas (at minimum marketing landing header and footer) with the reusable logo.</step>
+            <step>If dashboard shell branding uses placeholder branding, update key dashboard branding surface(s) to use the same logo treatment without disrupting UX.</step>
+            <step>Run `npm run typecheck` after UI changes.</step>
+            <step>Use Chrome DevTools MCP to verify desktop/mobile rendering, logo visibility, and no console errors on the homepage (and one dashboard page if updated there).</step>
+            <validation_checklist>
+                <check>The visible site includes a recognizable Healio logo mark (not only favicon/tab icon).</check>
+                <check>Landing page header/footer branding uses the SVG logo consistently.</check>
+                <check>Typecheck passes after component/UI updates.</check>
+                <check>Chrome DevTools MCP evidence includes desktop/mobile snapshots and console review.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Reusable logo component and branded UI integration</artifact>
+                <artifact>Chrome DevTools MCP verification evidence</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>The site visibly uses the Healio logo mark in primary branding areas, not just the browser tab icon.</criterion>
+                <criterion>Branding is visually consistent across updated surfaces and remains legible on desktop/mobile.</criterion>
+                <criterion>Chrome DevTools MCP verification evidence is recorded before task completion.</criterion>
+                <criterion>Task XML is updated and renamed with `DONE_` prefix after completion.</criterion>
+            </acceptance_criteria>
+            <commit_message>feat(healio-branding): use svg logo in site branding surfaces</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, typecheck command, Chrome DevTools MCP snapshots/notes, and commit references here.</item>
+                <item>Include Chrome DevTools MCP evidence (desktop + mobile logo visibility, console review) before marking complete.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/verification/commits as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>frontend-design-system-shell</agent_to_execute>
+            <estimated_complexity>low</estimated_complexity>
+            <blocks_on>HEALIO-081</blocks_on>
+            <task_slug>SITE_LOGO_COMPONENT_AND_BRANDING_INTEGRATION</task_slug>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
+    </task_package>
+</task_packages>
