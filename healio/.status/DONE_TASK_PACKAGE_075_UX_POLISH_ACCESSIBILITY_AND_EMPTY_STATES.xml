@@ -7,9 +7,9 @@
             <domain>Frontend Polish</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-029, HEALIO-030, HEALIO-031, HEALIO-038, HEALIO-039, HEALIO-040, HEALIO-041, HEALIO-049, HEALIO-050, HEALIO-059, HEALIO-064, HEALIO-067</dependencies>
             <prd_reference>5 Frontend Design Guidelines + user Healio UI pillars</prd_reference>
         </metadata>
@@ -58,17 +58,17 @@
             <commit_message>refactor(healio): ux polish accessibility and empty states</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>frontend-design-system-shell</owner>
+            <started_at>2026-02-24T23:54:36+08:00</started_at>
+            <completed_at>2026-02-24T23:54:36+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; Chrome DevTools MCP snapshots/interactions on /appointments, /billing, /patients, /book/northview-clinic (desktop + mobile)</verification_command>
+            <verification_notes>Polished dashboard UX and accessibility by correcting shell navigation to real routes (`/appointments`, `/patients`, `/billing`, `/analytics`, `/settings`), adding `aria-current` to nav links, dynamic header title/subtitle copy by route, stronger tab semantics on appointments view, `aria-busy` and live-region semantics for invoice/patient list loading/empty/error states, and quick-action menu `menu/menuitem` + expanded/controls semantics. Public booking form error feedback now announces via `role=alert`. Chrome DevTools MCP verified desktop and mobile layouts, empty states, quick-action menu open/close with Escape, and shell navigation labels. Public booking console/network 500s were observed intentionally while checking error-state rendering for an unavailable clinic slug.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item><item>Changed files: healio/components/layout/sidebar.tsx, healio/components/layout/mobile-nav.tsx, healio/components/layout/header.tsx, healio/components/layout/global-quick-action.tsx, healio/app/(dashboard)/appointments/page.tsx, healio/app/(dashboard)/billing/page.tsx, healio/components/patients/patient-list.tsx, healio/components/billing/invoice-list.tsx, healio/components/appointments/public-booking-patient-form.tsx.</item><item>Chrome DevTools MCP evidence: desktop snapshot on `/appointments` shows sidebar with corrected real-route links and dynamic header; mobile snapshots on `/patients` and `/billing` show empty-state `status` regions and bottom nav labels/routes.</item><item>Chrome DevTools MCP interaction checks: quick action FAB opens `menu` with `menuitem` actions and closes via `Escape`; mobile and desktop route pages render without layout overflow.</item><item>Console check: only dev Fast Refresh/React DevTools messages, plus expected 500 resource errors during intentional `/book/northview-clinic` error-state verification.</item><item>Typecheck passed after UI polish changes: `npm run typecheck`.</item><item>Feature commit: 8a7ca50 (refactor(healio): ux polish accessibility and empty states).</item></evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
