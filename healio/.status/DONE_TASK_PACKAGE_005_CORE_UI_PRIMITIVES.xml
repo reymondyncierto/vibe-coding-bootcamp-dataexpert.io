@@ -7,9 +7,9 @@
             <domain>Frontend Design System</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-004</dependencies>
             <prd_reference>5.3 Component Standards</prd_reference>
         </metadata>
@@ -43,7 +43,8 @@
             <validation_checklist>
                 <check>Run lint/typecheck or the smallest relevant test suite for the files changed by this task.</check>
                 <check>Manually verify desktop and mobile layouts plus focus/keyboard behavior for the primary interaction path.</check>
-                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check><check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
+                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check>
+                <check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
             </validation_checklist>
         </instruction>
         <output_spec>
@@ -59,17 +60,25 @@
             <commit_message>feat(healio): core ui primitives</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>frontend-design-system-shell</owner>
+            <started_at>2026-02-24T16:00:34+08:00</started_at>
+            <completed_at>2026-02-24T16:00:34+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; npm run dev; Chrome DevTools MCP (reload, resize desktop/mobile, snapshot, click/fill/press_key, console check)</verification_command>
+            <verification_notes>Implemented Card, Button, Input, Select, and Badge primitives with Healio styling tokens and verified them via Chrome DevTools MCP on desktop and mobile. Validated button clicks, input/select interaction, keyboard focus visibility, and clean console output.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/components/ui/card.tsx, healio/components/ui/button.tsx, healio/components/ui/input.tsx, healio/components/ui/select.tsx, healio/components/ui/badge.tsx, healio/app/page.tsx.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Chrome DevTools MCP desktop verification: resized to 1440x900, snapshot captured, screenshot saved to /tmp/healio-healio005-desktop.png.</item>
+                <item>Chrome DevTools MCP mobile verification: resized to 390x844, snapshot captured, screenshot saved to /tmp/healio-healio005-mobile.png.</item>
+                <item>Chrome DevTools MCP interaction checks: clicked multiple button variants, filled Patient Name, selected Follow-up in Visit Type, and confirmed keyboard focus state via Tab on form controls.</item>
+                <item>Console verification: no console messages after reload during HEALIO-005 verification pass.</item>
+                <item>Implementation commit: f5221d1 (feat(healio-ui): add core UI primitives).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
@@ -77,6 +86,8 @@
             <estimated_complexity>medium</estimated_complexity>
             <blocks_on>HEALIO-004</blocks_on>
             <task_slug>CORE_UI_PRIMITIVES</task_slug>
-        <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool><verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref></references>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
     </task_package>
 </task_packages>
