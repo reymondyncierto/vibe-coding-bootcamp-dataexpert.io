@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Appointments Backend</domain>
             <estimated_time>40 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-010, HEALIO-012, HEALIO-020</dependencies>
             <prd_reference>Feature 2 Appointment Management + Feature 6 Booking Rules</prd_reference>
         </metadata>
@@ -53,16 +53,20 @@
             <commit_message>feat(healio-appointments): appointment schemas and rules</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>appointments-operations</owner>
+            <started_at>2026-02-24T17:18:20+08:00</started_at>
+            <completed_at>2026-02-24T17:18:20+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/appointment-service.test.ts</verification_command>
+            <verification_notes>Added appointment list/create/update schemas and reusable appointment scheduling/status-transition rules in appointmentService. Scheduling validation enforces no-past appointments, duration/end-time consistency, overlap blocking (unless double booking is enabled), and cancellation-reason requirements for status transitions.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/schemas/appointment.ts, healio/services/appointmentService.ts, healio/tests/unit/appointment-service.test.ts.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Unit tests: `node --import tsx --test tests/unit/appointment-service.test.ts` passed (file covers schema parsing, end-time derivation, overlap rejection/double-booking bypass, past/duration mismatch rejection, and status transition rules).</item>
+                <item>Implementation commit: 9493658 (feat(healio-appointments): appointment schemas and rules).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
