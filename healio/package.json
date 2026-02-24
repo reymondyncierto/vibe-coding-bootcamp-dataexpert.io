@@ -14,9 +14,12 @@
     "db:seed": "prisma db seed",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "npm run test:unit",
-    "test:unit": "echo \"No unit tests yet (see HEALIO-068)\"",
-    "test:integration": "echo \"No integration tests yet (see HEALIO-068)\"",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "npm run test:unit:node && npm run test:unit:vitest",
+    "test:unit:node": "node --import tsx --test tests/unit/*.test.ts",
+    "test:unit:vitest": "vitest run tests/unit/vitest --config vitest.config.ts",
+    "test:integration": "vitest run tests/integration --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts",
     "e2e": "echo \"No E2E tests yet (see HEALIO-069)\""
   },
   "dependencies": {
@@ -43,7 +46,8 @@
     "prisma": "^5.17.0",
     "tailwindcss": "3.4.7",
     "tsx": "^4.19.1",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "vitest": "^4.0.18"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
