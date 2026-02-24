@@ -1,9 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+import { PublicBookingConfirmation, type BookingConfirmationData } from "@/components/appointments/public-booking-confirmation";
+import { PublicBookingPatientFormDrawer, type PublicBookingPatientFormValues } from "@/components/appointments/public-booking-patient-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/components/ui/toast-provider";
 import { PublicBookingProviderSelector } from "@/components/appointments/public-booking-provider-selector";
 import { PublicBookingServiceSelector } from "@/components/appointments/public-booking-service-selector";
 import { PublicSlotPicker } from "@/components/appointments/public-slot-picker";
@@ -15,10 +20,95 @@ export default function PublicBookingPage({
   params: { slug: string };
 }) {
   const booking = usePublicBooking(params.slug);
+  const { pushToast } = useToast();
+  const [patientDrawerOpen, setPatientDrawerOpen] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [confirmation, setConfirmation] = useState<{
+    data: BookingConfirmationData;
+    patientName: string;
+  } | null>(null);
 
   const clinic = booking.clinicQuery.data;
   const pageError =
     booking.clinicQuery.error instanceof Error ? booking.clinicQuery.error.message : null;
+
+  useEffect(() => {
+    if (!booking.selectedSlot && patientDrawerOpen) {
+      setPatientDrawerOpen(false);
+    }
+  }, [booking.selectedSlot, patientDrawerOpen]);
+
+  async function handleSubmitPatientDetails(values: PublicBookingPatientFormValues) {
+    if (!booking.selectedSlot || !booking.selectedService) {
+      setSubmitError("Please choose a service and slot before submitting.");
+      return;
+    }
+
+    setSubmitError(null);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/v1/public/bookings", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "idempotency-key": `ui-${crypto.randomUUID()}`,
+        },
+        body: JSON.stringify({
+          clinicSlug: params.slug,
+          serviceId: booking.selectedService.id,
+          slotStartTime: booking.selectedSlot.startTime,
+          patient: {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            phone: values.phone,
+          },
+          ...(values.notes.trim() ? { notes: values.notes.trim() } : {}),
+        }),
+      });
+
+      const json = (await response.json()) as
+        | { success: true; data: BookingConfirmationData }
+        | { success: false; error: { message: string } };
+
+      if (!response.ok || !json.success) {
+        const message =
+          "success" in json && !json.success
+            ? json.error.message
+            : "Booking could not be completed.";
+        setSubmitError(message);
+        pushToast({
+          title: "Booking failed",
+          description: message,
+          variant: "error",
+        });
+        return;
+      }
+
+      setConfirmation({
+        data: json.data,
+        patientName: `${values.firstName.trim()} ${values.lastName.trim()}`,
+      });
+      setPatientDrawerOpen(false);
+      pushToast({
+        title: "Appointment confirmed",
+        description: "Your booking has been saved successfully.",
+        variant: "success",
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Booking request failed.";
+      setSubmitError(message);
+      pushToast({
+        title: "Booking failed",
+        description: message,
+        variant: "error",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-app px-4 py-6 text-ink sm:px-6 sm:py-8">
@@ -99,6 +189,23 @@ export default function PublicBookingPage({
           </div>
 
           <aside className="space-y-6">
+            {confirmation && clinic && booking.selectedService && booking.selectedSlot ? (
+              <PublicBookingConfirmation
+                clinicName={clinic.name}
+                clinicAddress={clinic.address}
+                clinicEmail={clinic.email}
+                serviceName={booking.selectedService.name}
+                patientName={confirmation.patientName}
+                confirmation={confirmation.data}
+                slotLabel={booking.selectedSlot.label}
+                onBookAnother={() => {
+                  setConfirmation(null);
+                  setSubmitError(null);
+                  booking.setSelectedSlotStartTime(null);
+                }}
+              />
+            ) : null}
+
             <Card>
               <CardHeader>
                 <CardTitle>Booking summary</CardTitle>
@@ -137,8 +244,8 @@ export default function PublicBookingPage({
                   <div className="rounded-control border border-success/20 bg-success/5 p-4">
                     <p className="text-sm font-semibold text-ink">Step flow ready</p>
                     <p className="mt-1 text-sm text-muted">
-                      Next task (`HEALIO-024`) adds the patient info drawer, submission, and
-                      confirmation screen.
+                      Add patient details in the drawer to confirm your appointment and download a
+                      calendar invite.
                     </p>
                   </div>
                 ) : (
@@ -152,7 +259,14 @@ export default function PublicBookingPage({
                   </div>
                 )}
 
-                <Button className="w-full" disabled={!booking.selectedSlot}>
+                <Button
+                  className="w-full"
+                  disabled={!booking.selectedSlot}
+                  onClick={() => {
+                    setSubmitError(null);
+                    setPatientDrawerOpen(true);
+                  }}
+                >
                   Continue to patient details
                 </Button>
               </CardContent>
@@ -182,6 +296,18 @@ export default function PublicBookingPage({
             </Card>
           </aside>
         </div>
+
+        <PublicBookingPatientFormDrawer
+          open={patientDrawerOpen}
+          onClose={() => setPatientDrawerOpen(false)}
+          onSubmit={handleSubmitPatientDetails}
+          submitting={isSubmitting}
+          submitError={submitError}
+          clinicName={clinic?.name}
+          serviceName={booking.selectedService?.name}
+          slotLabel={booking.selectedSlot?.label ?? null}
+          appointmentDate={booking.selectedDate}
+        />
       </div>
     </main>
   );
