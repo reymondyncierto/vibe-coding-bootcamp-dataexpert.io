@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Authentication</domain>
             <estimated_time>40 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-003</dependencies>
             <prd_reference>1.2 Layer Responsibilities; 7 Auth; 9 lib/supabase/*</prd_reference>
         </metadata>
@@ -52,16 +52,23 @@
             <commit_message>feat(healio-auth): supabase clients and auth helpers</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>auth-rbac-security</owner>
+            <started_at>2026-02-24T16:28:41+08:00</started_at>
+            <completed_at>2026-02-24T16:28:41+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm install @supabase/supabase-js @supabase/ssr server-only; npm run typecheck; node --import tsx claim-parser check</verification_command>
+            <verification_notes>Added Supabase browser/server/middleware client factories plus Healio auth-claim parsing helpers for clinicId/role extraction. Verification included a negative claim parse (missing clinicId) and positive parse (clinicId + role) using the extracted pure auth-claims helper.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/lib/supabase/client.ts, healio/lib/supabase/server.ts, healio/lib/supabase/middleware.ts, healio/lib/supabase/auth-claims.ts, healio/package.json, healio/package-lock.json.</item>
+                <item>Dependency installs: `@supabase/supabase-js`, `@supabase/ssr`, and `server-only` added.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Negative auth artifact: claim parser returned `Authenticated user is missing required clinicId claim.` for missing clinicId.</item>
+                <item>Positive auth artifact: claim parser returned `clinic_1:DOCTOR` for valid role+clinic claims.</item>
+                <item>Design note: claim parsing extracted to pure helper (`lib/supabase/auth-claims.ts`) so it can be tested without importing env/server-only modules.</item>
+                <item>Implementation commit: 8b4ea47 (feat(healio-auth): add supabase clients and auth context helpers).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
