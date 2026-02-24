@@ -7,9 +7,9 @@
             <domain>Frontend Marketing UI</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-077, HEALIO-078</dependencies>
             <prd_reference>5 Frontend Design Guidelines + user-specified Healio visual direction for trust, bento layouts, and frictionless workflows</prd_reference>
         </metadata>
@@ -58,17 +58,22 @@
             <commit_message>feat(healio-marketing): redesign landing page for multi-tenant clinic SaaS</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>frontend-design-system-shell</owner>
+            <started_at>2026-02-24T16:59:48Z</started_at>
+            <completed_at>2026-02-24T16:59:48Z</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>cd healio &amp;&amp; npm run typecheck; Chrome DevTools MCP verification on http://localhost:3002 (desktop + mobile snapshots, FAQ interaction, footer Docs hash navigation to #faq, CTA keyboard activation to /signup, console review).</verification_command>
+            <verification_notes>Homepage now presents a multi-tenant clinic SaaS marketing experience with reusable components under components/marketing/* and no longer renders the primitive showcase as the primary experience.</verification_notes>
             <evidence>
-                <item>When work starts/completes, record changed files, typecheck command, Chrome DevTools MCP snapshots/interaction notes, and commit references here.</item>
-                <item>Include Chrome DevTools MCP evidence (desktop + mobile snapshots, console check, and primary CTA/navigation interaction check) before marking complete.</item>
+                <item>Changed files: healio/app/page.tsx; healio/components/marketing/landing-page.tsx; healio/components/marketing/landing-header.tsx; healio/components/marketing/dashboard-bento-preview.tsx; healio/components/marketing/workflow-sequence.tsx; healio/components/marketing/role-benefits.tsx; healio/components/marketing/faq.tsx; healio/components/marketing/marketing-footer.tsx; healio/tsconfig.tsbuildinfo</item>
+                <item>Typecheck passed: cd healio &amp;&amp; npm run typecheck</item>
+                <item>Chrome DevTools MCP desktop verification: 1440x900 snapshot confirmed header nav, CTA hierarchy, hero + bento preview, feature/workflow/role/security/final CTA/footer sections.</item>
+                <item>Chrome DevTools MCP mobile verification: 390x844 snapshot + computed style check confirmed mobile breakpoint hides nav/login while keeping CTA/header within viewport.</item>
+                <item>Chrome DevTools MCP interaction checks: FAQ disclosure expands, footer Docs link updates hash to #faq and scrolls, Start Free CTA keyboard activation navigates to /signup.</item>
+                <item>Chrome DevTools MCP console review: no warn/error messages during landing page verification.</item>
+                <item>Feature commit: bd753f0 (feat(healio-marketing): redesign landing page for multi-tenant clinic saas).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/snapshots as applicable.</completion_signal>
         </execution_tracking>
