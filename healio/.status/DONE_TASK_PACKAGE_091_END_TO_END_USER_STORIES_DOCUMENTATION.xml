@@ -7,9 +7,9 @@
             <domain>Developer Documentation</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-090</dependencies>
             <prd_reference>Core clinic workflows: onboarding, booking, appointments, patient records, billing, reminders</prd_reference>
         </metadata>
@@ -42,16 +42,19 @@
             <commit_message>docs(healio): add end-to-end user stories guide</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>agent-router -> task-architect</owner>
+            <started_at>2026-02-25T01:49:00+08:00</started_at>
+            <completed_at>2026-02-25T01:53:47+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>Route/button label verification via rg/sed across auth, booking, appointments, patients, billing, settings components</verification_command>
+            <verification_notes>Created detailed end-to-end user stories guide with click-by-click instructions for clinic owner, front desk, and patient workflows. Included local setup assumptions, auth options (password/magic link/Google), public booking, appointments, patient chart, billing, payment, troubleshooting, and suggested test order. Labels/routes were cross-checked against current UI code.</verification_notes>
             <evidence>
-                <item>Record created doc file, route/button labels checked, and commit refs.</item>
+                <item>Created file: healio/USER-STORIES.md</item>
+                <item>Task creation commit: 99c73af (chore(status): add HEALIO-091 user stories documentation task)</item>
+                <item>Docs commit: 5ff252f (docs(healio): add end-to-end user stories guide)</item>
+                <item>Cross-checked labels/routes in auth pages, public booking page/components, appointments dashboard, patients pages/components, billing pages/components, and settings pages/components.</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence is recorded.</completion_signal>
         </execution_tracking>
