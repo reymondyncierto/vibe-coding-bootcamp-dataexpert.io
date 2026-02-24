@@ -19,6 +19,12 @@ type MagicLinkState =
   | { kind: "success"; message: string }
   | { kind: "error"; message: string };
 
+type PasswordSignInState =
+  | { kind: "idle" }
+  | { kind: "loading" }
+  | { kind: "success"; message: string }
+  | { kind: "error"; message: string };
+
 type ProvisionLookupState =
   | { kind: "idle" }
   | { kind: "loading" }
@@ -43,8 +49,10 @@ function LoginPageContent() {
   const callbackError = searchParams.get("error");
 
   const [email, setEmail] = useState("owner@northview.example.com");
+  const [password, setPassword] = useState("healio-demo-password");
   const [fullName, setFullName] = useState("Dr. Andrea Reyes");
   const [magicLinkState, setMagicLinkState] = useState<MagicLinkState>({ kind: "idle" });
+  const [passwordSignInState, setPasswordSignInState] = useState<PasswordSignInState>({ kind: "idle" });
   const [lookupState, setLookupState] = useState<ProvisionLookupState>({ kind: "idle" });
 
   async function sendMagicLink() {
@@ -117,23 +125,31 @@ function LoginPageContent() {
     }
   }
 
-  async function continueWithGoogle() {
+  async function signInWithPassword() {
+    if (!password.trim()) {
+      setPasswordSignInState({ kind: "error", message: "Enter your password to continue." });
+      return;
+    }
     try {
+      setPasswordSignInState({ kind: "loading" });
       const supabase = getSupabaseBrowserClient();
-      const callbackUrl = new URL("/auth/callback", window.location.origin);
-      callbackUrl.searchParams.set("next", nextPath);
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: callbackUrl.toString() },
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
       if (error) {
-        pushToast({ title: "Google sign-in unavailable", description: error.message, variant: "error" });
+        setPasswordSignInState({ kind: "error", message: error.message });
+        return;
       }
+      setPasswordSignInState({
+        kind: "success",
+        message: `Signed in successfully. Redirecting to ${nextPath}...`,
+      });
+      window.location.assign(nextPath);
     } catch (error) {
-      pushToast({
-        title: "Supabase auth unavailable",
-        description: error instanceof Error ? error.message : "OAuth not configured in this environment.",
-        variant: "error",
+      setPasswordSignInState({
+        kind: "error",
+        message: error instanceof Error ? `Supabase auth unavailable: ${error.message}` : "Supabase auth unavailable.",
       });
     }
   }
@@ -148,7 +164,7 @@ function LoginPageContent() {
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Healio Access</p>
                 <CardTitle className="mt-2 text-2xl">Welcome back</CardTitle>
                 <CardDescription className="mt-1">
-                  Sign in with a magic link or OAuth, then continue to your clinic workspace without losing context.
+                  Sign in with email and password or a magic link, then continue to your clinic workspace without losing context.
                 </CardDescription>
               </div>
               <Badge variant="primary">Auth Flow</Badge>
@@ -189,6 +205,18 @@ function LoginPageContent() {
                 />
               </label>
               <label className="block text-sm font-medium text-ink">
+                Password
+                <Input
+                  className="mt-1"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.currentTarget.value)}
+                  placeholder="Enter your password"
+                />
+              </label>
+              <label className="block text-sm font-medium text-ink">
                 Display name (for local preview)
                 <Input
                   className="mt-1"
@@ -203,8 +231,12 @@ function LoginPageContent() {
                 <Button onClick={() => void sendMagicLink()} disabled={magicLinkState.kind === "loading"}>
                   {magicLinkState.kind === "loading" ? "Sending..." : "Send Magic Link"}
                 </Button>
-                <Button variant="secondary" onClick={() => void continueWithGoogle()}>
-                  Continue with Google
+                <Button
+                  variant="secondary"
+                  onClick={() => void signInWithPassword()}
+                  disabled={passwordSignInState.kind === "loading"}
+                >
+                  {passwordSignInState.kind === "loading" ? "Signing in..." : "Sign In with Password"}
                 </Button>
               </div>
               <Button variant="ghost" onClick={() => void localProvisionPreview()} disabled={lookupState.kind === "loading"}>
@@ -217,6 +249,12 @@ function LoginPageContent() {
             ) : null}
             {magicLinkState.kind === "error" ? (
               <div className="rounded-card border border-danger/20 bg-danger/5 p-3 text-sm text-danger">{magicLinkState.message}</div>
+            ) : null}
+            {passwordSignInState.kind === "success" ? (
+              <div className="rounded-card border border-success/20 bg-success/5 p-3 text-sm text-success">{passwordSignInState.message}</div>
+            ) : null}
+            {passwordSignInState.kind === "error" ? (
+              <div className="rounded-card border border-danger/20 bg-danger/5 p-3 text-sm text-danger">{passwordSignInState.message}</div>
             ) : null}
 
             {lookupState.kind === "success" ? (
@@ -260,7 +298,7 @@ function LoginPageContent() {
             <CardHeader>
               <CardTitle className="text-lg">Callback Path</CardTitle>
               <CardDescription>
-                Supabase OAuth and magic-link redirects return through a local callback handler before continuing to the selected page.
+                Email/password sign-in stays on-page, while magic-link redirects return through a local callback handler before continuing to the selected page.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted">

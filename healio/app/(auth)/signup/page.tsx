@@ -51,8 +51,11 @@ function SignupPageContent() {
     timezone: "Asia/Manila",
     currency: "PHP",
   });
+  const [password, setPassword] = useState("healio-demo-password");
+  const [confirmPassword, setConfirmPassword] = useState("healio-demo-password");
   const [submitState, setSubmitState] = useState<SubmitState>({ kind: "idle" });
   const [magicLinkState, setMagicLinkState] = useState<{ kind: "idle" | "loading" | "success" | "error"; message?: string }>({ kind: "idle" });
+  const [passwordSignupState, setPasswordSignupState] = useState<{ kind: "idle" | "loading" | "success" | "error"; message?: string }>({ kind: "idle" });
 
   function patch<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -109,27 +112,45 @@ function SignupPageContent() {
     }
   }
 
-  async function continueWithGoogle() {
+  async function signUpWithPassword() {
+    if (!password.trim()) {
+      setPasswordSignupState({ kind: "error", message: "Enter a password to create your login." });
+      return;
+    }
+    if (password.length < 8) {
+      setPasswordSignupState({ kind: "error", message: "Use at least 8 characters for the password." });
+      return;
+    }
+    if (password !== confirmPassword) {
+      setPasswordSignupState({ kind: "error", message: "Password and confirmation do not match." });
+      return;
+    }
+
+    setPasswordSignupState({ kind: "loading" });
     try {
       const supabase = getSupabaseBrowserClient();
       const callbackUrl = new URL("/auth/callback", window.location.origin);
       callbackUrl.searchParams.set("next", nextPath);
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: callbackUrl.toString() },
+      const { error } = await supabase.auth.signUp({
+        email: form.email,
+        password,
+        options: {
+          emailRedirectTo: callbackUrl.toString(),
+          data: { fullName: form.fullName },
+        },
       });
       if (error) {
-        pushToast({
-          title: "Google sign-up unavailable",
-          description: error.message,
-          variant: "error",
-        });
+        setPasswordSignupState({ kind: "error", message: error.message });
+        return;
       }
+      setPasswordSignupState({
+        kind: "success",
+        message: "Email/password account created. If email confirmation is enabled in Supabase, check your inbox before logging in.",
+      });
     } catch (error) {
-      pushToast({
-        title: "Supabase auth unavailable",
-        description: error instanceof Error ? error.message : "OAuth not configured in this environment.",
-        variant: "error",
+      setPasswordSignupState({
+        kind: "error",
+        message: error instanceof Error ? `Supabase auth unavailable: ${error.message}` : "Supabase auth unavailable.",
       });
     }
   }
@@ -174,6 +195,30 @@ function SignupPageContent() {
                     value={form.email}
                     onChange={(e) => patch("email", e.currentTarget.value)}
                     placeholder="doctor@clinic.com"
+                  />
+                </label>
+                <label className="text-sm font-medium text-ink">
+                  Password
+                  <Input
+                    className="mt-1"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.currentTarget.value)}
+                    placeholder="At least 8 characters"
+                  />
+                </label>
+                <label className="text-sm font-medium text-ink">
+                  Confirm password
+                  <Input
+                    className="mt-1"
+                    name="confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.currentTarget.value)}
+                    placeholder="Re-enter password"
                   />
                 </label>
                 <label className="text-sm font-medium text-ink sm:col-span-2">
@@ -237,8 +282,13 @@ function SignupPageContent() {
                 <Button type="button" variant="secondary" onClick={() => void sendMagicLink()} disabled={magicLinkState.kind === "loading"}>
                   {magicLinkState.kind === "loading" ? "Sending..." : "Send Magic Link (Optional)"}
                 </Button>
-                <Button type="button" variant="secondary" onClick={() => void continueWithGoogle()}>
-                  Continue with Google
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => void signUpWithPassword()}
+                  disabled={passwordSignupState.kind === "loading"}
+                >
+                  {passwordSignupState.kind === "loading" ? "Creating login..." : "Create Email + Password Login"}
                 </Button>
                 <Link href={`/login?next=${encodeURIComponent(nextPath)}`} className="sm:ml-auto">
                   <Button type="button" variant="ghost">Back to Login</Button>
@@ -254,6 +304,12 @@ function SignupPageContent() {
             ) : null}
             {magicLinkState.kind === "error" ? (
               <div className="mt-4 rounded-card border border-warning/20 bg-warning/5 p-3 text-sm text-warning">{magicLinkState.message}</div>
+            ) : null}
+            {passwordSignupState.kind === "success" ? (
+              <div className="mt-4 rounded-card border border-success/20 bg-success/5 p-3 text-sm text-success">{passwordSignupState.message}</div>
+            ) : null}
+            {passwordSignupState.kind === "error" ? (
+              <div className="mt-4 rounded-card border border-danger/20 bg-danger/5 p-3 text-sm text-danger">{passwordSignupState.message}</div>
             ) : null}
 
             {submitState.kind === "success" ? (
@@ -312,7 +368,7 @@ function SignupPageContent() {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Callback readiness</CardTitle>
-              <CardDescription>Magic links and OAuth redirects return through the local callback endpoint before routing to the requested page.</CardDescription>
+              <CardDescription>Email/password signup stays on-page, while magic-link redirects return through the local callback endpoint before routing to the requested page.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-muted">
               <p><code>/auth/callback</code> safely validates the `next` path and redirects back to login on provider errors.</p>
