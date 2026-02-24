@@ -1,8 +1,15 @@
 "use client";
 
-import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type UseMutationOptions,
+  type UseQueryOptions,
+} from "@tanstack/react-query";
 
 export type InvoiceStatus = "DRAFT" | "SENT" | "PAID" | "OVERDUE" | "VOID" | "REFUNDED";
+export type CurrencyCode = "PHP" | "USD";
 
 export type InvoiceSummary = {
   id: string;
@@ -11,7 +18,7 @@ export type InvoiceSummary = {
   appointmentId: string | null;
   invoiceNumber: string;
   status: InvoiceStatus;
-  currency: "PHP" | "USD";
+  currency: CurrencyCode;
   subtotal: string;
   tax: string;
   total: string;
@@ -25,12 +32,52 @@ export type InvoiceSummary = {
   updatedAt: string;
 };
 
+export type InvoiceLineItem = {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: string;
+  total: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type InvoiceDetail = InvoiceSummary & {
+  items: InvoiceLineItem[];
+  stripePaymentIntentId: string | null;
+  stripeCheckoutUrl: string | null;
+  deletedAt: string | null;
+};
+
 export type InvoiceListResponse = {
   items: InvoiceSummary[];
   page: number;
   pageSize: number;
   total: number;
   totalPages: number;
+};
+
+export type InvoiceCreatePayload = {
+  patientId: string;
+  appointmentId?: string;
+  dueDate: string;
+  currency: CurrencyCode;
+  items: Array<{ description: string; quantity: number; unitPrice: string }>;
+  taxAmount?: string;
+  taxRatePercent?: number;
+  notes?: string;
+};
+
+export type InvoiceUpdatePayload = {
+  dueDate?: string;
+  currency?: CurrencyCode;
+  items?: Array<{ description: string; quantity: number; unitPrice: string }>;
+  taxAmount?: string;
+  taxRatePercent?: number;
+  notes?: string;
+  status?: InvoiceStatus;
+  paidAmount?: string;
+  paymentMethod?: "CASH" | "CARD" | "BANK_TRANSFER" | "GCASH" | "MAYA" | "STRIPE" | null;
 };
 
 type ApiEnvelope<T> =
@@ -97,6 +144,10 @@ function buildSearchParams(params: InvoicesListParams) {
   return search;
 }
 
+function invoicesQueryKey(params: { status: InvoiceStatus | "ALL"; page: number; pageSize: number }) {
+  return ["invoices", "list", params] as const;
+}
+
 export function useInvoicesList(
   params: InvoicesListParams,
   options?: Omit<UseQueryOptions<InvoiceListResponse, InvoicesApiError>, "queryKey" | "queryFn">,
@@ -108,9 +159,73 @@ export function useInvoicesList(
   } as const;
 
   return useQuery({
-    queryKey: ["invoices", "list", normalized],
+    queryKey: invoicesQueryKey(normalized),
     queryFn: () => requestJson<InvoiceListResponse>(`/api/v1/invoices?${buildSearchParams(normalized).toString()}`),
     placeholderData: (previous) => previous,
     ...options,
+  });
+}
+
+export function useInvoiceDetail(
+  invoiceId: string | null,
+  options?: Omit<UseQueryOptions<InvoiceDetail, InvoicesApiError>, "queryKey" | "queryFn" | "enabled">,
+) {
+  return useQuery({
+    queryKey: ["invoices", "detail", invoiceId ?? "unknown"],
+    enabled: Boolean(invoiceId),
+    queryFn: () => requestJson<InvoiceDetail>(`/api/v1/invoices/${invoiceId}`),
+    ...options,
+  });
+}
+
+function invalidateInvoiceQueries(queryClient: ReturnType<typeof useQueryClient>) {
+  return Promise.all([
+    queryClient.invalidateQueries({ queryKey: ["invoices", "list"] }),
+    queryClient.invalidateQueries({ queryKey: ["invoices", "detail"] }),
+  ]);
+}
+
+export function useCreateInvoice(
+  options?: UseMutationOptions<InvoiceDetail, InvoicesApiError, InvoiceCreatePayload>,
+) {
+  const queryClient = useQueryClient();
+  const userOnSuccess = options?.onSuccess;
+
+  return useMutation({
+    ...options,
+    mutationFn: (payload) =>
+      requestJson<InvoiceDetail>("/api/v1/invoices", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      }),
+    onSuccess: async (data, variables, onMutateResult, context) => {
+      await invalidateInvoiceQueries(queryClient);
+      await userOnSuccess?.(data, variables, onMutateResult, context);
+    },
+  });
+}
+
+export function useUpdateInvoice(
+  invoiceId: string | null,
+  options?: UseMutationOptions<InvoiceDetail, InvoicesApiError, InvoiceUpdatePayload>,
+) {
+  const queryClient = useQueryClient();
+  const userOnSuccess = options?.onSuccess;
+
+  return useMutation({
+    ...options,
+    mutationFn: (payload) => {
+      if (!invoiceId) throw new InvoicesApiError({ status: 400, code: "INVOICE_ID_REQUIRED", message: "invoiceId is required" });
+      return requestJson<InvoiceDetail>(`/api/v1/invoices/${invoiceId}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    },
+    onSuccess: async (data, variables, onMutateResult, context) => {
+      await invalidateInvoiceQueries(queryClient);
+      await userOnSuccess?.(data, variables, onMutateResult, context);
+    },
   });
 }

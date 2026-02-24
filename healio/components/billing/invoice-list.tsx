@@ -47,6 +47,8 @@ type Props = {
   onSearchChange: (value: string) => void;
   onStatusChange: (value: InvoiceStatus | "ALL") => void;
   onRefresh: () => void;
+  onCreateInvoice?: () => void;
+  onEditInvoice?: (invoiceId: string) => void;
 };
 
 export function InvoiceList(props: Props) {
@@ -96,6 +98,11 @@ export function InvoiceList(props: Props) {
             <Button type="button" variant="secondary" onClick={props.onRefresh}>
               Refresh
             </Button>
+            {props.onCreateInvoice ? (
+              <Button type="button" onClick={props.onCreateInvoice}>
+                New Invoice
+              </Button>
+            ) : null}
           </div>
         </div>
       </CardHeader>
@@ -166,6 +173,13 @@ export function InvoiceList(props: Props) {
                       <p className="mt-1 text-xs text-muted">
                         Paid {formatMoney(invoice.paidAmount, invoice.currency)} • Balance {formatMoney(balance.toFixed(2), invoice.currency)}
                       </p>
+                      {props.onEditInvoice ? (
+                        <div className="mt-2">
+                          <Button type="button" size="sm" variant="secondary" onClick={() => props.onEditInvoice?.(invoice.id)}>
+                            Edit
+                          </Button>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 </article>
