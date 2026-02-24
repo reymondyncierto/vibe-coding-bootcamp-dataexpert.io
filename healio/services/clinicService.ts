@@ -68,6 +68,33 @@ export async function getClinicSettingsForClinic(clinicId: string): Promise<Clin
   return structuredClone(store.get(clinicId)!);
 }
 
+export async function provisionClinicSettingsForClinic(input: {
+  clinicId: string;
+  slug: string;
+  name: string;
+  email: string;
+  timezone: string;
+  currency: "PHP" | "USD";
+  phone?: string | null;
+  address?: string | null;
+}): Promise<ClinicSettingsResponse> {
+  const store = getClinicSettingsStore();
+  const base = await buildDefaultClinicSettings(input.clinicId);
+  const next = clinicSettingsResponseSchema.parse({
+    ...base,
+    slug: input.slug,
+    name: input.name,
+    email: input.email,
+    timezone: input.timezone,
+    currency: input.currency,
+    phone: input.phone ?? null,
+    address: input.address ?? null,
+    updatedAt: new Date().toISOString(),
+  });
+  store.set(input.clinicId, next);
+  return structuredClone(next);
+}
+
 export async function updateClinicSettingsForClinic(input: {
   clinicId: string;
   patch: z.input<typeof clinicSettingsPatchSchema>;
