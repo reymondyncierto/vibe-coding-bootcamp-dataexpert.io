@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-089</id>
+            <title>Polish Settings Card Action Button Layout for Profile Hours and Preferences</title>
+            <domain>Frontend UI Polish</domain>
+            <estimated_time>30 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-059</dependencies>
+            <prd_reference>Settings dashboard UX polish and high-legibility, fast-action interaction design</prd_reference>
+        </metadata>
+        <context>
+            <background>User reports `/settings` action buttons (Edit Profile, Edit Hours, Edit Preferences) look cramped/ugly because they wrap and appear constrained to narrow widths.</background>
+            <files_involved>
+                <file>healio/components/settings/clinic-profile-card.tsx</file>
+                <file>healio/components/settings/operating-hours-card.tsx</file>
+                <file>healio/components/settings/notification-preferences-card.tsx</file>
+            </files_involved>
+            <design_constraints>
+                <constraint>Keep button labels readable (avoid awkward 2-line wrapping).</constraint>
+                <constraint>Use responsive layout that looks intentional on mobile and desktop.</constraint>
+                <constraint>Preserve existing actions and card content semantics.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Refactor the card header layouts so action buttons have adequate width and do not wrap awkwardly.</step>
+            <step>Prefer responsive header/action stacks on small screens and aligned right actions on larger screens.</step>
+            <step>Run `npm run typecheck`.</step>
+            <step>Use Chrome DevTools MCP to verify `/settings` desktop and mobile layouts, interactions, and console cleanliness.</step>
+            <validation_checklist>
+                <check>Edit Profile, Edit Hours, and Edit Preferences buttons render cleanly without cramped two-line labels.</check>
+                <check>Desktop and mobile layouts remain visually balanced.</check>
+                <check>Typecheck passes and MCP verification is recorded.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <acceptance_criteria>
+                <criterion>Settings card header action buttons are readable and visually aligned on small and large screens.</criterion>
+                <criterion>Task XML is updated with evidence and renamed `DONE_` on completion.</criterion>
+            </acceptance_criteria>
+            <commit_message>refactor(healio-settings): polish card action button layouts</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>Record changed components, typecheck result, MCP desktop/mobile verification, and commit refs.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence is recorded.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>frontend-design-system-shell</agent_to_execute>
+            <estimated_complexity>low</estimated_complexity>
+            <task_slug>SETTINGS_CARD_ACTION_BUTTON_LAYOUT_POLISH</task_slug>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
+    </task_package>
+</task_packages>
