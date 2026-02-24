@@ -7,9 +7,9 @@
             <domain>Frontend Branding UI</domain>
             <estimated_time>35 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-081</dependencies>
             <prd_reference>Frontend polish and trust-oriented presentation for production-readiness</prd_reference>
         </metadata>
@@ -59,17 +59,22 @@
             <commit_message>feat(healio-branding): use svg logo in site branding surfaces</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>frontend-design-system-shell</owner>
+            <started_at>2026-02-24T17:10:55Z</started_at>
+            <completed_at>2026-02-24T17:10:55Z</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>cd healio &amp;&amp; npm run typecheck; Chrome DevTools MCP verify logo rendering on http://localhost:3002 (landing desktop/mobile) and http://localhost:3002/appointments (dashboard shell), including DOM checks for img[src*='icon.svg'] and console review.</verification_command>
+            <verification_notes>Added reusable HealioLogo component backed by /icon.svg and replaced placeholder branding blocks in marketing header/footer plus dashboard header/sidebar. MCP verified visible logo integration and no console warnings/errors.</verification_notes>
             <evidence>
-                <item>When work starts/completes, record changed files, typecheck command, Chrome DevTools MCP snapshots/notes, and commit references here.</item>
-                <item>Include Chrome DevTools MCP evidence (desktop + mobile logo visibility, console review) before marking complete.</item>
+                <item>Changed files: healio/components/shared/healio-logo.tsx; healio/components/marketing/landing-header.tsx; healio/components/marketing/marketing-footer.tsx; healio/components/layout/sidebar.tsx; healio/components/layout/header.tsx; healio/tsconfig.tsbuildinfo</item>
+                <item>Typecheck executed: cd healio &amp;&amp; npm run typecheck</item>
+                <item>Chrome DevTools MCP landing page verification (desktop + mobile): header/footer logo placements render; mobile header retains menu + CTA layout with logo visible.</item>
+                <item>Chrome DevTools MCP DOM checks on landing page: header img[src*='icon.svg'] count=1, footer count=1, computed size 32x32.</item>
+                <item>Chrome DevTools MCP dashboard verification on /appointments: sidebar and dashboard header each include img[src*='icon.svg'] (count=1 each).</item>
+                <item>Chrome DevTools MCP console review on landing and /appointments: no warn/error messages.</item>
+                <item>Feature commit: 4abb627 (feat(healio-branding): use svg logo in site branding surfaces).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/verification/commits as applicable.</completion_signal>
         </execution_tracking>
