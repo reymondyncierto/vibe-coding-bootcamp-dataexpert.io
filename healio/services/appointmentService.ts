@@ -4,7 +4,13 @@ import {
   parseTimeStringToMinutes,
   zonedDateTimeToUtc,
 } from "@/lib/utils";
-import type { AppointmentStatus } from "@/schemas/appointment";
+import type {
+  AppointmentCreateInput,
+  AppointmentsListQuery,
+  AppointmentStatus,
+  AppointmentSummary,
+  AppointmentUpdateInput,
+} from "@/schemas/appointment";
 import type { PublicClinicProfile, PublicService } from "@/schemas/clinic";
 import {
   getPublicClinicProfileBySlug,
@@ -94,6 +100,13 @@ const DEV_FALLBACK_OPERATING_HOURS: SlotEngineOperatingHours[] = [
   { dayOfWeek: 0, openTime: "00:00", closeTime: "00:00", isClosed: true },
 ];
 const publicBookingAppointmentStore: PublicBookingAppointmentRecord[] = [];
+type InternalAppointmentRecord = AppointmentSummary & {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  isWalkIn?: boolean;
+};
+const internalAppointmentStore: InternalAppointmentRecord[] = [];
 
 type PrismaAppointmentRow = {
   startTime: Date;
@@ -525,4 +538,238 @@ export function validateAppointmentStatusTransition(input: {
   }
 
   return { ok: true };
+}
+
+function toIso(date: Date | string) {
+  return normalizeDate(date).toISOString();
+}
+
+function toUtcDayRange(date: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    throw new Error("Invalid date format. Expected YYYY-MM-DD.");
+  }
+  const start = new Date(`${date}T00:00:00.000Z`);
+  const end = new Date(`${date}T23:59:59.999Z`);
+  return { start, end };
+}
+
+export type AppointmentServiceResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; code: string; message: string; status: number; details?: unknown };
+
+export async function listAppointmentsForClinicDay(input: {
+  clinicId: string;
+  query: AppointmentsListQuery;
+}): Promise<AppointmentSummary[]> {
+  const { start, end } = toUtcDayRange(input.query.date);
+
+  return internalAppointmentStore
+    .filter((item) => item.deletedAt === null)
+    .filter((item) => item.clinicId === input.clinicId)
+    .filter((item) => {
+      const startTime = normalizeDate(item.startTime);
+      return startTime >= start && startTime <= end;
+    })
+    .filter((item) => (input.query.staffId ? item.staffId === input.query.staffId : true))
+    .filter((item) => (input.query.status ? item.status === input.query.status : true))
+    .sort((a, b) => normalizeDate(a.startTime).getTime() - normalizeDate(b.startTime).getTime())
+    .map((item) => ({
+      id: item.id,
+      clinicId: item.clinicId,
+      patientId: item.patientId,
+      staffId: item.staffId,
+      serviceId: item.serviceId,
+      startTime: item.startTime,
+      endTime: item.endTime,
+      status: item.status,
+      source: item.source,
+      notes: item.notes ?? null,
+      cancellationReason: item.cancellationReason ?? null,
+    }));
+}
+
+export async function createAppointmentForClinic(
+  input: AppointmentCreateInput,
+): Promise<AppointmentServiceResult<AppointmentSummary>> {
+  const scheduling = validateAppointmentSchedulingRules({
+    startTime: input.startTime,
+    endTime: input.endTime,
+    durationMinutes: input.durationMinutes,
+    staffId: input.staffId,
+    allowDoubleBooking: input.allowDoubleBooking,
+    existingAppointments: internalAppointmentStore
+      .filter((item) => item.deletedAt === null)
+      .filter((item) => item.clinicId === input.clinicId)
+      .map((item) => ({
+        id: item.id,
+        staffId: item.staffId,
+        startTime: item.startTime,
+        endTime: item.endTime,
+        status: item.status,
+      })),
+  });
+
+  if (!scheduling.ok) {
+    return {
+      ok: false,
+      code: scheduling.code,
+      message: scheduling.message,
+      status: scheduling.code === "OVERLAPPING_APPOINTMENT" ? 409 : 422,
+      details: scheduling.details,
+    };
+  }
+
+  const nowIso = new Date().toISOString();
+  const record: InternalAppointmentRecord = {
+    id: `appt_staff_${crypto.randomUUID()}`,
+    clinicId: input.clinicId,
+    patientId: input.patientId,
+    staffId: input.staffId,
+    serviceId: input.serviceId,
+    startTime: scheduling.normalizedStartTime.toISOString(),
+    endTime: scheduling.normalizedEndTime.toISOString(),
+    status: "SCHEDULED",
+    source: input.source,
+    notes: input.notes ?? null,
+    cancellationReason: null,
+    createdAt: nowIso,
+    updatedAt: nowIso,
+    deletedAt: null,
+    isWalkIn: input.isWalkIn,
+  };
+
+  internalAppointmentStore.push(record);
+
+  return {
+    ok: true,
+    data: {
+      id: record.id,
+      clinicId: record.clinicId,
+      patientId: record.patientId,
+      staffId: record.staffId,
+      serviceId: record.serviceId,
+      startTime: record.startTime,
+      endTime: record.endTime,
+      status: record.status,
+      source: record.source,
+      notes: record.notes,
+      cancellationReason: record.cancellationReason,
+    },
+  };
+}
+
+export function getAppointmentByIdForClinic(clinicId: string, id: string) {
+  const found = internalAppointmentStore.find(
+    (item) => item.deletedAt === null && item.clinicId === clinicId && item.id === id,
+  );
+  if (!found) return null;
+  const { deletedAt: _deletedAt, createdAt: _createdAt, updatedAt: _updatedAt, ...summary } = found;
+  return summary as AppointmentSummary;
+}
+
+export async function updateAppointmentForClinic(input: {
+  clinicId: string;
+  appointmentId: string;
+  patch: AppointmentUpdateInput;
+}): Promise<AppointmentServiceResult<AppointmentSummary>> {
+  const record = internalAppointmentStore.find(
+    (item) =>
+      item.deletedAt === null &&
+      item.clinicId === input.clinicId &&
+      item.id === input.appointmentId,
+  );
+  if (!record) {
+    return { ok: false, code: "APPOINTMENT_NOT_FOUND", message: "Appointment not found.", status: 404 };
+  }
+
+  if (input.patch.status) {
+    const statusCheck = validateAppointmentStatusTransition({
+      currentStatus: record.status,
+      nextStatus: input.patch.status,
+      cancellationReason: input.patch.cancellationReason ?? record.cancellationReason,
+    });
+    if (!statusCheck.ok) {
+      return {
+        ok: false,
+        code: statusCheck.code,
+        message: statusCheck.message,
+        status: 422,
+      };
+    }
+  }
+
+  const nextStart = input.patch.startTime ?? record.startTime;
+  const nextEnd = input.patch.endTime ?? record.endTime;
+  if (input.patch.startTime || input.patch.endTime) {
+    const durationMinutes = Math.max(
+      1,
+      Math.round(
+        (normalizeDate(record.endTime).getTime() - normalizeDate(record.startTime).getTime()) /
+          60_000,
+      ),
+    );
+    const scheduling = validateAppointmentSchedulingRules({
+      startTime: nextStart,
+      endTime: nextEnd,
+      durationMinutes,
+      staffId: record.staffId,
+      ignoreAppointmentId: record.id,
+      existingAppointments: internalAppointmentStore
+        .filter((item) => item.deletedAt === null && item.clinicId === input.clinicId)
+        .map((item) => ({
+          id: item.id,
+          staffId: item.staffId,
+          startTime: item.startTime,
+          endTime: item.endTime,
+          status: item.status,
+        })),
+    });
+    if (!scheduling.ok) {
+      return {
+        ok: false,
+        code: scheduling.code,
+        message: scheduling.message,
+        status: scheduling.code === "OVERLAPPING_APPOINTMENT" ? 409 : 422,
+        details: scheduling.details,
+      };
+    }
+    record.startTime = scheduling.normalizedStartTime.toISOString();
+    record.endTime = scheduling.normalizedEndTime.toISOString();
+  }
+
+  if (input.patch.status) record.status = input.patch.status;
+  if (input.patch.notes !== undefined) record.notes = input.patch.notes;
+  if (input.patch.cancellationReason !== undefined) {
+    record.cancellationReason = input.patch.cancellationReason;
+  }
+  record.updatedAt = new Date().toISOString();
+
+  return { ok: true, data: getAppointmentByIdForClinic(input.clinicId, input.appointmentId)! };
+}
+
+export async function deleteAppointmentForClinic(input: {
+  clinicId: string;
+  appointmentId: string;
+}): Promise<AppointmentServiceResult<{ id: string; deleted: true }>> {
+  const record = internalAppointmentStore.find(
+    (item) =>
+      item.deletedAt === null &&
+      item.clinicId === input.clinicId &&
+      item.id === input.appointmentId,
+  );
+  if (!record) {
+    return { ok: false, code: "APPOINTMENT_NOT_FOUND", message: "Appointment not found.", status: 404 };
+  }
+  record.deletedAt = new Date().toISOString();
+  record.updatedAt = record.deletedAt;
+  return { ok: true, data: { id: record.id, deleted: true } };
+}
+
+export function resetInternalAppointmentStoreForTests() {
+  internalAppointmentStore.length = 0;
+}
+
+export function seedInternalAppointmentStoreForTests(records: InternalAppointmentRecord[]) {
+  internalAppointmentStore.length = 0;
+  internalAppointmentStore.push(...records);
 }
