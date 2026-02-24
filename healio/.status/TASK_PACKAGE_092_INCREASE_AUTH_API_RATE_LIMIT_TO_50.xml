@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-092</id>
+            <title>Increase Auth API Rate Limit to 50 Requests per Minute</title>
+            <domain>Platform Foundation</domain>
+            <estimated_time>10 mins</estimated_time>
+            <priority>medium</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-002</dependencies>
+            <prd_reference>Rate limiting baseline for API routes</prd_reference>
+        </metadata>
+        <context>
+            <background>User requested a rate limit of 50. Healio app-side auth API rate limit is currently set to 10/min in `lib/rate-limit.ts`.</background>
+            <files_involved>
+                <file>healio/lib/rate-limit.ts</file>
+            </files_involved>
+            <design_constraints>
+                <constraint>Only change the intended app-side rate limit constant and preserve other policies.</constraint>
+                <constraint>Document completion clearly in task XML.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Update the Healio `authApi` rate-limit policy max value from 10 to 50 in `healio/lib/rate-limit.ts`.</step>
+            <step>Verify the change by inspecting the policy object in code.</step>
+            <validation_checklist>
+                <check>`authApi.max` is set to `50`.</check>
+                <check>Other policy values remain unchanged.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <acceptance_criteria>
+                <criterion>Healio auth API rate-limit policy is configured to allow 50 requests per minute.</criterion>
+                <criterion>Task XML is updated with evidence and renamed `DONE_` on completion.</criterion>
+            </acceptance_criteria>
+            <commit_message>chore(healio-platform): increase auth api rate limit to 50</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>Record changed file, before/after policy value, and commit refs.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence is recorded.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>platform-foundation</agent_to_execute>
+            <estimated_complexity>low</estimated_complexity>
+            <task_slug>INCREASE_AUTH_API_RATE_LIMIT_TO_50</task_slug>
+        </references>
+    </task_package>
+</task_packages>
