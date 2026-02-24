@@ -7,9 +7,9 @@
             <domain>Launch Readiness</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-054, HEALIO-055, HEALIO-068, HEALIO-069, HEALIO-070, HEALIO-071, HEALIO-072, HEALIO-073, HEALIO-074, HEALIO-075</dependencies>
             <prd_reference>6 System Design performance targets; 10 Milestone Plan phases 5-6</prd_reference>
         </metadata>
@@ -58,16 +58,21 @@
             <commit_message>docs(healio): release readiness checklist and performance tuning</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>devops-release-ops</owner>
+            <started_at>2026-02-24T23:57:47+08:00</started_at>
+            <completed_at>2026-02-24T23:57:47+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>node --import tsx health route check; npm run build; npm run typecheck (rerun sequentially after build)</verification_command>
+            <verification_notes>Added `docs/release-checklist.md` and expanded README release/performance notes, tuned Next.js production defaults (`poweredByHeader`, compression, optimized package imports), made React Query cache timing configurable for production, and added analytics cache TTL configurability with minute-bucket cache keys. Build verification also uncovered a Next.js prerender issue on `/login` and `/signup` caused by `useSearchParams()` usage without `Suspense`; both auth pages were wrapped in `Suspense` fallbacks so `next build` now completes successfully. A temporary `typecheck` failure occurred only when run in parallel with `next build` due `.next/types` regeneration; sequential rerun passed.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/docs/release-checklist.md, healio/README.md, healio/lib/query-client.ts, healio/services/analyticsService.ts, healio/next.config.js, healio/app/(auth)/login/page.tsx, healio/app/(auth)/signup/page.tsx.</item>
+                <item>Health endpoint verification passed via direct route invocation (`GET /api/v1/health` => 200 success envelope).</item>
+                <item>`npm run build` passed after auth-page `Suspense` patch; build output includes all core dashboard, public booking, billing/payment, and API routes.</item>
+                <item>Sequential `npm run typecheck` passed after build (parallel run race with `.next/types` noted and resolved).</item>
+                <item>Feature commit: 1a50a2f (docs(healio): release readiness checklist and performance tuning).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
