@@ -7,9 +7,9 @@
             <domain>Frontend Content Polish</domain>
             <estimated_time>10 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-082</dependencies>
             <prd_reference>Landing page production content polish</prd_reference>
         </metadata>
@@ -41,16 +41,20 @@
             <commit_message>refactor(healio-marketing): remove workflow callout copy from landing page</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>agent-router -> frontend-design-system-shell</owner>
+            <started_at>2026-02-25T01:15:00+08:00</started_at>
+            <completed_at>2026-02-25T01:18:23+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; Chrome DevTools MCP snapshot + evaluate_script + console check on http://localhost:3002/</verification_command>
+            <verification_notes>Removed workflow callout block from workflow sequence section. Typecheck passed. MCP confirmed the removed sentence is absent (evaluate_script returned false) and console had no messages.</verification_notes>
             <evidence>
-                <item>Record changed files, typecheck command, MCP verification notes, and commit refs.</item>
+                <item>Changed file: healio/components/marketing/workflow-sequence.tsx</item>
+                <item>Task creation commit: 6216235 (chore(status): add HEALIO-084 landing copy removal task)</item>
+                <item>Feature commit: 9eb1fea (refactor(healio-marketing): remove workflow callout copy from landing page)</item>
+                <item>Typecheck: `cd healio &amp;&amp; npm run typecheck` passed.</item>
+                <item>Chrome DevTools MCP: loaded / on localhost:3002, snapshot inspected workflow section, `document.body.innerText.includes(...)` returned false, console messages empty.</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence is recorded.</completion_signal>
         </execution_tracking>
