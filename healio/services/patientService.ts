@@ -10,6 +10,8 @@ import type {
   PatientListResponse,
   PatientSummary,
   PatientUpdateInput,
+  VisitNoteCreateInput,
+  VisitNoteSummary,
 } from "@/schemas/patient";
 
 const SENSITIVE_STRING_FIELDS = [
@@ -135,6 +137,11 @@ type InternalPatientRecord = {
   searchText: string;
 };
 
+type InternalVisitNoteRecord = VisitNoteSummary & {
+  deletedAt: string | null;
+  createdByUserId?: string | null;
+};
+
 function getInternalPatientStore() {
   const globalScope = globalThis as typeof globalThis & {
     __healioInternalPatientStore?: InternalPatientRecord[];
@@ -143,6 +150,16 @@ function getInternalPatientStore() {
     globalScope.__healioInternalPatientStore = [];
   }
   return globalScope.__healioInternalPatientStore;
+}
+
+function getInternalVisitNoteStore() {
+  const globalScope = globalThis as typeof globalThis & {
+    __healioInternalVisitNoteStore?: InternalVisitNoteRecord[];
+  };
+  if (!globalScope.__healioInternalVisitNoteStore) {
+    globalScope.__healioInternalVisitNoteStore = [];
+  }
+  return globalScope.__healioInternalVisitNoteStore;
 }
 
 function getAttendanceMetricsStore() {
@@ -443,6 +460,74 @@ export async function updatePatientForClinic(input: {
   return { ok: true, data: toPatientDetail(record) };
 }
 
+export async function listVisitNotesForPatient(input: {
+  clinicId: string;
+  patientId: string;
+}): Promise<VisitNoteSummary[]> {
+  const patient = getPatientByIdForClinic(input.clinicId, input.patientId);
+  if (!patient) return [];
+  const store = getInternalVisitNoteStore();
+  return store
+    .filter(
+      (item) =>
+        item.deletedAt === null &&
+        item.clinicId === input.clinicId &&
+        item.patientId === input.patientId,
+    )
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .map(({ deletedAt: _deletedAt, createdByUserId: _createdByUserId, ...note }) => note);
+}
+
+export async function createVisitNoteForPatient(input: {
+  clinicId: string;
+  patientId: string;
+  userId: string;
+  payload: VisitNoteCreateInput;
+}): Promise<PatientServiceResult<VisitNoteSummary>> {
+  const patient = getPatientByIdForClinic(input.clinicId, input.patientId);
+  if (!patient) {
+    return { ok: false, code: "PATIENT_NOT_FOUND", message: "Patient not found.", status: 404 };
+  }
+
+  const store = getInternalVisitNoteStore();
+  if (input.payload.amendmentToVisitId) {
+    const target = store.find(
+      (item) =>
+        item.deletedAt === null &&
+        item.id === input.payload.amendmentToVisitId &&
+        item.clinicId === input.clinicId &&
+        item.patientId === input.patientId,
+    );
+    if (!target) {
+      return {
+        ok: false,
+        code: "VISIT_NOTE_NOT_FOUND",
+        message: "Amended visit note was not found for this patient.",
+        status: 404,
+      };
+    }
+  }
+
+  const createdAt = new Date().toISOString();
+  const record: InternalVisitNoteRecord = {
+    id: `visit_${crypto.randomUUID()}`,
+    clinicId: input.clinicId,
+    patientId: input.patientId,
+    appointmentId: input.payload.appointmentId,
+    subjective: input.payload.subjective,
+    objective: input.payload.objective ?? null,
+    assessment: input.payload.assessment ?? null,
+    plan: input.payload.plan ?? null,
+    amendmentToVisitId: input.payload.amendmentToVisitId ?? null,
+    createdAt,
+    deletedAt: null,
+    createdByUserId: input.userId,
+  };
+  store.push(record);
+  const { deletedAt: _deletedAt, createdByUserId: _createdByUserId, ...note } = record;
+  return { ok: true, data: note };
+}
+
 export function recordPatientNoShow(input: {
   clinicId: string;
   patientId: string;
@@ -480,5 +565,6 @@ export function resetPatientAttendanceMetricsForTests() {
 
 export function resetInternalPatientStoreForTests() {
   getInternalPatientStore().length = 0;
+  getInternalVisitNoteStore().length = 0;
   resetPatientAttendanceMetricsForTests();
 }
