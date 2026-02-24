@@ -7,9 +7,9 @@
             <domain>DevOps</domain>
             <estimated_time>40 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-068, HEALIO-069, HEALIO-070, HEALIO-071</dependencies>
             <prd_reference>7.3 CI/CD Pipeline</prd_reference>
         </metadata>
@@ -50,16 +50,20 @@
             <commit_message>chore(healio): ci workflow pipeline</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>devops-release-ops</owner>
+            <started_at>2026-02-24T23:44:35+08:00</started_at>
+            <completed_at>2026-02-24T23:44:35+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; npm run test:unit; npm run test:integration; npm run e2e:list; npm run build (mirrored in CI workflow)</verification_command>
+            <verification_notes>Added GitHub Actions workflow `healio/.github/workflows/ci.yml` that runs install, typecheck, unit tests, integration tests, Playwright E2E discovery smoke, and Next.js build with placeholder CI env vars. The pipeline is scoped to Healio path changes and uses npm cache for `healio/package-lock.json`.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/.github/workflows/ci.yml.</item>
+                <item>Workflow includes `npm ci`, `npm run typecheck`, `npm run test:unit`, `npm run test:integration`, `npm run e2e:list`, and `npm run build` in `healio/` working directory.</item>
+                <item>CI env placeholders added for Supabase/Stripe/DB/encryption/cron variables so build-time validation and route imports can run in GitHub Actions.</item>
+                <item>Feature commit: 8c05584 (chore(healio): ci workflow pipeline).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
