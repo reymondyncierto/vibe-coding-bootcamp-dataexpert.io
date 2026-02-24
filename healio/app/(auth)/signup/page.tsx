@@ -109,6 +109,31 @@ function SignupPageContent() {
     }
   }
 
+  async function continueWithGoogle() {
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const callbackUrl = new URL("/auth/callback", window.location.origin);
+      callbackUrl.searchParams.set("next", nextPath);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: callbackUrl.toString() },
+      });
+      if (error) {
+        pushToast({
+          title: "Google sign-up unavailable",
+          description: error.message,
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      pushToast({
+        title: "Supabase auth unavailable",
+        description: error instanceof Error ? error.message : "OAuth not configured in this environment.",
+        variant: "error",
+      });
+    }
+  }
+
   return (
     <div className="min-h-screen bg-app px-4 py-10 sm:px-6">
       <div className="mx-auto grid w-full max-w-6xl gap-6 xl:grid-cols-[1.1fr_0.9fr]">
@@ -211,6 +236,9 @@ function SignupPageContent() {
                 </Button>
                 <Button type="button" variant="secondary" onClick={() => void sendMagicLink()} disabled={magicLinkState.kind === "loading"}>
                   {magicLinkState.kind === "loading" ? "Sending..." : "Send Magic Link (Optional)"}
+                </Button>
+                <Button type="button" variant="secondary" onClick={() => void continueWithGoogle()}>
+                  Continue with Google
                 </Button>
                 <Link href={`/login?next=${encodeURIComponent(nextPath)}`} className="sm:ml-auto">
                   <Button type="button" variant="ghost">Back to Login</Button>
