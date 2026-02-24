@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Public Booking API</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-021</dependencies>
             <prd_reference>Feature 1 API Endpoints</prd_reference>
         </metadata>
@@ -57,16 +57,23 @@
             <commit_message>feat(healio-booking): public booking create route</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>public-booking</owner>
+            <started_at>2026-02-24T17:02:10+08:00</started_at>
+            <completed_at>2026-02-24T17:02:10+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/booking-validation.test.ts; Chrome DevTools MCP POST /api/v1/public/bookings via evaluate_script (reqid=241 create, reqid=242 idempotent replay, reqid=243 duplicate conflict)</verification_command>
+            <verification_notes>Implemented public booking create endpoint with body validation, idempotency key support, duplicate prevention, slot availability confirmation against the public slots service, and local in-memory patient/appointment persistence fallback. Verified create (201), idempotent replay (200), and duplicate booking rejection (409) via Chrome DevTools MCP fetch/network inspection.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/v1/public/bookings/route.ts, healio/services/bookingService.ts, healio/services/patientService.ts, healio/services/appointmentService.ts.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Regression test: `node --import tsx --test tests/unit/booking-validation.test.ts` passed after idempotency replay ordering fix.</item>
+                <item>Chrome DevTools MCP POST verification (reqid=241): `POST /api/v1/public/bookings` with `idempotency-key=demo-booking-2` returned 201 and success envelope containing booking/appointment/patient IDs plus `x-idempotency-key` response header.</item>
+                <item>Chrome DevTools MCP idempotent replay (reqid=242): same request + same idempotency key returned 200 with identical booking payload.</item>
+                <item>Chrome DevTools MCP duplicate prevention (reqid=243): same booking payload with a different idempotency key returned 409 `DUPLICATE_BOOKING`.</item>
+                <item>Implementation commit: 940bc6f (feat(healio-booking): add public booking create route).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
