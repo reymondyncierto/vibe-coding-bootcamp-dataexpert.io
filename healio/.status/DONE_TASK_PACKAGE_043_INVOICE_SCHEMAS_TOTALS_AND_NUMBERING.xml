@@ -7,9 +7,9 @@
             <domain>Billing Backend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-010, HEALIO-012, HEALIO-016</dependencies>
             <prd_reference>Feature 4 Billing &amp; Invoicing</prd_reference>
         </metadata>
@@ -54,16 +54,23 @@
             <commit_message>feat(healio-billing): invoice schemas totals and numbering</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>billing-invoicing-payments</owner>
+            <started_at>2026-02-24T18:41:20+08:00</started_at>
+            <completed_at>2026-02-24T18:41:20+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/invoice-service.test.ts</verification_command>
+            <verification_notes>Added `schemas/invoice.ts` (Zod schemas/types), `services/invoiceService.ts` (in-memory invoice store + totals calculation + invoice numbering + list/detail/update primitives), and money conversion helpers in `lib/utils.ts`. Unit tests cover schema parsing, totals math, clinic/year numbering sequence, tenant scoping, duplicate appointment invoice prevention, and status/update rules.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/schemas/invoice.ts, healio/services/invoiceService.ts, healio/lib/utils.ts, healio/tests/unit/invoice-service.test.ts, healio/tsconfig.tsbuildinfo.</item>
+                <item>`schemas/invoice.ts` includes list/create/update schemas plus invoice summary/detail response shapes and money/status/payment enums for follow-on API routes.</item>
+                <item>`services/invoiceService.ts` implements invoice totals calculation (line-item subtotal + tax amount/rate), clinic/year-scoped invoice numbering (`INV-YYYY-#####`), in-memory invoice persistence, tenant-scoped list/detail lookup, duplicate appointment invoice guard, and update/status transition validation.</item>
+                <item>`lib/utils.ts` now exports shared `moneyToCents` and `centsToMoney` helpers used for safe integer-based billing math.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Verification tests: `node --import tsx --test tests/unit/invoice-service.test.ts` passed.</item>
+                <item>Implementation commit: 0c161a8 (feat(healio-billing): invoice schemas totals and numbering).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
