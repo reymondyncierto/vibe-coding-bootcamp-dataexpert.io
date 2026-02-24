@@ -7,9 +7,9 @@
             <domain>Settings &amp; Auth API</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-014, HEALIO-015, HEALIO-047</dependencies>
             <prd_reference>Feature 6 Staff Manager; Feature 7 Staff Invite</prd_reference>
         </metadata>
@@ -58,16 +58,22 @@
             <commit_message>feat(healio-auth): staff manager invite api</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>auth-rbac-security</owner>
+            <started_at>2026-02-24T22:58:50+08:00</started_at>
+            <completed_at>2026-02-24T22:58:50+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/staff-route.test.ts</verification_command>
+            <verification_notes>Implemented protected staff manager API (`GET /api/v1/staff`, `POST /api/v1/staff`) with OWNER/ADMIN invite permissions, tenant-scoped in-memory `staffService`, invite token generation, and invite email delivery via `renderWelcomeEmail` + `notificationService` (`STAFF_INVITE` notification type).</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/schemas/staff.ts, healio/services/staffService.ts, healio/app/api/v1/staff/route.ts, healio/tests/unit/staff-route.test.ts, healio/services/notificationService.ts.</item>
+                <item>Route verification: `GET /api/v1/staff` returns clinic-scoped staff list; `POST /api/v1/staff` creates an invited staff member (`201`) with invite token/expiry and invite email metadata.</item>
+                <item>Invite flow verification: staff invite triggers a `STAFF_INVITE` notification record with `SENT` status and expected recipient email in `notificationService` store.</item>
+                <item>Security/RBAC verification: missing auth returns `401`; FRONT_DESK invite attempt returns `403`; invalid invite payload returns `400`; duplicate email returns `409`.</item>
+                <item>Typecheck/tests passed: `npm run typecheck`; `node --import tsx --test tests/unit/staff-route.test.ts`.</item>
+                <item>Feature commit: dc95957 (feat(healio-auth): staff manager invite api).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
