@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-081</id>
+            <title>Browser Tab Logo Icon (Favicon) and Metadata Icon Wiring</title>
+            <domain>Frontend Branding Polish</domain>
+            <estimated_time>25 mins</estimated_time>
+            <priority>medium</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-080</dependencies>
+            <prd_reference>Brand/UX polish expectations for production-readiness and trust-oriented presentation</prd_reference>
+        </metadata>
+        <context>
+            <background>The browser tab icon should use the Healio logo mark (brand-consistent favicon) instead of a generic placeholder icon. This improves polish, recognizability, and deployment readiness for the public site and dashboard pages.</background>
+            <files_involved>
+                <file>healio/app/icon.svg</file>
+                <file>healio/app/layout.tsx</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>none</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Use a simple, high-contrast mark that remains legible at small favicon sizes (16x16 / 32x32 equivalents).</constraint>
+                <constraint>Keep the icon visually consistent with Healio branding used on the landing page header/logo mark.</constraint>
+                <constraint>Ensure the app emits valid icon metadata so the favicon loads reliably across routes.</constraint>
+                <constraint>Do not introduce heavy image assets when a lightweight SVG icon is sufficient.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Create or update the favicon/icon asset so the browser tab displays the Healio logo mark (not a generic placeholder).</step>
+            <step>Wire explicit metadata icon references in `healio/app/layout.tsx` if needed to improve reliability across browsers/routes.</step>
+            <step>Verify the icon asset loads successfully in the running app and confirm icon link metadata exists in the page head.</step>
+            <step>Use Chrome DevTools MCP to inspect the page head/network and record favicon verification evidence before marking done.</step>
+            <validation_checklist>
+                <check>The tab icon asset is a Healio-branded mark and is visually simple enough for small sizes.</check>
+                <check>No 404/icon load errors occur for the favicon asset during page load.</check>
+                <check>Chrome DevTools MCP evidence includes head icon metadata inspection and/or successful icon network request.</check>
+                <check>`npm run typecheck` is run if `healio/app/layout.tsx` is modified.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Updated favicon/icon asset using Healio logo mark</artifact>
+                <artifact>Metadata icon wiring (if applicable)</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>The browser tab icon is updated to a Healio-branded logo mark.</criterion>
+                <criterion>The icon asset is referenced correctly by the app and loads without runtime errors.</criterion>
+                <criterion>Chrome DevTools MCP verification evidence is recorded before task completion.</criterion>
+                <criterion>The task XML is updated with execution evidence and renamed with `DONE_` prefix after completion.</criterion>
+            </acceptance_criteria>
+            <commit_message>feat(healio-branding): use healio logo for browser tab icon</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, Chrome DevTools MCP favicon checks, and commit references here.</item>
+                <item>Include Chrome DevTools MCP evidence (head icon link inspection and/or successful icon network request) before marking complete.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/verification/commits as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>frontend-design-system-shell</agent_to_execute>
+            <estimated_complexity>low</estimated_complexity>
+            <blocks_on>HEALIO-080</blocks_on>
+            <task_slug>BROWSER_TAB_LOGO_ICON_AND_METADATA</task_slug>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
+    </task_package>
+</task_packages>
