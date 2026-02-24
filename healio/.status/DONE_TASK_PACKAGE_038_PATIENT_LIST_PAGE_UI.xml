@@ -7,9 +7,9 @@
             <domain>Patient Records Frontend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-007, HEALIO-008, HEALIO-033</dependencies>
             <prd_reference>Feature 3 Patient List + user empty-state guidance</prd_reference>
         </metadata>
@@ -61,17 +61,25 @@
             <commit_message>feat(healio-patients): patient list page ui</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>patient-records-lite-emr</owner>
+            <started_at>2026-02-24T18:19:10+08:00</started_at>
+            <completed_at>2026-02-24T18:19:10+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/patients-route.test.ts; Chrome DevTools MCP on http://localhost:4010/patients</verification_command>
+            <verification_notes>Built the initial patient list page (`/patients`) with bento summary cards, search + page-size filters, pagination, and educational empty/no-results states. Added a React Query `usePatientsList` hook with a localhost auth-header shim and Chrome DevTools MCP verification on desktop/mobile. DevTools a11y snapshots showed duplicate stale entries after page-size changes, but direct DOM inspection (`document.querySelectorAll('main article').length`) confirmed the rendered list count was correct (12), so this was treated as a snapshot artifact rather than a UI defect.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/app/(dashboard)/patients/page.tsx, healio/components/patients/patient-list.tsx, healio/components/patients/patient-search-filters.tsx, healio/hooks/usePatients.ts, healio/lib/query-keys.ts, healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>API regression check: `node --import tsx --test tests/unit/patients-route.test.ts` passed (GET /api/v1/patients list query and route behavior still valid).</item>
+                <item>Chrome DevTools MCP verification (http://localhost:4010/patients): desktop and mobile snapshots captured; verified initial empty state, populated list state after local API seeding, no-results state via search (`zzz-no-match`), pagination (page 1→2), page-size filter (10→20), and responsive mobile layout with bottom nav visible.</item>
+                <item>Chrome DevTools MCP network evidence: GET `/api/v1/patients?page=1&amp;pageSize=10` (200), GET search queries (200), GET pagination/page-size transitions (200); local seeding via DevTools `fetch` issued 12x POST `/api/v1/patients` (201).</item>
+                <item>Chrome DevTools MCP console check: no app errors; only standard React DevTools development info message.</item>
+                <item>Implementation commit: 63b9a9c (feat(healio-patients): patient list page ui).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
