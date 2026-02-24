@@ -12,11 +12,38 @@ const globalForPrisma = globalThis as typeof globalThis & {
   __healio_prisma__?: PrismaClient;
 };
 
-export const prisma =
-  globalForPrisma.__healio_prisma__ ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
-  });
+function createPrismaUnavailableStub(cause: unknown) {
+  const stub: Record<string, unknown> = {
+    $use() {
+      return undefined;
+    },
+    $extends() {
+      return stub;
+    },
+  };
+  return new Proxy(stub, {
+    get(target, prop, receiver) {
+      if (prop in target) {
+        return Reflect.get(target, prop, receiver);
+      }
+      throw new Error(
+        `Prisma client unavailable in this environment. ${cause instanceof Error ? cause.message : String(cause)}`,
+      );
+    },
+  }) as unknown as PrismaClient;
+}
+
+function createPrismaClientSafely() {
+  try {
+    return new PrismaClient({
+      log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
+    });
+  } catch (error) {
+    return createPrismaUnavailableStub(error);
+  }
+}
+
+export const prisma = globalForPrisma.__healio_prisma__ ?? createPrismaClientSafely();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.__healio_prisma__ = prisma;
@@ -111,3 +138,90 @@ export function createTenantPrisma(clinicId: string) {
 }
 
 export type TenantPrismaClient = ReturnType<typeof createTenantPrisma>;
+
+export type PrismaAuditEvent = {
+  clinicId?: string | null;
+  userId?: string | null;
+  action: string;
+  model: string;
+  recordId?: string | null;
+  metadata?: Record<string, unknown>;
+};
+
+export type PrismaAuditEmitter = (event: PrismaAuditEvent) => void | Promise<void>;
+
+const globalAuditScope = globalThis as typeof globalThis & {
+  __healioPrismaAuditEmitter?: PrismaAuditEmitter;
+  __healioPrismaAuditMiddlewareInstalled?: boolean;
+};
+
+export function registerPrismaAuditEmitter(emitter: PrismaAuditEmitter) {
+  globalAuditScope.__healioPrismaAuditEmitter = emitter;
+}
+
+export async function emitPrismaAuditEvent(event: PrismaAuditEvent) {
+  const emitter = globalAuditScope.__healioPrismaAuditEmitter;
+  if (!emitter) return;
+  await emitter(event);
+}
+
+const AUDIT_MUTATION_OPERATIONS = new Set([
+  "create",
+  "createMany",
+  "createManyAndReturn",
+  "update",
+  "updateMany",
+  "delete",
+  "deleteMany",
+  "upsert",
+]);
+
+export function installPrismaAuditLogging() {
+  if (globalAuditScope.__healioPrismaAuditMiddlewareInstalled) return;
+  if (typeof (prisma as any).$use !== "function") return;
+
+  (prisma as any).$use(async (params: any, next: (params: any) => Promise<any>) => {
+    const result = await next(params);
+
+    if (!AUDIT_MUTATION_OPERATIONS.has(params?.action)) {
+      return result;
+    }
+
+    const data = (params?.args?.data ?? params?.args?.where ?? null) as Record<string, unknown> | null;
+    const clinicId =
+      typeof data?.clinicId === "string"
+        ? data.clinicId
+        : typeof params?.args?.where?.clinicId === "string"
+          ? params.args.where.clinicId
+          : null;
+    const userId =
+      typeof data?.updatedByUserId === "string"
+        ? data.updatedByUserId
+        : typeof data?.createdByUserId === "string"
+          ? data.createdByUserId
+          : null;
+
+    const recordId =
+      typeof result?.id === "string"
+        ? result.id
+        : typeof params?.args?.where?.id === "string"
+          ? params.args.where.id
+          : null;
+
+    await emitPrismaAuditEvent({
+      clinicId,
+      userId,
+      action: `${params.model}.${params.action}`,
+      model: params.model ?? "unknown",
+      recordId,
+      metadata: {
+        hasWhere: Boolean(params?.args?.where),
+        hasData: Boolean(params?.args?.data),
+      },
+    });
+
+    return result;
+  });
+
+  globalAuditScope.__healioPrismaAuditMiddlewareInstalled = true;
+}
