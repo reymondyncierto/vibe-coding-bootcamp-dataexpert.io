@@ -7,9 +7,9 @@
             <domain>Frontend Marketing Polish</domain>
             <estimated_time>40 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-079</dependencies>
             <prd_reference>5 Frontend Design Guidelines + user Healio UI pillars + launch readiness UX expectations</prd_reference>
         </metadata>
@@ -57,17 +57,24 @@
             <commit_message>refactor(healio-marketing): polish landing page accessibility and conversion ux</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>frontend-design-system-shell</owner>
+            <started_at>2026-02-24T17:02:07Z</started_at>
+            <completed_at>2026-02-24T17:02:07Z</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>cd healio &amp;&amp; npm run typecheck; Chrome DevTools MCP verification on http://localhost:3002 (desktop + mobile snapshots, mobile menu open/links, anchor offset checks for #features and #security, CTA above-fold check, console review).</verification_command>
+            <verification_notes>Polish pass added mobile menu access for hidden nav links, sticky-header anchor offsets (scroll-mt), and semantic list markup in role benefits. Desktop/mobile layouts and interactions verified; no console warnings/errors observed.</verification_notes>
             <evidence>
-                <item>When work starts/completes, record changed files, typecheck command, Chrome DevTools MCP snapshots/notes, and commit references here.</item>
-                <item>Include Chrome DevTools MCP evidence (desktop + mobile snapshots, interaction checks, console review) before marking frontend tasks complete.</item>
+                <item>Changed files: healio/components/marketing/landing-header.tsx; healio/components/marketing/landing-page.tsx; healio/components/marketing/role-benefits.tsx; healio/tsconfig.tsbuildinfo</item>
+                <item>Typecheck passed: cd healio &amp;&amp; npm run typecheck</item>
+                <item>Chrome DevTools MCP desktop snapshot verified final polished layout at 1440x900, nav/CTA hierarchy, and section continuity.</item>
+                <item>Chrome DevTools MCP desktop anchor check: clicking header Features updates hash to #features and lands with section top ~95px while sticky header bottom ~65px (no overlap).</item>
+                <item>Chrome DevTools MCP mobile snapshot verified compact header (logo + menu + primary CTA) at 390x844.</item>
+                <item>Chrome DevTools MCP mobile interaction check: Menu disclosure opens mobile nav panel; mobile Security link navigates to #security with anchor offset preserved.</item>
+                <item>Chrome DevTools MCP mobile conversion check: hero Start Free / Book a Demo CTAs remain above fold (top ~489px on 844px viewport).</item>
+                <item>Chrome DevTools MCP console review after interactions: no warn/error messages.</item>
+                <item>Polish commit: dba2cf3 (refactor(healio-marketing): polish landing page accessibility and conversion ux).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/snapshots as applicable.</completion_signal>
         </execution_tracking>
