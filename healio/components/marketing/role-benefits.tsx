@@ -55,10 +55,15 @@ export function RoleBenefits() {
                 <CardTitle className="text-base sm:text-lg">{role.title}</CardTitle>
                 <Badge variant="primary" className="whitespace-nowrap">{role.badge}</Badge>
               </CardHeader>
-              <CardContent className="space-y-2 pb-5 text-sm leading-6 text-muted">
-                {role.points.map((point) => (
-                  <p key={point}>• {point}</p>
-                ))}
+              <CardContent className="pb-5">
+                <ul className="space-y-2 text-sm leading-6 text-muted">
+                  {role.points.map((point) => (
+                    <li key={point} className="flex gap-2">
+                      <span aria-hidden="true" className="mt-1 text-primary">•</span>
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
               </CardContent>
             </Card>
           ))}

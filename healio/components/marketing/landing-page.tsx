@@ -57,7 +57,14 @@ function SectionShell({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} aria-labelledby={id ? `${id}-heading` : undefined} className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <section
+      id={id}
+      aria-labelledby={id ? `${id}-heading` : undefined}
+      className={[
+        "mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8",
+        id ? "scroll-mt-24" : "",
+      ].join(" ")}
+    >
       <div className="mb-8 flex flex-col gap-3">
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-primary">{label}</p>
         <h2 id={id ? `${id}-heading` : undefined} className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
@@ -201,7 +208,7 @@ export function LandingPage() {
                 ))}
               </CardContent>
             </Card>
-            <Card id="billing" className="bg-gradient-to-b from-white to-slate-50">
+            <Card id="billing" className="scroll-mt-24 bg-gradient-to-b from-white to-slate-50">
               <CardHeader>
                 <CardTitle className="text-lg">Billing that keeps up with the front desk</CardTitle>
                 <CardDescription>

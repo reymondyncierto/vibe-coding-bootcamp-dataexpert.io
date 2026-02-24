@@ -13,10 +13,12 @@ function CtaLink({
   href,
   children,
   variant = "secondary",
+  className,
 }: {
   href: string;
   children: React.ReactNode;
   variant?: "primary" | "secondary";
+  className?: string;
 }) {
   return (
     <Link
@@ -27,6 +29,7 @@ function CtaLink({
         variant === "primary"
           ? "bg-primary text-white hover:bg-primary-hover"
           : "border border-border bg-white/90 text-ink hover:bg-white",
+        className,
       )}
     >
       {children}
@@ -58,6 +61,36 @@ export function LandingHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <details className="relative md:hidden">
+            <summary className="inline-flex min-h-10 cursor-pointer list-none items-center justify-center rounded-control border border-border bg-white/90 px-3 text-sm font-medium text-ink hover:bg-white">
+              Menu
+            </summary>
+            <div className="absolute right-0 top-[calc(100%+0.5rem)] w-64 rounded-2xl border border-border bg-white p-2 shadow-xl">
+              <nav aria-label="Mobile primary" className="grid gap-1">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className="rounded-xl px-3 py-2 text-sm font-medium text-ink hover:bg-slate-50"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+                <Link
+                  href="/login"
+                  className="rounded-xl px-3 py-2 text-sm font-medium text-ink hover:bg-slate-50"
+                >
+                  Log in
+                </Link>
+                <div className="mt-1 grid gap-2 border-t border-border pt-2">
+                  <CtaLink href="/signup">Start Free</CtaLink>
+                  <CtaLink href="/signup?intent=demo" variant="secondary">
+                    Book a Demo
+                  </CtaLink>
+                </div>
+              </nav>
+            </div>
+          </details>
           <Link
             href="/login"
             className="hidden rounded-control px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-white hover:text-ink sm:inline-flex"
@@ -65,7 +98,7 @@ export function LandingHeader() {
             Log in
           </Link>
           <CtaLink href="/signup">Start Free</CtaLink>
-          <CtaLink href="/signup?intent=demo" variant="secondary">
+          <CtaLink href="/signup?intent=demo" variant="secondary" className="hidden sm:inline-flex">
             Book a Demo
           </CtaLink>
         </div>
