@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { successResponse } from "@/lib/api-helpers";
-import { withRequestLogger } from "@/lib/logger";
+import { logHealthcheckResult, withRequestLogger } from "@/lib/logger";
 import { getRequestId } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +28,14 @@ export async function GET(request: Request) {
     },
   };
 
-  log.info({ durationMs: Date.now() - startedAt }, "healthcheck_ok");
+  const durationMs = Date.now() - startedAt;
+  log.info({ durationMs }, "healthcheck_ok");
+  logHealthcheckResult({
+    requestId,
+    durationMs,
+    status: "ok",
+    checks: payload.checks,
+  });
 
   const response = successResponse(payload);
   response.headers.set("x-request-id", requestId);

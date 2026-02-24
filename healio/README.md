@@ -42,3 +42,22 @@ Healio is a clinic management SaaS planned as a unified Next.js monolith (fronte
 - Required for billing flows: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - Required for cron routes: `CRON_SECRET`
 - Optional but recommended: `RESEND_API_KEY`, `TWILIO_*`, `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`
+
+## Monitoring & Observability Runbook (Baseline)
+
+- Health endpoint: `GET /api/v1/health`
+  - Expected: `200` with `{ success: true, data.status = "ok" }`
+  - Use for uptime checks (for example UptimeRobot) and post-deploy smoke tests.
+- Logging
+  - `lib/logger.ts` uses structured JSON logs (Pino).
+  - Sensitive fields (authorization headers, common email/phone paths) are redacted.
+  - Health checks emit a dedicated operational event (`healthcheck_observed`) for filtering.
+- Sentry (prepared, optional)
+  - `sentry.server.config.ts` and `sentry.client.config.ts` provide environment-aware config helpers without requiring the SDK yet.
+  - Set `SENTRY_DSN` / `NEXT_PUBLIC_SENTRY_DSN` before wiring `@sentry/nextjs`.
+- Frontend analytics (optional)
+  - Set `NEXT_PUBLIC_VERCEL_ANALYTICS_ID` to inject the Vercel Analytics script from the root layout.
+- Recommended alerts
+  - Health endpoint downtime / non-200
+  - Error-rate spikes in API routes (via log aggregation/Sentry)
+  - Cron failures (`/api/cron/*`) and webhook signature failures (`/api/v1/webhooks/stripe`)
