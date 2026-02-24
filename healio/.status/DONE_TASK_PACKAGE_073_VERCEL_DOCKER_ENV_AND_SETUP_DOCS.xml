@@ -7,9 +7,9 @@
             <domain>DevOps</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-054, HEALIO-055, HEALIO-072</dependencies>
             <prd_reference>7 Deployment &amp; DevOps; 7.4 vercel.json; 7.5 env vars</prd_reference>
         </metadata>
@@ -57,16 +57,21 @@
             <commit_message>chore(healio): vercel docker env and setup docs</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>devops-release-ops</owner>
+            <started_at>2026-02-24T23:47:27+08:00</started_at>
+            <completed_at>2026-02-24T23:47:27+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>node --import tsx route checks for /api/cron/reminders, /api/cron/overdue-invoices, /api/cron/subscription-check; manual review of vercel.json and docker-compose.yml</verification_command>
+            <verification_notes>Added Vercel cron schedule config, local Docker Compose for Next.js + Postgres, expanded environment template with deployment/observability variables, and documented Vercel cron + env setup in README. Verified cron route auth/status behavior directly against route handlers (403 without secret, 200 with CRON_SECRET for overdue/subscription routes).</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/vercel.json, healio/docker-compose.yml, healio/.env.example, healio/README.md.</item>
+                <item>Direct route verification script confirmed cron endpoint protection/status behavior and success envelopes for `/api/cron/overdue-invoices` and `/api/cron/subscription-check` using `CRON_SECRET`.</item>
+                <item>`vercel.json` cron entries added for 24h and 1h reminders plus overdue invoice and subscription checks.</item>
+                <item>README now documents Docker local run, Vercel cron expectations, and minimum env variable checklist.</item>
+                <item>Feature commit: 4818d48 (chore(healio): vercel docker env and setup docs).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
