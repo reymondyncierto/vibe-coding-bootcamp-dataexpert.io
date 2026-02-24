@@ -16,6 +16,7 @@ import {
   getPublicClinicProfileBySlug,
   getPublicServicesByClinicSlug,
 } from "@/services/clinicPublicService";
+import { recordPatientLateCancel, recordPatientNoShow } from "@/services/patientService";
 
 export type SlotEngineBookingRules = {
   leadTimeMinutes: number;
@@ -89,6 +90,7 @@ export const DEFAULT_BOOKING_RULES: SlotEngineBookingRules = {
   maxAdvanceDays: 30,
   slotStepMinutes: 15,
 };
+const LATE_CANCEL_WINDOW_MINUTES = 24 * 60;
 
 const DEV_FALLBACK_OPERATING_HOURS: SlotEngineOperatingHours[] = [
   { dayOfWeek: 1, openTime: "09:00", closeTime: "17:00" },
@@ -104,6 +106,8 @@ type InternalAppointmentRecord = AppointmentSummary & {
   updatedAt: string;
   deletedAt: string | null;
   isWalkIn?: boolean;
+  noShowTrackedAt?: string | null;
+  lateCancelTrackedAt?: string | null;
 };
 
 type AppointmentServiceMemoryStores = {
@@ -563,6 +567,33 @@ function toIso(date: Date | string) {
   return normalizeDate(date).toISOString();
 }
 
+function isWithinLateCancelWindow(startTime: Date | string, now = new Date()) {
+  const start = normalizeDate(startTime);
+  const diffMinutes = (start.getTime() - now.getTime()) / 60_000;
+  return diffMinutes >= 0 && diffMinutes <= LATE_CANCEL_WINDOW_MINUTES;
+}
+
+function trackNoShowIfNeeded(record: InternalAppointmentRecord) {
+  if (record.noShowTrackedAt) return;
+  record.noShowTrackedAt = new Date().toISOString();
+  recordPatientNoShow({
+    clinicId: record.clinicId,
+    patientId: record.patientId,
+    occurredAt: record.noShowTrackedAt,
+  });
+}
+
+function trackLateCancelIfNeeded(record: InternalAppointmentRecord) {
+  if (record.lateCancelTrackedAt) return;
+  if (!isWithinLateCancelWindow(record.startTime)) return;
+  record.lateCancelTrackedAt = new Date().toISOString();
+  recordPatientLateCancel({
+    clinicId: record.clinicId,
+    patientId: record.patientId,
+    occurredAt: record.lateCancelTrackedAt,
+  });
+}
+
 function toUtcDayRange(date: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     throw new Error("Invalid date format. Expected YYYY-MM-DD.");
@@ -655,6 +686,8 @@ export async function createAppointmentForClinic(
     updatedAt: nowIso,
     deletedAt: null,
     isWalkIn: input.isWalkIn,
+    noShowTrackedAt: null,
+    lateCancelTrackedAt: null,
   };
 
   internalAppointmentStore.push(record);
@@ -756,10 +789,19 @@ export async function updateAppointmentForClinic(input: {
     record.endTime = scheduling.normalizedEndTime.toISOString();
   }
 
+  const previousStatus = record.status;
   if (input.patch.status) record.status = input.patch.status;
   if (input.patch.notes !== undefined) record.notes = input.patch.notes;
   if (input.patch.cancellationReason !== undefined) {
     record.cancellationReason = input.patch.cancellationReason;
+  }
+  if (input.patch.status && input.patch.status !== previousStatus) {
+    if (input.patch.status === "NO_SHOW") {
+      trackNoShowIfNeeded(record);
+    }
+    if (input.patch.status === "CANCELLED") {
+      trackLateCancelIfNeeded(record);
+    }
   }
   record.updatedAt = new Date().toISOString();
 
@@ -779,6 +821,7 @@ export async function deleteAppointmentForClinic(input: {
   if (!record) {
     return { ok: false, code: "APPOINTMENT_NOT_FOUND", message: "Appointment not found.", status: 404 };
   }
+  trackLateCancelIfNeeded(record);
   record.deletedAt = new Date().toISOString();
   record.updatedAt = record.deletedAt;
   return { ok: true, data: { id: record.id, deleted: true } };

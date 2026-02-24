@@ -99,6 +99,43 @@ export type UpsertPublicBookingPatientInput = {
 };
 
 const publicBookingPatientStore = new Map<string, PublicBookingPatientProfile>();
+type PatientAttendanceMetrics = {
+  noShowCount: number;
+  lateCancelCount: number;
+  lastNoShowAt: string | null;
+  lastLateCancelAt: string | null;
+};
+
+type PatientAttendanceMetricKey = `${string}|${string}`;
+
+function getAttendanceMetricsStore() {
+  const globalScope = globalThis as typeof globalThis & {
+    __healioPatientAttendanceMetrics?: Map<PatientAttendanceMetricKey, PatientAttendanceMetrics>;
+  };
+  if (!globalScope.__healioPatientAttendanceMetrics) {
+    globalScope.__healioPatientAttendanceMetrics = new Map();
+  }
+  return globalScope.__healioPatientAttendanceMetrics;
+}
+
+function attendanceMetricKey(clinicId: string, patientId: string): PatientAttendanceMetricKey {
+  return `${clinicId}|${patientId}`;
+}
+
+function getOrCreateAttendanceMetrics(clinicId: string, patientId: string) {
+  const store = getAttendanceMetricsStore();
+  const key = attendanceMetricKey(clinicId, patientId);
+  const existing = store.get(key);
+  if (existing) return existing;
+  const created: PatientAttendanceMetrics = {
+    noShowCount: 0,
+    lateCancelCount: 0,
+    lastNoShowAt: null,
+    lastLateCancelAt: null,
+  };
+  store.set(key, created);
+  return created;
+}
 
 function patientStoreKey(clinicSlug: string, email: string) {
   return `${clinicSlug}|${email.trim().toLowerCase()}`;
@@ -134,4 +171,39 @@ export async function upsertPatientFromPublicBooking(
   };
   publicBookingPatientStore.set(key, created);
   return created;
+}
+
+export function recordPatientNoShow(input: {
+  clinicId: string;
+  patientId: string;
+  occurredAt?: string;
+}) {
+  const metrics = getOrCreateAttendanceMetrics(input.clinicId, input.patientId);
+  metrics.noShowCount += 1;
+  metrics.lastNoShowAt = input.occurredAt ?? new Date().toISOString();
+  return { ...metrics };
+}
+
+export function recordPatientLateCancel(input: {
+  clinicId: string;
+  patientId: string;
+  occurredAt?: string;
+}) {
+  const metrics = getOrCreateAttendanceMetrics(input.clinicId, input.patientId);
+  metrics.lateCancelCount += 1;
+  metrics.lastLateCancelAt = input.occurredAt ?? new Date().toISOString();
+  return { ...metrics };
+}
+
+export function getPatientAttendanceMetrics(input: {
+  clinicId: string;
+  patientId: string;
+}): PatientAttendanceMetrics {
+  return {
+    ...getOrCreateAttendanceMetrics(input.clinicId, input.patientId),
+  };
+}
+
+export function resetPatientAttendanceMetricsForTests() {
+  getAttendanceMetricsStore().clear();
 }
