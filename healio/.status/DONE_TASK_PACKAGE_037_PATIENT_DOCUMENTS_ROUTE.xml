@@ -7,9 +7,9 @@
             <domain>Patient Documents API</domain>
             <estimated_time>40 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-034, HEALIO-036</dependencies>
             <prd_reference>Feature 3 API Endpoints</prd_reference>
         </metadata>
@@ -56,16 +56,21 @@
             <commit_message>feat(healio-patients): patient documents route</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>patient-documents-storage</owner>
+            <started_at>2026-02-24T18:12:39+08:00</started_at>
+            <completed_at>2026-02-24T18:12:39+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/patient-documents-route.test.ts</verification_command>
+            <verification_notes>Implemented tenant-scoped GET/POST patient document routes with multipart upload parsing, patient existence checks, file-required validation, and standard error/success envelopes. Responses include signed preview/download URLs (15-minute expiry) by enriching stored document metadata via documentService, which supports the upcoming patient documents tab UI.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/v1/patients/[id]/documents/route.ts, healio/services/documentService.ts, healio/tests/unit/patient-documents-route.test.ts, healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Route tests: `node --import tsx --test tests/unit/patient-documents-route.test.ts` passed; covers upload/list success, signed preview URL fields, unauthenticated rejection (401), invalid patient id (400), missing file (400), unsupported MIME (415), and tenant-scoped patient mismatch (404).</item>
+                <item>Persistence/side effects: in-memory document metadata/blob stores record uploaded documents and list ordering; GET/POST responses include `memory://signed/...` signed URLs via private-storage fallback in local test mode.</item>
+                <item>Implementation commit: 26c7352 (feat(healio-patients): patient documents route).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
