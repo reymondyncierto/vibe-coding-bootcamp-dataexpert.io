@@ -7,9 +7,9 @@
             <domain>Settings Frontend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-006, HEALIO-007, HEALIO-056, HEALIO-057, HEALIO-058</dependencies>
             <prd_reference>Feature 6 Clinic Settings + user bento/drawer guidance</prd_reference>
         </metadata>
@@ -65,17 +65,27 @@
             <commit_message>feat(healio): settings page bento ui</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>clinic-settings-admin</owner>
+            <started_at>2026-02-24T23:04:42+08:00</started_at>
+            <completed_at>2026-02-24T23:04:42+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; Chrome DevTools MCP on http://localhost:4012/settings (desktop/mobile interactions, console/network checks)</verification_command>
+            <verification_notes>Implemented settings bento workspace UI with clinic profile, operating hours, services, staff, and notification preference cards backed by existing settings APIs. Verified Stripe-style in-context drawer flows (profile/hours/preferences), keyboard Escape close behavior, mobile layout, and fixed a runtime checkbox handler bug found during MCP validation by capturing `checked` before the state updater callback.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Changed files: healio/app/(dashboard)/settings/page.tsx, healio/components/settings/clinic-profile-card.tsx, healio/components/settings/operating-hours-card.tsx, healio/components/settings/services-manager-card.tsx, healio/components/settings/staff-manager-card.tsx, healio/components/settings/notification-preferences-card.tsx.</item>
+                <item>Endpoint verification via UI/network: `GET /api/v1/clinics`, `GET /api/v1/services?includeInactive=true`, and `GET /api/v1/staff` all returned `200` and populated the corresponding bento cards.</item>
+                <item>Chrome DevTools MCP (desktop): verified `/settings` renders with bento cards, opened `Edit Profile` and `Edit Hours` drawers, and confirmed `Escape` closes drawers while preserving page context.</item>
+                <item>Chrome DevTools MCP (notification prefs): opened `Edit Preferences`, toggled the `1-hour SMS reminders` checkbox, clicked `Save Draft`, observed drawer close and success toast (`Saved locally`).</item>
+                <item>Chrome DevTools MCP (mobile 390x844): verified stacked card layout, mobile navigation visibility, and profile drawer open/close behavior without layout breakage.</item>
+                <item>Console check: `list_console_messages` returned no console messages after reload/fix. Network check: `list_network_requests` showed successful page/assets loads plus settings API `200` responses.</item>
+                <item>Runtime bug fix during verification: resolved `TypeError: Cannot read properties of null (reading 'checked')` in notification checkbox handler by capturing `e.currentTarget.checked` before `setNotificationPrefs` updater.</item>
+                <item>Typecheck passed: `npm run typecheck`.</item>
+                <item>Feature commit: 6e0c501 (feat(healio): settings page bento ui).</item>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
