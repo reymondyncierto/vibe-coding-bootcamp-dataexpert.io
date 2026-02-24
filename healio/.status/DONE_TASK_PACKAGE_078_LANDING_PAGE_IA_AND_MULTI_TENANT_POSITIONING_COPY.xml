@@ -7,9 +7,9 @@
             <domain>Marketing Content Strategy</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-077</dependencies>
             <prd_reference>Product positioning implied by PRD modules (booking, patients, billing, analytics, RBAC, tenant isolation) + user UI pillars</prd_reference>
         </metadata>
@@ -56,16 +56,19 @@
             <commit_message>docs(healio-marketing): landing page IA and multi-tenant positioning copy spec</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>frontend-design-system-shell</owner>
+            <started_at>2026-02-24T16:53:22Z</started_at>
+            <completed_at>2026-02-24T16:53:22Z</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>Review against HEALIO-077 benchmark and PRD module coverage; confirm landing-page-content-spec includes section hierarchy, copy, CTA strategy, multi-tenant/RBAC positioning, and component mapping.</verification_command>
+            <verification_notes>Spec includes implementation-ready copy, FAQ, footer labels, and componentization guidance for components/marketing/*, while avoiding unsupported compliance claims.</verification_notes>
             <evidence>
-                <item>When work starts/completes, record changed files, content decisions, and commit references here.</item>
+                <item>Changed file: healio/docs/marketing/landing-page-content-spec.md</item>
+                <item>Content decisions: dual CTA strategy (Start Free + Book a Demo), role-specific messaging (owner/doctor/front desk), explicit multi-tenant and clinic-scoped data positioning, and CTA/footer navigation labels.</item>
+                <item>Component mapping included for reusable sections under healio/components/marketing/*.</item>
+                <item>Feature commit: 2bc592a (docs(healio-marketing): landing page ia and multi-tenant positioning copy spec).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/content decisions as applicable.</completion_signal>
         </execution_tracking>
