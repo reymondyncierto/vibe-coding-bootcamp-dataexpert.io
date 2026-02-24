@@ -9,7 +9,8 @@ export type NotificationType =
   | "NO_SHOW_FOLLOWUP"
   | "INVOICE_SENT"
   | "PAYMENT_CONFIRMATION"
-  | "FOLLOWUP_REMINDER";
+  | "FOLLOWUP_REMINDER"
+  | "STAFF_INVITE";
 
 export type NotificationChannel = "EMAIL" | "SMS";
 export type NotificationStatus = "PENDING" | "SENT" | "FAILED";
