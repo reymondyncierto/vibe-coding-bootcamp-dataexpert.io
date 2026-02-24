@@ -4,6 +4,7 @@ import {
   parseTimeStringToMinutes,
   zonedDateTimeToUtc,
 } from "@/lib/utils";
+import type { AppointmentStatus } from "@/schemas/appointment";
 import type { PublicClinicProfile, PublicService } from "@/schemas/clinic";
 import {
   getPublicClinicProfileBySlug,
@@ -338,4 +339,190 @@ export async function createAppointmentFromPublicBooking(input: {
   };
   publicBookingAppointmentStore.push(record);
   return record;
+}
+
+type SchedulingRuleExistingAppointment = {
+  id?: string;
+  staffId: string;
+  startTime: Date | string;
+  endTime: Date | string;
+  status?: string | null;
+};
+
+export type AppointmentSchedulingRuleInput = {
+  startTime: Date | string;
+  endTime?: Date | string;
+  durationMinutes: number;
+  staffId: string;
+  existingAppointments?: SchedulingRuleExistingAppointment[];
+  allowDoubleBooking?: boolean;
+  now?: Date;
+  ignoreAppointmentId?: string;
+};
+
+export type AppointmentSchedulingRuleResult =
+  | { ok: true; normalizedStartTime: Date; normalizedEndTime: Date }
+  | {
+      ok: false;
+      code:
+        | "INVALID_START_TIME"
+        | "INVALID_END_TIME"
+        | "INVALID_DURATION"
+        | "INVALID_TIME_RANGE"
+        | "PAST_APPOINTMENT"
+        | "DURATION_MISMATCH"
+        | "OVERLAPPING_APPOINTMENT";
+      message: string;
+      details?: unknown;
+    };
+
+export type AppointmentStatusRuleResult =
+  | { ok: true }
+  | {
+      ok: false;
+      code: "INVALID_STATUS_TRANSITION" | "CANCELLATION_REASON_REQUIRED";
+      message: string;
+    };
+
+function parseDateInput(value: Date | string): Date | null {
+  const parsed = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function isTerminalStatus(status: string) {
+  return status === "COMPLETED" || status === "CANCELLED";
+}
+
+export function computeAppointmentEndTime(
+  startTime: Date | string,
+  durationMinutes: number,
+) {
+  const start = parseDateInput(startTime);
+  if (!start || !Number.isInteger(durationMinutes) || durationMinutes <= 0) {
+    return null;
+  }
+  return new Date(start.getTime() + durationMinutes * 60_000);
+}
+
+export function validateAppointmentSchedulingRules(
+  input: AppointmentSchedulingRuleInput,
+): AppointmentSchedulingRuleResult {
+  const start = parseDateInput(input.startTime);
+  if (!start) {
+    return {
+      ok: false,
+      code: "INVALID_START_TIME",
+      message: "Invalid appointment start time.",
+    };
+  }
+
+  if (!Number.isInteger(input.durationMinutes) || input.durationMinutes <= 0) {
+    return {
+      ok: false,
+      code: "INVALID_DURATION",
+      message: "Appointment duration must be a positive integer.",
+    };
+  }
+
+  const computedEnd = computeAppointmentEndTime(start, input.durationMinutes);
+  if (!computedEnd) {
+    return {
+      ok: false,
+      code: "INVALID_DURATION",
+      message: "Appointment duration must be a positive integer.",
+    };
+  }
+
+  let end = computedEnd;
+  if (input.endTime) {
+    const providedEnd = parseDateInput(input.endTime);
+    if (!providedEnd) {
+      return {
+        ok: false,
+        code: "INVALID_END_TIME",
+        message: "Invalid appointment end time.",
+      };
+    }
+    if (providedEnd.getTime() !== computedEnd.getTime()) {
+      return {
+        ok: false,
+        code: "DURATION_MISMATCH",
+        message: "Appointment end time does not match the provided duration.",
+        details: {
+          expectedEndTime: computedEnd.toISOString(),
+          providedEndTime: providedEnd.toISOString(),
+        },
+      };
+    }
+    end = providedEnd;
+  }
+
+  if (end <= start) {
+    return {
+      ok: false,
+      code: "INVALID_TIME_RANGE",
+      message: "Appointment end time must be after start time.",
+    };
+  }
+
+  const now = input.now ?? new Date();
+  if (start < now) {
+    return {
+      ok: false,
+      code: "PAST_APPOINTMENT",
+      message: "Appointments cannot be scheduled in the past.",
+    };
+  }
+
+  if (!input.allowDoubleBooking) {
+    const conflicts = (input.existingAppointments ?? []).some((item) => {
+      if (item.staffId !== input.staffId) return false;
+      if (input.ignoreAppointmentId && item.id === input.ignoreAppointmentId) return false;
+      const status = (item.status || "").toUpperCase();
+      if (status === "CANCELLED") return false;
+
+      const existingStart = parseDateInput(item.startTime);
+      const existingEnd = parseDateInput(item.endTime);
+      if (!existingStart || !existingEnd) return false;
+      return start < existingEnd && existingStart < end;
+    });
+
+    if (conflicts) {
+      return {
+        ok: false,
+        code: "OVERLAPPING_APPOINTMENT",
+        message: "This appointment overlaps with an existing booking for the same staff member.",
+      };
+    }
+  }
+
+  return { ok: true, normalizedStartTime: start, normalizedEndTime: end };
+}
+
+export function validateAppointmentStatusTransition(input: {
+  currentStatus: AppointmentStatus;
+  nextStatus: AppointmentStatus;
+  cancellationReason?: string | null;
+}): AppointmentStatusRuleResult {
+  if (input.currentStatus === input.nextStatus) {
+    return { ok: true };
+  }
+
+  if (isTerminalStatus(input.currentStatus)) {
+    return {
+      ok: false,
+      code: "INVALID_STATUS_TRANSITION",
+      message: `Cannot change status after ${input.currentStatus.toLowerCase()}.`,
+    };
+  }
+
+  if (input.nextStatus === "CANCELLED" && !input.cancellationReason?.trim()) {
+    return {
+      ok: false,
+      code: "CANCELLATION_REASON_REQUIRED",
+      message: "Cancellation reason is required when cancelling an appointment.",
+    };
+  }
+
+  return { ok: true };
 }
