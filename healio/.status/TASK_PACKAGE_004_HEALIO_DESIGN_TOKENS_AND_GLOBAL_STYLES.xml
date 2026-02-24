@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='utf-8'?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-004</id>
+            <title>Implement Healio Design Tokens and Global Styles</title>
+            <domain>Frontend Design System</domain>
+            <estimated_time>45 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-001</dependencies>
+            <prd_reference>5 Frontend Design Guidelines + user Healio UI pillars</prd_reference>
+        </metadata>
+        <context>
+            <background>This task implements Implement Healio Design Tokens and Global Styles for Healio and is scoped as one atomic work item aligned to the PRD. It should be completed within 45 mins and leave clear evidence for follow-on tasks.</background>
+            <files_involved>
+                <file>healio/styles/globals.css</file>
+                <file>healio/tailwind.config.ts</file>
+                <file>healio/app/layout.tsx</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>none</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Use Stripe-like frictionless workflows: create/edit actions should open centered modals or slide-out drawers instead of disruptive full-page forms.</constraint>
+                <constraint>Use a Viedoc-style bento layout: soft floating white cards on an off-white background for dashboards and dense data views.</constraint>
+                <constraint>Apply the Paper Replacement palette: app background near #F9FAFB, white cards, calm trustworthy accents (teal/sage/cerulean), and reserve red for critical alerts only.</constraint>
+                <constraint>Preserve high-legibility typography: clean sans-serif (Inter/SF Pro/Halyard), bold patient names, slate-gray secondary metadata.</constraint>
+                <constraint>Honor the one-click rule where applicable: keep the global + action for Add Appointment, Add Patient, and Create Invoice visible and easy to reach.</constraint>
+                <constraint>Add educational empty states with clear CTAs for first-time or empty datasets.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Implement the scoped changes for Implement Healio Design Tokens and Global Styles in the planned files (healio/styles/globals.css, healio/tailwind.config.ts, healio/app/layout.tsx) while preserving the PRD-aligned project structure.</step>
+            <step>Apply validation, error handling, and consistent response/UI behavior so the task output integrates cleanly with existing helpers and patterns.</step>
+            <step>Wire integrations and dependencies for this task (endpoints: none) and keep tenant scoping/RBAC/security expectations intact where applicable.</step>
+            <step>Prefer in-context modal/drawer workflows, scannable bento cards, and educational empty states so the UI matches the requested Healio experience.</step>
+            <step>Verify keyboard/focus behavior, touch target sizing, and mobile responsiveness before marking the task ready.</step>
+            <validation_checklist>
+                <check>Run lint/typecheck or the smallest relevant test suite for the files changed by this task.</check>
+                <check>Manually verify desktop and mobile layouts plus focus/keyboard behavior for the primary interaction path.</check>
+                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check><check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Next.js page/component updates</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>The deliverable for Implement Healio Design Tokens and Global Styles is implemented in the referenced files and compiles without breaking adjacent modules.</criterion>
+                <criterion>Task output matches the PRD scope (5 Frontend Design Guidelines + user Healio UI pillars) and remains bounded to an atomic &lt;=45-minute implementation chunk.</criterion>
+                <criterion>UI states (loading, empty, error, success) are present and visually consistent with Healio bento cards, off-white background, and trust-oriented styling.</criterion>
+                <criterion>Interactions are keyboard accessible and usable on mobile without disruptive navigation when a modal/drawer workflow is appropriate.</criterion>
+            </acceptance_criteria>
+            <commit_message>feat(healio): healio design tokens and global styles</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner />
+            <started_at />
+            <completed_at />
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command />
+            <verification_notes />
+            <evidence>
+                <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>Full-Stack Next.js Engineer</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-001</blocks_on>
+            <task_slug>HEALIO_DESIGN_TOKENS_AND_GLOBAL_STYLES</task_slug>
+        <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool><verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref></references>
+    </task_package>
+</task_packages>

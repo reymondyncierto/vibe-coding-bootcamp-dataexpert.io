@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-055</id>
+            <title>Implement Overdue Invoice and Subscription Check Cron Routes</title>
+            <domain>Cron Jobs</domain>
+            <estimated_time>45 mins</estimated_time>
+            <priority>medium</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-045, HEALIO-048, HEALIO-061</dependencies>
+            <prd_reference>1.2 Cron Jobs; Feature 4 overdue invoices; Feature 8 grace period</prd_reference>
+        </metadata>
+        <context>
+            <background>This task implements Implement Overdue Invoice and Subscription Check Cron Routes for Healio and is scoped as one atomic work item aligned to the PRD. It should be completed within 45 mins and leave clear evidence for follow-on tasks.</background>
+            <files_involved>
+                <file>healio/app/api/cron/overdue-invoices/route.ts</file>
+                <file>healio/app/api/cron/subscription-check/route.ts</file>
+                <file>healio/services/invoiceService.ts</file>
+                <file>healio/services/subscriptionService.ts</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>/api/cron/overdue-invoices</endpoint>
+                <endpoint>/api/cron/subscription-check</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Follow the PRD architecture/security conventions and keep outputs compatible with the Healio design system and response envelopes.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Implement the scoped changes for Implement Overdue Invoice and Subscription Check Cron Routes in the planned files (healio/app/api/cron/overdue-invoices/route.ts, healio/app/api/cron/subscription-check/route.ts, healio/services/invoiceService.ts, healio/services/subscriptionService.ts) while preserving the PRD-aligned project structure.</step>
+            <step>Apply validation, error handling, and consistent response/UI behavior so the task output integrates cleanly with existing helpers and patterns.</step>
+            <step>Wire integrations and dependencies for this task (endpoints: /api/cron/overdue-invoices, /api/cron/subscription-check) and keep tenant scoping/RBAC/security expectations intact where applicable.</step>
+            <step>Add or update focused tests (unit/integration) for critical business rules, idempotency, or security behavior introduced by this task.</step>
+            <step>Document assumptions and any follow-on schema/API contracts in code comments or lightweight docs when they affect downstream tasks.</step>
+            <validation_checklist>
+                <check>Exercise the related endpoint(s): /api/cron/overdue-invoices, /api/cron/subscription-check and verify response shape/status codes.</check>
+                <check>Run lint/typecheck or the smallest relevant test suite for the files changed by this task.</check>
+                <check>Validate security/tenant behavior with at least one negative test or rejection scenario when applicable.</check>
+                <check>Record evidence of persistence/side effects (DB row change, log entry, webhook event handling, cache behavior, etc.) as applicable.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Next.js page/component updates</artifact>
+                <artifact>Route handler/API contract updates</artifact>
+                <artifact>Service-layer business logic updates</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>The deliverable for Implement Overdue Invoice and Subscription Check Cron Routes is implemented in the referenced files and compiles without breaking adjacent modules.</criterion>
+                <criterion>Task output matches the PRD scope (1.2 Cron Jobs; Feature 4 overdue invoices; Feature 8 grace period) and remains bounded to an atomic &lt;=45-minute implementation chunk.</criterion>
+                <criterion>Related endpoint behavior returns the standard success/error envelope and respects auth/public route expectations for the route class.</criterion>
+                <criterion>Business rules, tenant scoping, and security constraints relevant to this task are enforced (validation, idempotency, RBAC, webhook/cron protection, etc.).</criterion>
+                <criterion>At least one verification artifact (test case, curl call, or fixture-driven check) proves the new behavior works and regressions are covered.</criterion>
+            </acceptance_criteria>
+            <commit_message>feat(healio-cron): overdue and subscription cron routes</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>Full-Stack Next.js Engineer</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-045, HEALIO-048, HEALIO-061</blocks_on>
+            <task_slug>OVERDUE_AND_SUBSCRIPTION_CRON_ROUTES</task_slug>
+        </references>
+    </task_package>
+</task_packages>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<frontend_verification_rules>
+    <metadata>
+        <id>HEALIO-FRONTEND-VERIFICATION-RULES</id>
+        <version>1.0</version>
+        <status>ACTIVE</status>
+        <scope>All frontend and UI-facing task XML files in healio/.status that require Chrome DevTools MCP verification.</scope>
+        <purpose>Standardize how frontend work is verified in-browser so task completion evidence is consistent, reproducible, and easy to audit.</purpose>
+    </metadata>
+
+    <tool_requirement>
+        <required_tool>Chrome DevTools MCP</required_tool>
+        <rule>Frontend tasks must be validated in a real browser session using Chrome DevTools MCP before execution_tracking/state is marked DONE.</rule>
+        <minimum_expectation>Desktop check + mobile check + interaction check + console check + evidence capture.</minimum_expectation>
+    </tool_requirement>
+
+    <app_preconditions>
+        <precondition>The relevant page/route must be runnable locally (or in a preview environment) before verification begins.</precondition>
+        <precondition>Use realistic fixture/seed data when a UI requires records (appointments, patients, invoices, analytics, settings).</precondition>
+        <precondition>If a task depends on backend endpoints not yet implemented, record the blocker explicitly in execution_tracking/verification_notes and do not mark the task DONE.</precondition>
+    </app_preconditions>
+
+    <required_mcp_workflow>
+        <step order="1">Open or select a browser page using Chrome DevTools MCP and navigate to the target route for the task under verification.</step>
+        <step order="2">Capture a page snapshot (accessibility/text snapshot preferred) to confirm the expected UI surface loaded.</step>
+        <step order="3">Run a desktop viewport check (recommended width at least 1280px) and verify layout, spacing, card grouping, and primary actions.</step>
+        <step order="4">Run a mobile viewport check (recommended widths around 390px and/or 430px) and verify usability without horizontal overflow.</step>
+        <step order="5">Exercise the primary interaction path for the task (open modal/drawer, submit form, toggle views, filter list, navigate tabs, etc.).</step>
+        <step order="6">Inspect console messages and confirm there are no unexpected uncaught errors or critical warnings introduced by the task.</step>
+        <step order="7">Capture evidence (snapshot/screenshot + short notes) and write it into the task XML execution_tracking/evidence section.</step>
+        <step order="8">Only then update execution_tracking/state, is_done, completed_at, and verification_status to reflect the actual result.</step>
+    </required_mcp_workflow>
+
+    <recommended_mcp_actions>
+        <action>mcp__chrome-devtools__new_page or mcp__chrome-devtools__select_page</action>
+        <action>mcp__chrome-devtools__navigate_page</action>
+        <action>mcp__chrome-devtools__resize_page (desktop and mobile widths)</action>
+        <action>mcp__chrome-devtools__take_snapshot (preferred for actionable verification)</action>
+        <action>mcp__chrome-devtools__click / fill / fill_form / press_key (interaction validation)</action>
+        <action>mcp__chrome-devtools__list_console_messages (console regression check)</action>
+        <action>mcp__chrome-devtools__take_screenshot (visual evidence capture)</action>
+    </recommended_mcp_actions>
+
+    <ui_quality_checks>
+        <layout_and_visuals>
+            <check>UI follows Healio visual direction: off-white app background, white cards, calm/trustworthy accents, strong readability hierarchy.</check>
+            <check>Bento-style card grouping is scannable and does not collapse into dense spreadsheet-like blocks unless explicitly intended.</check>
+            <check>Primary actions and key record identifiers (patient names, appointment status, invoice totals) are visually obvious.</check>
+        </layout_and_visuals>
+
+        <responsive_behavior>
+            <check>Desktop layout remains structured and balanced (sidebar, content width, card spacing, drawer placement).</check>
+            <check>Mobile layout is usable with touch targets, readable text, and no critical clipping or horizontal scrolling.</check>
+            <check>Tables/lists degrade gracefully on mobile (stacking/cards/scroll treatment) without blocking core actions.</check>
+        </responsive_behavior>
+
+        <interaction_flows>
+            <check>Primary task interaction completes in-context where designed (modal/drawer) instead of disruptive navigation.</check>
+            <check>Buttons, toggles, tabs, filters, and menus respond correctly and preserve context/state when expected.</check>
+            <check>Loading, success, error, and empty states are present and understandable for the verified flow.</check>
+        </interaction_flows>
+
+        <accessibility_basics>
+            <check>Keyboard navigation works for the primary flow (Tab/Enter/Escape) where applicable.</check>
+            <check>Focus remains visible and usable, especially in modals/drawers and quick-action menus.</check>
+            <check>Interactive elements and labels are readable under normal and compact viewport conditions.</check>
+        </accessibility_basics>
+
+        <console_and_runtime>
+            <check>No unexpected uncaught runtime errors appear in the browser console during the verified flow.</check>
+            <check>Warnings are reviewed and either resolved or explicitly documented in verification notes when non-blocking.</check>
+        </console_and_runtime>
+    </ui_quality_checks>
+
+    <task_type_specific_checks>
+        <forms_and_drawers>
+            <check>Modal/drawer opens and closes correctly (button trigger, Escape key, click outside when supported).</check>
+            <check>Field validation messages appear inline and are understandable.</check>
+            <check>Submission errors do not wipe all user-entered context unless intentionally reset.</check>
+        </forms_and_drawers>
+
+        <dashboards_and_lists>
+            <check>Filters/search/toggles update content without layout breakage.</check>
+            <check>Empty states include guidance and a next-step CTA (for example, create first appointment/patient/invoice).</check>
+            <check>Skeleton/loading states render instead of abrupt blank containers for initial fetches.</check>
+        </dashboards_and_lists>
+
+        <charts_and_analytics>
+            <check>Chart labels, legends, and tooltips are readable and not overlapping at common viewport sizes.</check>
+            <check>Sparse/empty data renders an intentional empty state instead of broken chart scaffolding.</check>
+        </charts_and_analytics>
+
+        <public_booking_and_payment_flows>
+            <check>Step flow remains guided and recoverable (users can change earlier selections without losing all progress unexpectedly).</check>
+            <check>Confirmation/error messaging is clear, human-readable, and suitable for patient-facing use.</check>
+        </public_booking_and_payment_flows>
+    </task_type_specific_checks>
+
+    <pass_fail_rules>
+        <pass_condition>verification_status may be set to PASSED only if the required MCP workflow was completed and no blocking UI/runtime defects remain for the task scope.</pass_condition>
+        <fail_condition>If layout breakage, blocked interaction, console runtime error, or inaccessible primary flow is found, set verification_status to FAILED and document reproduction notes.</fail_condition>
+        <blocked_condition>If dependencies or backend routes are incomplete, set verification_status to BLOCKED (or keep NOT_RUN if your task process uses that state) and record the exact blocker.</blocked_condition>
+    </pass_fail_rules>
+
+    <evidence_requirements>
+        <required_item>Target URL/route verified</required_item>
+        <required_item>Desktop viewport size(s) checked</required_item>
+        <required_item>Mobile viewport size(s) checked</required_item>
+        <required_item>Primary interaction(s) exercised</required_item>
+        <required_item>Console check result (no errors or documented warnings)</required_item>
+        <required_item>Snapshot/screenshot reference captured via Chrome DevTools MCP</required_item>
+        <required_item>Short pass/fail summary with any known limitations</required_item>
+    </evidence_requirements>
+
+    <task_xml_update_template>
+        <instruction>Use this structure when filling execution_tracking fields in a frontend task XML after verification.</instruction>
+        <example_fields>
+            <field name="state">DONE or IN_PROGRESS or BLOCKED</field>
+            <field name="is_done">true only when task is fully complete and verified</field>
+            <field name="verification_status">PASSED / FAILED / BLOCKED / NOT_RUN</field>
+            <field name="verification_command">Chrome DevTools MCP: navigate + resize (desktop/mobile) + snapshot + interaction + console check</field>
+            <field name="verification_notes">Concise notes on what was tested, defects found, and any temporary constraints</field>
+        </example_fields>
+        <example_evidence_items>
+            <item>Route verified: /dashboard/appointments (seeded clinic data)</item>
+            <item>Desktop check: 1440x900; mobile check: 390x844</item>
+            <item>Interactions: opened appointment drawer, changed status, closed with Escape</item>
+            <item>Console: no uncaught errors; one non-blocking warning documented</item>
+            <item>Chrome DevTools MCP snapshot/screenshot captured for pass evidence</item>
+        </example_evidence_items>
+    </task_xml_update_template>
+
+    <references>
+        <related_location>healio/.status/TASK_PACKAGE_*.xml (frontend/UI tasks)</related_location>
+        <related_requirement>Frontend tasks include a validation checklist item requiring Chrome DevTools MCP verification.</related_requirement>
+    </references>
+</frontend_verification_rules>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-043</id>
+            <title>Implement Invoice Schemas, Totals Calculation, and Invoice Numbering</title>
+            <domain>Billing Backend</domain>
+            <estimated_time>45 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-010, HEALIO-012, HEALIO-016</dependencies>
+            <prd_reference>Feature 4 Billing &amp; Invoicing</prd_reference>
+        </metadata>
+        <context>
+            <background>This task implements Implement Invoice Schemas, Totals Calculation, and Invoice Numbering for Healio and is scoped as one atomic work item aligned to the PRD. It should be completed within 45 mins and leave clear evidence for follow-on tasks.</background>
+            <files_involved>
+                <file>healio/schemas/invoice.ts</file>
+                <file>healio/services/invoiceService.ts</file>
+                <file>healio/lib/utils.ts</file>
+                <file>healio/tests/unit/invoice-service.test.ts</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>none</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Follow the PRD architecture/security conventions and keep outputs compatible with the Healio design system and response envelopes.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Implement the scoped changes for Implement Invoice Schemas, Totals Calculation, and Invoice Numbering in the planned files (healio/schemas/invoice.ts, healio/services/invoiceService.ts, healio/lib/utils.ts, healio/tests/unit/invoice-service.test.ts) while preserving the PRD-aligned project structure.</step>
+            <step>Apply validation, error handling, and consistent response/UI behavior so the task output integrates cleanly with existing helpers and patterns.</step>
+            <step>Wire integrations and dependencies for this task (endpoints: none) and keep tenant scoping/RBAC/security expectations intact where applicable.</step>
+            <step>Add or update focused tests (unit/integration) for critical business rules, idempotency, or security behavior introduced by this task.</step>
+            <step>Document assumptions and any follow-on schema/API contracts in code comments or lightweight docs when they affect downstream tasks.</step>
+            <validation_checklist>
+                <check>Run lint/typecheck or the smallest relevant test suite for the files changed by this task.</check>
+                <check>Validate security/tenant behavior with at least one negative test or rejection scenario when applicable.</check>
+                <check>Record evidence of persistence/side effects (DB row change, log entry, webhook event handling, cache behavior, etc.) as applicable.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Service-layer business logic updates</artifact>
+                <artifact>Verification tests or fixtures</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>The deliverable for Implement Invoice Schemas, Totals Calculation, and Invoice Numbering is implemented in the referenced files and compiles without breaking adjacent modules.</criterion>
+                <criterion>Task output matches the PRD scope (Feature 4 Billing &amp; Invoicing) and remains bounded to an atomic &lt;=45-minute implementation chunk.</criterion>
+                <criterion>Business rules, tenant scoping, and security constraints relevant to this task are enforced (validation, idempotency, RBAC, webhook/cron protection, etc.).</criterion>
+                <criterion>At least one verification artifact (test case, curl call, or fixture-driven check) proves the new behavior works and regressions are covered.</criterion>
+            </acceptance_criteria>
+            <commit_message>feat(healio-billing): invoice schemas totals and numbering</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>Full-Stack Next.js Engineer</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-010, HEALIO-012, HEALIO-016</blocks_on>
+            <task_slug>INVOICE_SCHEMAS_TOTALS_AND_NUMBERING</task_slug>
+        </references>
+    </task_package>
+</task_packages>

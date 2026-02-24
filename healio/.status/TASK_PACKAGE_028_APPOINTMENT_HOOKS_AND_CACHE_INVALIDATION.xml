@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-028</id>
+            <title>Create Appointment Data Hooks and Cache Invalidation</title>
+            <domain>Appointments Frontend</domain>
+            <estimated_time>35 mins</estimated_time>
+            <priority>medium</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-008, HEALIO-026, HEALIO-027</dependencies>
+            <prd_reference>6.2 Caching Strategy; hooks/useAppointments.ts</prd_reference>
+        </metadata>
+        <context>
+            <background>This task implements Create Appointment Data Hooks and Cache Invalidation for Healio and is scoped as one atomic work item aligned to the PRD. It should be completed within 35 mins and leave clear evidence for follow-on tasks.</background>
+            <files_involved>
+                <file>healio/hooks/useAppointments.ts</file>
+                <file>healio/lib/query-keys.ts</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>GET /api/v1/appointments</endpoint>
+                <endpoint>GET /api/v1/appointments/:id</endpoint>
+                <endpoint>PATCH /api/v1/appointments/:id</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Follow the PRD architecture/security conventions and keep outputs compatible with the Healio design system and response envelopes.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Implement the scoped changes for Create Appointment Data Hooks and Cache Invalidation in the planned files (healio/hooks/useAppointments.ts, healio/lib/query-keys.ts) while preserving the PRD-aligned project structure.</step>
+            <step>Apply validation, error handling, and consistent response/UI behavior so the task output integrates cleanly with existing helpers and patterns.</step>
+            <step>Wire integrations and dependencies for this task (endpoints: GET /api/v1/appointments, GET /api/v1/appointments/:id, PATCH /api/v1/appointments/:id) and keep tenant scoping/RBAC/security expectations intact where applicable.</step>
+            <step>Add or update focused tests (unit/integration) for critical business rules, idempotency, or security behavior introduced by this task.</step>
+            <step>Document assumptions and any follow-on schema/API contracts in code comments or lightweight docs when they affect downstream tasks.</step>
+            <validation_checklist>
+                <check>Exercise the related endpoint(s): GET /api/v1/appointments, GET /api/v1/appointments/:id, PATCH /api/v1/appointments/:id and verify response shape/status codes.</check>
+                <check>Run lint/typecheck or the smallest relevant test suite for the files changed by this task.</check>
+                <check>Validate security/tenant behavior with at least one negative test or rejection scenario when applicable.</check>
+                <check>Record evidence of persistence/side effects (DB row change, log entry, webhook event handling, cache behavior, etc.) as applicable.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Route handler/API contract updates</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>The deliverable for Create Appointment Data Hooks and Cache Invalidation is implemented in the referenced files and compiles without breaking adjacent modules.</criterion>
+                <criterion>Task output matches the PRD scope (6.2 Caching Strategy; hooks/useAppointments.ts) and remains bounded to an atomic &lt;=45-minute implementation chunk.</criterion>
+                <criterion>Related endpoint behavior returns the standard success/error envelope and respects auth/public route expectations for the route class.</criterion>
+                <criterion>Business rules, tenant scoping, and security constraints relevant to this task are enforced (validation, idempotency, RBAC, webhook/cron protection, etc.).</criterion>
+                <criterion>At least one verification artifact (test case, curl call, or fixture-driven check) proves the new behavior works and regressions are covered.</criterion>
+            </acceptance_criteria>
+            <commit_message>feat(healio-appointments): appointment hooks and cache invalidation</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>Full-Stack Next.js Engineer</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-008, HEALIO-026, HEALIO-027</blocks_on>
+            <task_slug>APPOINTMENT_HOOKS_AND_CACHE_INVALIDATION</task_slug>
+        </references>
+    </task_package>
+</task_packages>

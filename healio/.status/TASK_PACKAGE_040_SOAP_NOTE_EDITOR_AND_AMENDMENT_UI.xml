@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='utf-8'?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-040</id>
+            <title>Implement SOAP Note Editor and Amendment UX</title>
+            <domain>Patient Records Frontend</domain>
+            <estimated_time>45 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-006, HEALIO-035, HEALIO-039</dependencies>
+            <prd_reference>Feature 3 Visit Note Editor (TipTap) + append-only amendment rule</prd_reference>
+        </metadata>
+        <context>
+            <background>This task implements Implement SOAP Note Editor and Amendment UX for Healio and is scoped as one atomic work item aligned to the PRD. It should be completed within 45 mins and leave clear evidence for follow-on tasks.</background>
+            <files_involved>
+                <file>healio/components/patients/soap-note-editor.tsx</file>
+                <file>healio/components/patients/visit-note-timeline.tsx</file>
+                <file>healio/components/patients/create-visit-note-drawer.tsx</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>GET /api/v1/patients/:id/visits</endpoint>
+                <endpoint>POST /api/v1/patients/:id/visits</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Use Stripe-like frictionless workflows: create/edit actions should open centered modals or slide-out drawers instead of disruptive full-page forms.</constraint>
+                <constraint>Use a Viedoc-style bento layout: soft floating white cards on an off-white background for dashboards and dense data views.</constraint>
+                <constraint>Apply the Paper Replacement palette: app background near #F9FAFB, white cards, calm trustworthy accents (teal/sage/cerulean), and reserve red for critical alerts only.</constraint>
+                <constraint>Preserve high-legibility typography: clean sans-serif (Inter/SF Pro/Halyard), bold patient names, slate-gray secondary metadata.</constraint>
+                <constraint>Honor the one-click rule where applicable: keep the global + action for Add Appointment, Add Patient, and Create Invoice visible and easy to reach.</constraint>
+                <constraint>Add educational empty states with clear CTAs for first-time or empty datasets.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Implement the scoped changes for Implement SOAP Note Editor and Amendment UX in the planned files (healio/components/patients/soap-note-editor.tsx, healio/components/patients/visit-note-timeline.tsx, healio/components/patients/create-visit-note-drawer.tsx) while preserving the PRD-aligned project structure.</step>
+            <step>Apply validation, error handling, and consistent response/UI behavior so the task output integrates cleanly with existing helpers and patterns.</step>
+            <step>Wire integrations and dependencies for this task (endpoints: GET /api/v1/patients/:id/visits, POST /api/v1/patients/:id/visits) and keep tenant scoping/RBAC/security expectations intact where applicable.</step>
+            <step>Prefer in-context modal/drawer workflows, scannable bento cards, and educational empty states so the UI matches the requested Healio experience.</step>
+            <step>Verify keyboard/focus behavior, touch target sizing, and mobile responsiveness before marking the task ready.</step>
+            <validation_checklist>
+                <check>Exercise the related endpoint(s): GET /api/v1/patients/:id/visits, POST /api/v1/patients/:id/visits and verify response shape/status codes.</check>
+                <check>Run lint/typecheck or the smallest relevant test suite for the files changed by this task.</check>
+                <check>Manually verify desktop and mobile layouts plus focus/keyboard behavior for the primary interaction path.</check>
+                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check><check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Next.js page/component updates</artifact>
+                <artifact>Route handler/API contract updates</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>The deliverable for Implement SOAP Note Editor and Amendment UX is implemented in the referenced files and compiles without breaking adjacent modules.</criterion>
+                <criterion>Task output matches the PRD scope (Feature 3 Visit Note Editor (TipTap) + append-only amendment rule) and remains bounded to an atomic &lt;=45-minute implementation chunk.</criterion>
+                <criterion>Related endpoint behavior returns the standard success/error envelope and respects auth/public route expectations for the route class.</criterion>
+                <criterion>UI states (loading, empty, error, success) are present and visually consistent with Healio bento cards, off-white background, and trust-oriented styling.</criterion>
+                <criterion>Interactions are keyboard accessible and usable on mobile without disruptive navigation when a modal/drawer workflow is appropriate.</criterion>
+            </acceptance_criteria>
+            <commit_message>feat(healio-patients): soap note editor and amendment ui</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner />
+            <started_at />
+            <completed_at />
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command />
+            <verification_notes />
+            <evidence>
+                <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>Full-Stack Next.js Engineer</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-006, HEALIO-035, HEALIO-039</blocks_on>
+            <task_slug>SOAP_NOTE_EDITOR_AND_AMENDMENT_UI</task_slug>
+        <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool><verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref></references>
+    </task_package>
+</task_packages>
