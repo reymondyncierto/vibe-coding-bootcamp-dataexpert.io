@@ -149,7 +149,7 @@ Healio uses Supabase for authentication and reads custom claims (`clinicId`, `ro
    - Project URL → `NEXT_PUBLIC_SUPABASE_URL`
    - Anon key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - Service role key → `SUPABASE_SERVICE_ROLE_KEY`
-3. Configure auth providers (email OTP, optionally Google OAuth).
+3. Configure auth providers (email/password and/or email OTP; Google OAuth optional).
 4. Add redirect URLs in Supabase Auth settings:
    - `http://localhost:3000/auth/callback`
    - `https://<your-domain>/auth/callback`
@@ -157,7 +157,10 @@ Healio uses Supabase for authentication and reads custom claims (`clinicId`, `ro
    - `clinicId`
    - `role` (`OWNER`, `DOCTOR`, or `RECEPTIONIST`)
 
-Detailed setup (Google OAuth + Supabase + Healio callback URLs):
+Detailed setup (primary: email/password auth):
+- `healio/docs/supabase-email-password-auth-setup.md`
+
+Optional Google OAuth setup:
 - `healio/docs/supabase-google-auth-setup.md`
 
 Notes:
