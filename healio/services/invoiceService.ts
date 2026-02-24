@@ -389,6 +389,34 @@ export function setInvoiceStripeCheckoutLinkForClinic(input: {
   return { ok: true, data: structuredClone(updated) };
 }
 
+export function markInvoicePaidFromStripeWebhook(input: {
+  invoiceId: string;
+  stripePaymentIntentId?: string | null;
+  paidAt?: Date;
+}): InvoiceServiceResult<InvoiceDetail> {
+  const store = getInvoiceStore();
+  const index = store.findIndex(
+    (invoice) => invoice.id === input.invoiceId && invoice.deletedAt === null,
+  );
+  if (index === -1) {
+    return { ok: false, code: "INVOICE_NOT_FOUND", message: "Invoice not found.", status: 404 };
+  }
+
+  const current = store[index];
+  const paidAtIso = (input.paidAt ?? new Date()).toISOString();
+  const updated: InvoiceRecord = {
+    ...current,
+    status: "PAID",
+    paidAmount: current.total,
+    paymentMethod: "STRIPE",
+    paidAt: current.paidAt ?? paidAtIso,
+    stripePaymentIntentId: input.stripePaymentIntentId ?? current.stripePaymentIntentId,
+    updatedAt: paidAtIso,
+  };
+  store[index] = updated;
+  return { ok: true, data: structuredClone(updated) };
+}
+
 export function resetInvoiceStoresForTests() {
   getInvoiceStore().length = 0;
   getInvoiceSequenceStore().clear();
