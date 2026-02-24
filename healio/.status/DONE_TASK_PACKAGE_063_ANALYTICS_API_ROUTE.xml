@@ -7,9 +7,9 @@
             <domain>Analytics API</domain>
             <estimated_time>30 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-015, HEALIO-016, HEALIO-062</dependencies>
             <prd_reference>Feature 9 analytics endpoint</prd_reference>
         </metadata>
@@ -55,16 +55,21 @@
             <commit_message>feat(healio-analytics): analytics api route</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>analytics-reporting</owner>
+            <started_at>2026-02-24T23:20:11+08:00</started_at>
+            <completed_at>2026-02-24T23:20:11+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/analytics-route.test.ts</verification_command>
+            <verification_notes>Added protected `GET /api/v1/analytics` with query validation (`days` 1-90), standard success/error envelopes, request logging, and clinic-scoped analytics aggregation via `analyticsService`. Route tests verify success, unauthenticated rejection (`401`), and invalid query rejection (`400`).</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/v1/analytics/route.ts, healio/tests/unit/analytics-route.test.ts.</item>
+                <item>Endpoint verification (unit test): `GET /api/v1/analytics?days=14` returns `200` with clinic-scoped analytics payload and range metadata.</item>
+                <item>Security/validation verification: missing auth headers returns `401`; invalid `days=999` returns `400` with query issues.</item>
+                <item>Typecheck/tests passed: `npm run typecheck`; `node --import tsx --test tests/unit/analytics-route.test.ts`.</item>
+                <item>Feature commit: c1fd892 (feat(healio-analytics): analytics api route).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
