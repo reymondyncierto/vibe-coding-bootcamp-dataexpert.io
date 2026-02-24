@@ -7,9 +7,9 @@
             <domain>Appointments Frontend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-006, HEALIO-027, HEALIO-028, HEALIO-029</dependencies>
             <prd_reference>Feature 2 Appointment Detail Drawer + Quick Actions</prd_reference>
         </metadata>
@@ -62,17 +62,28 @@
             <commit_message>feat(healio-appointments): appointment detail drawer and quick actions ui</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>appointments-operations</owner>
+            <started_at>2026-02-24T17:50:52+08:00</started_at>
+            <completed_at>2026-02-24T17:50:52+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/appointments-route.test.ts tests/unit/appointment-detail-route.test.ts; Chrome DevTools MCP drawer flow on /appointments (GET detail, PATCH status, PATCH notes, DELETE, mobile drawer + ESC, console/network checks)</verification_command>
+            <verification_notes>Implemented a real appointment detail drawer workflow with status actions and quick actions (notes + delete), wired to detail/update/delete hooks. A local Next.js dev/HMR issue caused list/create and detail routes to use separate in-memory stores; fixed appointmentService to store dev in-memory arrays on globalThis so GET/PATCH/DELETE can operate on appointments created via the list/day-view flow. Chrome DevTools MCP verified desktop/mobile drawer behavior and endpoint interactions end-to-end.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/components/appointments/appointment-detail-drawer.tsx, healio/components/appointments/appointment-status-actions.tsx, healio/components/appointments/appointment-quick-actions.tsx, healio/components/appointments/daily-schedule.tsx (integrates new drawer and demo seed adjustment), healio/services/appointmentService.ts (globalThis-backed in-memory stores for dev/HMR consistency), plus generated healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Route regression tests (covers list/detail/update/delete): `node --import tsx --test tests/unit/appointments-route.test.ts tests/unit/appointment-detail-route.test.ts` passed after the global store fix.</item>
+                <item>Chrome DevTools MCP desktop verification: snapshot uid set 80 confirmed drawer success state with appointment metadata + status/quick-action sections after clicking a timeline row; click snapshot after uid 80_19 showed status transition to CHECKED_IN and inline success message (`Status updated to CHECKED_IN.`); notes save snapshot showed timeline row + drawer reflecting updated notes and inline `Notes saved.` message.</item>
+                <item>Chrome DevTools MCP mobile verification: mobile snapshot uid set 84 confirmed responsive layout with remaining timeline rows; drawer snapshot uid set 85 confirmed detail drawer usability on mobile; `Escape` key snapshot closed the drawer successfully and returned focus to the selected row.</item>
+                <item>Mobile full-page screenshot saved to `/tmp/healio-healio031-mobile-drawer-flow.png`.</item>
+                <item>Console check (final reload-only pass): `list_console_messages` returned no console messages.</item>
+                <item>Network evidence (`list_network_requests` preserved): detail GET reqid=247 [200], status PATCH reqid=248 [200] with request body `{\"status\":\"CHECKED_IN\"}`, notes PATCH reqid=251 [200] with notes payload, delete reqid=254 [200], refetch GETs reqid=249/250/252/253/255/256 [200], and post-delete detail GET reqid=257 [404] confirming deleted appointment no longer resolves. Additional detail GET reqid=258 [200] came from the subsequent mobile drawer open on another appointment. Duplicate-seed POST reqid=239 [409] occurred when reusing the demo-day loader and is an expected overlap-protection result, not a UI/runtime error.</item>
+                <item>GET detail request inspection reqid=247 and week/day protected API requests include local dev x-healio headers (clinic/user/role) proving the frontend is exercising protected endpoints under the local verification shim.</item>
+                <item>Implementation commit: 1dfc804 (feat(healio-appointments): appointment detail drawer and quick actions ui).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
