@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-080</id>
+            <title>Landing Page Polish Pass (Responsive, Accessibility, Conversion UX, Performance Hygiene)</title>
+            <domain>Frontend Marketing Polish</domain>
+            <estimated_time>40 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-079</dependencies>
+            <prd_reference>5 Frontend Design Guidelines + user Healio UI pillars + launch readiness UX expectations</prd_reference>
+        </metadata>
+        <context>
+            <background>This task performs the final polish pass on the new Healio landing page after implementation. It focuses on conversion UX quality, accessibility, responsive behavior, content clarity, and browser-verified presentation quality using Chrome DevTools MCP.</background>
+            <files_involved>
+                <file>healio/app/page.tsx</file>
+                <file>healio/components/marketing</file>
+                <file>healio/styles/globals.css</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>none</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Preserve the marketing redesign while improving polish; do not regress message clarity or section hierarchy.</constraint>
+                <constraint>Prioritize mobile readability, CTA visibility, spacing consistency, and trust-building presentation quality.</constraint>
+                <constraint>Accessibility polish should include keyboard flow, focus visibility, heading/landmark clarity, button/link labels, and reduced-motion compatibility where applicable.</constraint>
+                <constraint>Validation must use Chrome DevTools MCP and follow the shared frontend verification rules.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Audit the newly implemented landing page for spacing rhythm, typography consistency, CTA prominence, trust signal placement, and section transitions on desktop and mobile.</step>
+            <step>Fix responsive issues (overflow, cramped content, awkward card stacks, poor CTA placement) and accessibility issues (focus, labels, landmark clarity, semantic structure) found during verification.</step>
+            <step>Review console/network output for avoidable errors and remove any leftover developer/demo artifacts from the homepage experience.</step>
+            <step>Perform a full Chrome DevTools MCP verification pass (desktop + mobile) and record snapshots plus interaction evidence (navigation/CTA/button behavior).</step>
+            <step>Run `npm run typecheck` after polish changes.</step>
+            <validation_checklist>
+                <check>Use Chrome DevTools MCP to verify desktop/mobile layout, interactions, console output, and capture final validation snapshots.</check>
+                <check>Run `npm run typecheck` for the final landing page polish changes.</check>
+                <check>Confirm CTA hierarchy is clear and visible above the fold on desktop and mobile.</check>
+                <check>Confirm the page clearly communicates trust, multi-tenant SaaS positioning, and role-based workflow value without generic filler copy.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Landing page polish updates</artifact>
+                <artifact>Frontend verification evidence (Chrome DevTools MCP)</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>The landing page is visually polished and conversion-ready across desktop and mobile breakpoints.</criterion>
+                <criterion>Accessibility and interaction quality are improved and verified (focus/keyboard/semantic clarity) without regressions.</criterion>
+                <criterion>Console/runtime issues on the landing page are either resolved or explicitly documented as expected in evidence.</criterion>
+                <criterion>Chrome DevTools MCP evidence is recorded and the task is not marked complete without it.</criterion>
+            </acceptance_criteria>
+            <commit_message>refactor(healio-marketing): polish landing page accessibility and conversion ux</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, typecheck command, Chrome DevTools MCP snapshots/notes, and commit references here.</item>
+                <item>Include Chrome DevTools MCP evidence (desktop + mobile snapshots, interaction checks, console review) before marking frontend tasks complete.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/snapshots as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>frontend-design-system-shell</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-079</blocks_on>
+            <task_slug>MARKETING_LANDING_PAGE_POLISH_AND_CONVERSION_UX_VERIFICATION</task_slug>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
+    </task_package>
+</task_packages>

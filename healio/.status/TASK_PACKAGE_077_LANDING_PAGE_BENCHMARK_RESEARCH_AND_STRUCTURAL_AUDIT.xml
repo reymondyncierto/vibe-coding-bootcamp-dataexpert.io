@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-077</id>
+            <title>Landing Page Benchmark Research and Structural Audit (SaaS References + Chrome DevTools MCP)</title>
+            <domain>Marketing Frontend Research</domain>
+            <estimated_time>40 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-076</dependencies>
+            <prd_reference>5 Frontend Design Guidelines + user Healio UI pillars (trust, frictionless workflows, bento clarity)</prd_reference>
+        </metadata>
+        <context>
+            <background>This task creates a research-backed foundation for redesigning the Healio marketing landing page. It must benchmark high-quality SaaS/homepage patterns (especially trustworthy B2B/product-led experiences), inspect their structure using Chrome DevTools MCP, and translate findings into a Healio-specific structural audit for a multi-tenant clinic operations product.</background>
+            <files_involved>
+                <file>healio/docs/marketing/landing-page-benchmark.md</file>
+                <file>healio/app/page.tsx</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>none</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Benchmark pages should prioritize trust, clarity, strong information hierarchy, and conversion-focused structure suitable for healthcare operations software.</constraint>
+                <constraint>Explicitly evaluate patterns relevant to Healio: Stripe-like frictionless UX framing, Viedoc-like soft/bento data storytelling, and high-legibility design for stressed clinic staff.</constraint>
+                <constraint>Tailor findings to a multi-tenant SaaS narrative (clinic owner/admin/doctor/receptionist role support, tenant isolation, centralized operations, and scale from solo clinic to growing practice).</constraint>
+                <constraint>Do not copy visual language directly; extract reusable structural patterns (hero composition, proof blocks, feature sections, CTA sequencing, navigation density, footer structure, trust signals).</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Search the web for high-quality SaaS/product landing pages relevant to Healio’s target positioning (B2B operations tools, fintech-quality trust UX, healthcare/clinical software, modern productivity SaaS).</step>
+            <step>Use Chrome DevTools MCP to inspect the DOM/content structure of selected reference sites (hero, section order, CTA placement, social proof, feature cards, navigation/footer), and record structural notes rather than copying branded styling.</step>
+            <step>Create `healio/docs/marketing/landing-page-benchmark.md` summarizing 3-5 references with: why chosen, structural breakdown, reusable patterns, anti-patterns to avoid, and Healio-specific adaptations.</step>
+            <step>Audit the current `healio/app/page.tsx` and document what should change (showcase/dev-demo content to remove, missing SaaS messaging, missing multi-tenant value proposition, missing trust/conversion sections).</step>
+            <step>Produce a recommended Healio landing page section sequence that will be implemented by follow-on tasks.</step>
+            <validation_checklist>
+                <check>Record at least 3 external references with links and structural notes, not just visual adjectives.</check>
+                <check>Use Chrome DevTools MCP for structure inspection and record evidence (snapshots/notes) for each inspected reference.</check>
+                <check>Include a Healio-specific section order recommendation tied to multi-tenant clinic SaaS positioning.</check>
+                <check>Document at least one anti-pattern to avoid (for example, generic hero copy, overly dense tables, weak CTA hierarchy, or confusing navigation).</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Research/benchmark document with source links and structural audit</artifact>
+                <artifact>Landing page implementation plan inputs for follow-on tasks</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>`healio/docs/marketing/landing-page-benchmark.md` exists and contains benchmark references, structural analysis, and Healio-specific adaptations.</criterion>
+                <criterion>The document clearly distinguishes reusable structure patterns from brand-specific styling to avoid direct imitation.</criterion>
+                <criterion>The recommended section sequence supports a multi-tenant, multi-role clinic SaaS positioning and aligns with the PRD/user design direction.</criterion>
+                <criterion>Chrome DevTools MCP was used to inspect reference structures and evidence is recorded before marking the task complete.</criterion>
+            </acceptance_criteria>
+            <commit_message>docs(healio-marketing): landing page benchmark research and structural audit</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, source links, Chrome DevTools MCP snapshots/notes, and commit references here.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/source links/snapshots as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>frontend-design-system-shell</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-076</blocks_on>
+            <task_slug>LANDING_PAGE_BENCHMARK_RESEARCH_AND_STRUCTURAL_AUDIT</task_slug>
+            <verification_tool>Chrome DevTools MCP + Web research (required)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
+    </task_package>
+</task_packages>

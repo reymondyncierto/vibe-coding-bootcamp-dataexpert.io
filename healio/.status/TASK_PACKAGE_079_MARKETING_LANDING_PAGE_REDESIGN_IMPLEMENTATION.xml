@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-079</id>
+            <title>Implement Multi-Tenant SaaS Marketing Landing Page Redesign</title>
+            <domain>Frontend Marketing UI</domain>
+            <estimated_time>45 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-077, HEALIO-078</dependencies>
+            <prd_reference>5 Frontend Design Guidelines + user-specified Healio visual direction for trust, bento layouts, and frictionless workflows</prd_reference>
+        </metadata>
+        <context>
+            <background>This task replaces the current developer primitive showcase homepage with a polished marketing landing page tailored to Healio’s multi-tenant clinic SaaS use case. The page should be conversion-oriented, visually distinctive, and aligned with the research and content spec produced in the preceding tasks.</background>
+            <files_involved>
+                <file>healio/app/page.tsx</file>
+                <file>healio/components/marketing</file>
+                <file>healio/styles/globals.css</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>none</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Design must feel trustworthy and operationally serious (healthcare billing/records context), not a generic startup template.</constraint>
+                <constraint>Use an intentional visual system consistent with Healio’s palette and bento-card direction: soft off-white background, white cards, calm accents, strong hierarchy.</constraint>
+                <constraint>Communicate multi-tenant and multi-role value clearly (clinic owner, doctor, receptionist workflows) and show how booking/patients/billing/analytics connect.</constraint>
+                <constraint>Use accessible semantic markup and keyboard-friendly CTA/navigation interactions.</constraint>
+                <constraint>Avoid reusing the current primitive showcase content as the primary page experience.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Replace the current homepage implementation in `healio/app/page.tsx` with a marketing landing page built from reusable sections/components (prefer `components/marketing/*` where it improves maintainability).</step>
+            <step>Implement the section sequence and copy from the landing-page content spec, including hero, trust/proof band, feature/workflow sections, multi-tenant/RBAC/security messaging, integration or operations highlights, and final CTA/footer blocks.</step>
+            <step>Make the page visually polished (typography hierarchy, spacing rhythm, background treatment, card composition, clear CTA emphasis) and tailored to clinic operations buyers.</step>
+            <step>Ensure the page has mobile-ready layout behavior and preserves accessibility basics (landmarks, heading order, interactive labels, focus visibility).</step>
+            <step>Keep implementation bounded to the landing page and supporting marketing components/styles only.</step>
+            <validation_checklist>
+                <check>Run `npm run typecheck` after the landing page implementation changes.</check>
+                <check>Verify the page renders correctly on desktop and mobile widths.</check>
+                <check>Use Chrome DevTools MCP to inspect structure, interactions, console output, and capture validation snapshots before marking done.</check>
+                <check>Confirm the homepage now communicates Healio as a clinic SaaS (not a UI primitive showcase/demo page).</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Next.js homepage redesign implementation</artifact>
+                <artifact>Reusable marketing components (if created)</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>The homepage is redesigned into a polished marketing landing page and no longer presents the primitive showcase as the primary experience.</criterion>
+                <criterion>The page communicates Healio’s multi-tenant / multi-role clinic SaaS value proposition with clear CTAs and coherent section hierarchy.</criterion>
+                <criterion>Styling aligns with the user-requested Healio visual direction (trust-oriented, bento-friendly, legible, calm accents).</criterion>
+                <criterion>Desktop/mobile rendering and basic accessibility interactions are verified via Chrome DevTools MCP and recorded in evidence.</criterion>
+            </acceptance_criteria>
+            <commit_message>feat(healio-marketing): redesign landing page for multi-tenant clinic SaaS</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, typecheck command, Chrome DevTools MCP snapshots/interaction notes, and commit references here.</item>
+                <item>Include Chrome DevTools MCP evidence (desktop + mobile snapshots, console check, and primary CTA/navigation interaction check) before marking complete.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/snapshots as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>frontend-design-system-shell</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-077, HEALIO-078</blocks_on>
+            <task_slug>MARKETING_LANDING_PAGE_REDESIGN_IMPLEMENTATION</task_slug>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
+    </task_package>
+</task_packages>

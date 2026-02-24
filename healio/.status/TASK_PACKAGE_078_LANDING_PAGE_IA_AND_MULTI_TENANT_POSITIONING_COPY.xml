@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-078</id>
+            <title>Landing Page Information Architecture and Multi-Tenant Positioning Copy Spec</title>
+            <domain>Marketing Content Strategy</domain>
+            <estimated_time>45 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-077</dependencies>
+            <prd_reference>Product positioning implied by PRD modules (booking, patients, billing, analytics, RBAC, tenant isolation) + user UI pillars</prd_reference>
+        </metadata>
+        <context>
+            <background>This task converts benchmark findings into a concrete Healio landing page content/IA specification. It should produce implementation-ready section copy and messaging priorities tailored to a multi-tenant clinic SaaS with multiple users/roles (owner, doctor, receptionist) and future scale.</background>
+            <files_involved>
+                <file>healio/docs/marketing/landing-page-content-spec.md</file>
+                <file>healio/app/page.tsx</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>none</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Messaging must feel trustworthy, operationally concrete, and not generic AI/SaaS marketing filler.</constraint>
+                <constraint>Landing page copy should clearly communicate multi-tenant/multi-user support and role-based workflows without overpromising unsupported features.</constraint>
+                <constraint>Structure should support a high-conversion flow: problem framing → product value → role/workflow proof → trust/security/tenant isolation → feature depth → CTA.</constraint>
+                <constraint>Copy and IA should map to real implemented routes/features where possible (public booking, patients, appointments, billing, analytics, settings, audit logs).</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Create `healio/docs/marketing/landing-page-content-spec.md` with an implementation-ready section-by-section content outline for the new landing page.</step>
+            <step>Define hero messaging, subhead, primary/secondary CTAs, and supporting proof points for a clinic owner audience while still addressing doctors and front-desk staff.</step>
+            <step>Specify a section for multi-tenant/multi-role architecture value (clinic isolation, role-aware access, centralized operations, audit/security posture) using accurate claims based on implemented modules.</step>
+            <step>Draft concise content for major sections (feature cards, workflows, social proof placeholders, integration trust band, FAQ, final CTA, footer navigation labels).</step>
+            <step>Include a content-to-component mapping plan (which sections should be reusable components in `components/marketing/*` vs inline in `app/page.tsx`).</step>
+            <validation_checklist>
+                <check>Hero and CTA copy are specific to clinic operations and do not read like a generic software template.</check>
+                <check>IA includes explicit multi-tenant / multi-user value communication tied to real features (RBAC, audit, clinic-scoped data, role workflows).</check>
+                <check>Copy references implemented feature areas accurately (no unsupported integrations or functionality claims).</check>
+                <check>The spec is detailed enough that the UI implementation task can be executed with minimal rethinking.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Landing page content/IA specification document</artifact>
+                <artifact>Implementation-ready copy + component mapping notes</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>`healio/docs/marketing/landing-page-content-spec.md` exists with a complete section sequence and draft copy for the landing page.</criterion>
+                <criterion>The content spec clearly articulates Healio’s multi-tenant and multi-role positioning in accurate, non-generic terms.</criterion>
+                <criterion>The spec includes CTA strategy, section hierarchy, and componentization guidance for `components/marketing/*`.</criterion>
+                <criterion>The content remains aligned with existing implemented features and the PRD/user design direction.</criterion>
+            </acceptance_criteria>
+            <commit_message>docs(healio-marketing): landing page IA and multi-tenant positioning copy spec</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, content decisions, and commit references here.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/content decisions as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>frontend-design-system-shell</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-077</blocks_on>
+            <task_slug>LANDING_PAGE_IA_AND_MULTI_TENANT_POSITIONING_COPY</task_slug>
+        </references>
+    </task_package>
+</task_packages>
