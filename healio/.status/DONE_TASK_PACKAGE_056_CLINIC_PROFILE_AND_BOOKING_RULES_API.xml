@@ -7,9 +7,9 @@
             <domain>Settings API</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-015, HEALIO-016</dependencies>
             <prd_reference>Feature 6 Clinic Settings; clinics route</prd_reference>
         </metadata>
@@ -57,16 +57,23 @@
             <commit_message>feat(healio): clinic profile and booking rules api</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>clinic-settings-admin</owner>
+            <started_at>2026-02-24T19:27:26+08:00</started_at>
+            <completed_at>2026-02-24T19:27:26+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/clinics-route.test.ts</verification_command>
+            <verification_notes>Implemented protected `GET/PATCH /api/v1/clinics` with clinic profile + operating hours + booking rules payloads, Zod validation, and OWNER/ADMIN-only patch authorization. Added `clinicService` in-memory settings store to support later Settings UI and subscription guard tasks.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/v1/clinics/route.ts, healio/services/clinicService.ts, healio/schemas/clinic.ts, healio/tests/unit/clinics-route.test.ts.</item>
+                <item>GET verification: route returns success envelope with clinic profile fields, booking rules, and 7 operating-hour rows for the authenticated clinic.</item>
+                <item>PATCH verification: ADMIN can update clinic profile and booking rules; persisted values are returned on subsequent GET.</item>
+                <item>RBAC/security verification: FRONT_DESK role receives `403 FORBIDDEN` on PATCH; missing auth headers receive `401 UNAUTHENTICATED`.</item>
+                <item>Validation verification: invalid bookingRules patch (negative leadTimeMinutes) is rejected with `400 INVALID_BODY`.</item>
+                <item>Typecheck/tests passed: `npm run typecheck`; `node --import tsx --test tests/unit/clinics-route.test.ts`.</item>
+                <item>Feature commit: 92bc8c8 (feat(healio): clinic profile and booking rules api).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
