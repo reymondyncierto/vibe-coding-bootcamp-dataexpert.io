@@ -21,7 +21,7 @@ type CounterRecord = {
 };
 
 const RATE_LIMIT_POLICIES: Record<RateLimitPolicyName, RateLimitPolicy> = {
-  publicApi: { name: "publicApi", windowMs: 60_000, max: 5 },
+  publicApi: { name: "publicApi", windowMs: 60_000, max: 50 },
   authApi: { name: "authApi", windowMs: 60_000, max: 10 },
   privateApi: { name: "privateApi", windowMs: 60_000, max: 100 },
 };
