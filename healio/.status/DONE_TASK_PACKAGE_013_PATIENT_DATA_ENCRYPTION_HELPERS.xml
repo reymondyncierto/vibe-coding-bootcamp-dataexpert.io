@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Security</domain>
             <estimated_time>40 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-003</dependencies>
             <prd_reference>4.3 Data Security; 9 lib/encryption.ts</prd_reference>
         </metadata>
@@ -53,16 +53,22 @@
             <commit_message>feat(healio-security): patient data encryption helpers</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>auth-rbac-security</owner>
+            <started_at>2026-02-24T16:25:19+08:00</started_at>
+            <completed_at>2026-02-24T16:25:19+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/encryption.test.ts</verification_command>
+            <verification_notes>Implemented versioned AES-256-GCM encryption/decryption helpers with AAD support plus patient-field encryption wrappers. Node test coverage verifies round-trip encryption, non-deterministic IV behavior, tamper rejection, JSON payload encryption, and wrong-tenant AAD rejection.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/lib/encryption.ts, healio/services/patientService.ts, healio/tests/unit/encryption.test.ts.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Test artifact: `node --import tsx --test tests/unit/encryption.test.ts` passed.</item>
+                <item>Negative crypto artifact: tests cover tampered ciphertext rejection and wrong-tenant AAD rejection (`clinic-b` decrypt on `clinic-a` payload).</item>
+                <item>Design note: `lib/encryption.ts` lazy-loads env access so tests can inject a test key without loading server-only env modules.</item>
+                <item>Implementation commit: 2dc52bf (feat(healio-security): add patient data encryption helpers).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
