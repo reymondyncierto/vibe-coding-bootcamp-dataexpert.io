@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Appointments API</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-026</dependencies>
             <prd_reference>Feature 2 API Endpoints</prd_reference>
         </metadata>
@@ -57,16 +57,21 @@
             <commit_message>feat(healio-appointments): appointment detail update cancel route</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>appointments-operations</owner>
+            <started_at>2026-02-24T17:29:05+08:00</started_at>
+            <completed_at>2026-02-24T17:29:05+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/appointment-detail-route.test.ts</verification_command>
+            <verification_notes>Implemented protected appointment detail/update/delete route with standard API envelopes and middleware header auth-context parsing. Reused appointmentService CRUD/status-transition logic to support GET, PATCH, and soft-delete DELETE flows. Route-handler tests exercise successful detail/update/delete plus invalid cancellation and missing-auth rejections.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/v1/appointments/[id]/route.ts, healio/tests/unit/appointment-detail-route.test.ts (uses appointmentService CRUD methods added in prior task).</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Endpoint exercise (route-handler tests): `node --import tsx --test tests/unit/appointment-detail-route.test.ts` passed; verifies GET detail (200), PATCH cancel with reason (200), DELETE soft delete (200), GET after delete (404), PATCH cancel without reason (422), and missing auth headers (401).</item>
+                <item>Protected-route behavior remains fail-closed without middleware auth headers (`x-healio-*`).</item>
+                <item>Implementation commit: 83ee8bb (feat(healio-appointments): appointment detail update cancel route).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
