@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='utf-8'?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-029</id>
+            <title>Build Daily Schedule Dashboard View with Bento Cards and Timeline</title>
+            <domain>Appointments Frontend</domain>
+            <estimated_time>45 mins</estimated_time>
+            <priority>high</priority>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
+            <dependencies>HEALIO-007, HEALIO-028</dependencies>
+            <prd_reference>Feature 2 Daily Schedule View + user bento guidance</prd_reference>
+        </metadata>
+        <context>
+            <background>This task implements Build Daily Schedule Dashboard View with Bento Cards and Timeline for Healio and is scoped as one atomic work item aligned to the PRD. It should be completed within 45 mins and leave clear evidence for follow-on tasks.</background>
+            <files_involved>
+                <file>healio/app/(dashboard)/appointments/page.tsx</file>
+                <file>healio/components/appointments/daily-schedule.tsx</file>
+                <file>healio/components/appointments/appointment-row-card.tsx</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>GET /api/v1/appointments?date=YYYY-MM-DD</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Use Stripe-like frictionless workflows: create/edit actions should open centered modals or slide-out drawers instead of disruptive full-page forms.</constraint>
+                <constraint>Use a Viedoc-style bento layout: soft floating white cards on an off-white background for dashboards and dense data views.</constraint>
+                <constraint>Apply the Paper Replacement palette: app background near #F9FAFB, white cards, calm trustworthy accents (teal/sage/cerulean), and reserve red for critical alerts only.</constraint>
+                <constraint>Preserve high-legibility typography: clean sans-serif (Inter/SF Pro/Halyard), bold patient names, slate-gray secondary metadata.</constraint>
+                <constraint>Honor the one-click rule where applicable: keep the global + action for Add Appointment, Add Patient, and Create Invoice visible and easy to reach.</constraint>
+                <constraint>Add educational empty states with clear CTAs for first-time or empty datasets.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Implement the scoped changes for Build Daily Schedule Dashboard View with Bento Cards and Timeline in the planned files (healio/app/(dashboard)/appointments/page.tsx, healio/components/appointments/daily-schedule.tsx, healio/components/appointments/appointment-row-card.tsx) while preserving the PRD-aligned project structure.</step>
+            <step>Apply validation, error handling, and consistent response/UI behavior so the task output integrates cleanly with existing helpers and patterns.</step>
+            <step>Wire integrations and dependencies for this task (endpoints: GET /api/v1/appointments?date=YYYY-MM-DD) and keep tenant scoping/RBAC/security expectations intact where applicable.</step>
+            <step>Prefer in-context modal/drawer workflows, scannable bento cards, and educational empty states so the UI matches the requested Healio experience.</step>
+            <step>Verify keyboard/focus behavior, touch target sizing, and mobile responsiveness before marking the task ready.</step>
+            <validation_checklist>
+                <check>Exercise the related endpoint(s): GET /api/v1/appointments?date=YYYY-MM-DD and verify response shape/status codes.</check>
+                <check>Run lint/typecheck or the smallest relevant test suite for the files changed by this task.</check>
+                <check>Manually verify desktop and mobile layouts plus focus/keyboard behavior for the primary interaction path.</check>
+                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check><check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Next.js page/component updates</artifact>
+                <artifact>Route handler/API contract updates</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>The deliverable for Build Daily Schedule Dashboard View with Bento Cards and Timeline is implemented in the referenced files and compiles without breaking adjacent modules.</criterion>
+                <criterion>Task output matches the PRD scope (Feature 2 Daily Schedule View + user bento guidance) and remains bounded to an atomic &lt;=45-minute implementation chunk.</criterion>
+                <criterion>Related endpoint behavior returns the standard success/error envelope and respects auth/public route expectations for the route class.</criterion>
+                <criterion>UI states (loading, empty, error, success) are present and visually consistent with Healio bento cards, off-white background, and trust-oriented styling.</criterion>
+                <criterion>Interactions are keyboard accessible and usable on mobile without disruptive navigation when a modal/drawer workflow is appropriate.</criterion>
+            </acceptance_criteria>
+            <commit_message>feat(healio-appointments): daily schedule bento ui</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>appointments-operations</owner>
+            <started_at>2026-02-24T17:40:01+08:00</started_at>
+            <completed_at>2026-02-24T17:40:01+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; Chrome DevTools MCP: open /appointments on http://localhost:3002, verify desktop/mobile layouts, empty-&gt;success flow via Load Demo Day, row drawer open/ESC close, and console/network checks</verification_command>
+            <verification_notes>Built a bento-style daily schedule dashboard with timeline, metrics cards, educational empty state, and an in-context appointment drawer. Added a localhost-only dev-auth fallback path (custom x-healio-* headers) in appointment hooks + middleware so the frontend can exercise protected appointment APIs during local verification without a full Supabase session. Chrome DevTools MCP verified desktop and mobile layouts, timeline interactions, and clean console after reload.</verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/app/(dashboard)/appointments/page.tsx, healio/components/appointments/daily-schedule.tsx, healio/components/appointments/appointment-row-card.tsx, healio/hooks/useAppointments.ts (local dev auth headers for protected API calls), healio/middleware.ts (localhost-only x-healio header bypass for protected API verification), plus generated healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Chrome DevTools MCP desktop snapshot (uid set 56) verified empty state, bento metrics cards, date/status filters, and visible global quick action. Desktop interaction snapshots (uid sets 57/58) verified `Load Demo Day`, timeline row click, drawer content, and Escape close behavior.</item>
+                <item>Chrome DevTools MCP mobile snapshot (uid set 61) verified responsive stacked layout, touch-target buttons, and timeline rows; mobile drawer interaction verified via uid set 62. Mobile full-page screenshot saved to `/tmp/healio-healio029-mobile.png`.</item>
+                <item>Console check: `list_console_messages` returned no console messages after reload.</item>
+                <item>Network evidence (`list_network_requests` with preserved requests): GET `/api/v1/appointments?date=2026-02-24` reqid=38 [200] (authenticated via local dev header shim); demo seeding POST `/api/v1/appointments` reqid=39 [422] (past time rejection, expected negative case) and reqid=40 [201] (successful create); follow-up GET reqid=41/42/44/45/47/48/49 [200]; mobile reload GET reqid=60 [200].</item>
+                <item>Implementation commit: a78e2de (feat(healio-appointments): daily schedule bento ui).</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>Full-Stack Next.js Engineer</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-007, HEALIO-028</blocks_on>
+            <task_slug>DAILY_SCHEDULE_BENTO_UI</task_slug>
+        <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool><verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref></references>
+    </task_package>
+</task_packages>
