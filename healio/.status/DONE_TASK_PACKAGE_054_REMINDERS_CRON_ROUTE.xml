@@ -7,9 +7,9 @@
             <domain>Cron Jobs</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-022, HEALIO-035, HEALIO-052, HEALIO-053</dependencies>
             <prd_reference>Feature 5 reminders cron; 7.4 vercel.json; cron security</prd_reference>
         </metadata>
@@ -56,16 +56,23 @@
             <commit_message>feat(healio-cron): reminders cron route</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>automation-cron-jobs</owner>
+            <started_at>2026-02-24T19:24:43+08:00</started_at>
+            <completed_at>2026-02-24T19:24:43+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; node --import tsx --test tests/unit/reminders-cron-route.test.ts tests/unit/notification-service.test.ts tests/unit/notification-templates-twilio.test.ts</verification_command>
+            <verification_notes>Implemented `/api/cron/reminders` with `CRON_SECRET` protection (`Authorization: Bearer` or `x-cron-secret`), 24h/1h reminder dispatch windows, email reminder templating, and idempotent replay-safe notification delivery. Added public booking reminder candidate listing in `appointmentService` and generic email delivery helper in `notificationService` to support cron dispatch cleanly.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/cron/reminders/route.ts, healio/services/appointmentService.ts, healio/services/notificationService.ts, healio/tests/unit/reminders-cron-route.test.ts.</item>
+                <item>Security verification: cron route rejects missing/invalid secret with `403 FORBIDDEN` and returns `500 CRON_SECRET_MISSING` when secret is not configured.</item>
+                <item>Dispatch verification: seeded a public booking appointment in the 24h reminder window, ran cron with `lead=24h`, and confirmed `emailSent=1`, notification status `SENT`, type `REMINDER_24H`, channel `EMAIL` for clinic `dev-clinic-northview`.</item>
+                <item>Idempotency verification: reran the same cron window and confirmed `emailReplayed=1` with no duplicate notification rows (still exactly one reminder notification).</item>
+                <item>Validation coverage: invalid `now` query is rejected with `400 INVALID_NOW` in unit tests.</item>
+                <item>Typecheck/tests passed: `npm run typecheck`; `node --import tsx --test tests/unit/reminders-cron-route.test.ts tests/unit/notification-service.test.ts tests/unit/notification-templates-twilio.test.ts`.</item>
+                <item>Feature commit: 7801760 (feat(healio-cron): reminders cron route).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
