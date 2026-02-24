@@ -1,5 +1,15 @@
-import { DEFAULT_BOOKING_RULES } from "@/services/appointmentService";
-import type { PublicBookingCreateInput } from "@/schemas/appointment";
+import {
+  createAppointmentFromPublicBooking,
+  DEFAULT_BOOKING_RULES,
+  getPublicSlotsByClinicSlug,
+  listPublicBookingRecordsForValidation,
+} from "@/services/appointmentService";
+import {
+  publicBookingCreateResultSchema,
+  type PublicBookingCreateInput,
+  type PublicBookingCreateResult,
+} from "@/schemas/appointment";
+import { upsertPatientFromPublicBooking } from "@/services/patientService";
 
 type BookingRecordForDuplicateCheck = {
   serviceId: string;
@@ -32,6 +42,34 @@ export type PublicBookingValidationResult =
         | "DUPLICATE_BOOKING";
       message: string;
       details?: unknown;
+    };
+
+export type CreatePublicBookingResult =
+  | {
+      ok: true;
+      data: PublicBookingCreateResult;
+      replayed: boolean;
+      idempotencyKey: string;
+    }
+  | {
+      ok: false;
+      code:
+        | PublicBookingValidationResult["ok"] extends false
+          ? never
+          : never
+        | "CLINIC_NOT_FOUND"
+        | "SERVICE_NOT_FOUND"
+        | "SLOT_UNAVAILABLE"
+        | "IDEMPOTENCY_IN_PROGRESS"
+        | "INVALID_SLOT_START"
+        | "BOOKING_IN_PAST"
+        | "BOOKING_LEAD_TIME_VIOLATION"
+        | "BOOKING_ADVANCE_LIMIT_VIOLATION"
+        | "DUPLICATE_BOOKING";
+      message: string;
+      status: number;
+      details?: unknown;
+      idempotencyKey?: string;
     };
 
 type IdempotencyEntry<T = unknown> = {
@@ -222,4 +260,170 @@ export function releasePublicBookingIdempotencyKey(key: string) {
 
 export function resetPublicBookingIdempotencyStoreForTests() {
   idempotencyStore.clear();
+}
+
+export async function createPublicBooking(
+  payload: PublicBookingCreateInput,
+  options?: { idempotencyKey?: string; now?: Date },
+): Promise<CreatePublicBookingResult> {
+  let slotStart: Date;
+  try {
+    slotStart = toDate(payload.slotStartTime);
+  } catch {
+    return {
+      ok: false,
+      code: "INVALID_SLOT_START",
+      message: "Invalid booking slot start time.",
+      status: 400,
+    };
+  }
+
+  const slotDate = slotStart.toISOString().slice(0, 10);
+  const slotsLookup = await getPublicSlotsByClinicSlug({
+    clinicSlug: payload.clinicSlug,
+    serviceId: payload.serviceId,
+    date: slotDate,
+    now: options?.now,
+  });
+
+  if (!slotsLookup.ok) {
+    return {
+      ok: false,
+      code: slotsLookup.code,
+      message:
+        slotsLookup.code === "CLINIC_NOT_FOUND" ? "Clinic not found." : "Service not found.",
+      status: 404,
+    };
+  }
+
+  let idempotencyKey = options?.idempotencyKey?.trim() || "";
+  let reservation:
+    | IdempotencyReserveResult<PublicBookingCreateResult>
+    | undefined;
+
+  if (idempotencyKey) {
+    reservation = reservePublicBookingIdempotencyKey<PublicBookingCreateResult>(idempotencyKey);
+    if (reservation.status === "IN_PROGRESS") {
+      return {
+        ok: false,
+        code: "IDEMPOTENCY_IN_PROGRESS",
+        message: "A booking request with this idempotency key is already being processed.",
+        status: 409,
+        idempotencyKey,
+      };
+    }
+    if (reservation.status === "REPLAY") {
+      return {
+        ok: true,
+        data: reservation.response,
+        replayed: true,
+        idempotencyKey,
+      };
+    }
+  }
+
+  const validation = validatePublicBookingBusinessRules({
+    payload,
+    clinicTimezone: slotsLookup.timezone,
+    now: options?.now,
+    existingBookings: listPublicBookingRecordsForValidation(payload.clinicSlug),
+  });
+
+  if (!validation.ok) {
+    if (reservation?.status === "ACQUIRED") {
+      releasePublicBookingIdempotencyKey(idempotencyKey);
+    }
+    return {
+      ok: false,
+      code: validation.code,
+      message: validation.message,
+      details: validation.details,
+      status: validation.code === "DUPLICATE_BOOKING" ? 409 : 422,
+    };
+  }
+
+  if (!idempotencyKey) {
+    idempotencyKey = validation.duplicateFingerprint;
+    reservation = reservePublicBookingIdempotencyKey<PublicBookingCreateResult>(idempotencyKey);
+  }
+
+  if (!reservation) {
+    reservation = reservePublicBookingIdempotencyKey<PublicBookingCreateResult>(idempotencyKey);
+  }
+  if (reservation.status === "IN_PROGRESS") {
+    return {
+      ok: false,
+      code: "IDEMPOTENCY_IN_PROGRESS",
+      message: "A booking request with this idempotency key is already being processed.",
+      status: 409,
+      idempotencyKey,
+    };
+  }
+
+  if (reservation.status === "REPLAY") {
+    return {
+      ok: true,
+      data: reservation.response,
+      replayed: true,
+      idempotencyKey,
+    };
+  }
+
+  try {
+    const matchingSlot = slotsLookup.slots.find((slot) => slot.startTime === slotStart.toISOString());
+    if (!matchingSlot) {
+      releasePublicBookingIdempotencyKey(idempotencyKey);
+      return {
+        ok: false,
+        code: "SLOT_UNAVAILABLE",
+        message: "Selected slot is no longer available.",
+        status: 409,
+        idempotencyKey,
+      };
+    }
+
+    const patient = await upsertPatientFromPublicBooking({
+      clinicSlug: payload.clinicSlug,
+      firstName: payload.patient.firstName,
+      lastName: payload.patient.lastName,
+      email: payload.patient.email,
+      phone: payload.patient.phone,
+    });
+
+    const bookingId = `book_${crypto.randomUUID()}`;
+    const appointment = await createAppointmentFromPublicBooking({
+      bookingId,
+      clinicSlug: payload.clinicSlug,
+      patientId: patient.id,
+      patientEmail: patient.email,
+      serviceId: payload.serviceId,
+      serviceName: slotsLookup.service.name,
+      slotStartTime: matchingSlot.startTime,
+      slotEndTime: matchingSlot.endTime,
+    });
+
+    const result = publicBookingCreateResultSchema.parse({
+      bookingId,
+      appointmentId: appointment.id,
+      patientId: patient.id,
+      clinicSlug: payload.clinicSlug,
+      serviceId: payload.serviceId,
+      slotStartTime: appointment.slotStartTime,
+      slotEndTime: appointment.slotEndTime,
+      status: "SCHEDULED",
+      idempotencyKey,
+    });
+
+    completePublicBookingIdempotencyKey(idempotencyKey, result);
+
+    return {
+      ok: true,
+      data: result,
+      replayed: false,
+      idempotencyKey,
+    };
+  } catch (error) {
+    releasePublicBookingIdempotencyKey(idempotencyKey);
+    throw error;
+  }
 }

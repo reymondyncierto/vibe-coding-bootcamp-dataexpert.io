@@ -78,3 +78,60 @@ export function decryptPatientSensitiveFields<T extends PatientSensitiveInput>(
 
   return next as T & { dateOfBirth?: string | null };
 }
+
+export type PublicBookingPatientProfile = {
+  id: string;
+  clinicSlug: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UpsertPublicBookingPatientInput = {
+  clinicSlug: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+};
+
+const publicBookingPatientStore = new Map<string, PublicBookingPatientProfile>();
+
+function patientStoreKey(clinicSlug: string, email: string) {
+  return `${clinicSlug}|${email.trim().toLowerCase()}`;
+}
+
+export async function upsertPatientFromPublicBooking(
+  input: UpsertPublicBookingPatientInput,
+): Promise<PublicBookingPatientProfile> {
+  const key = patientStoreKey(input.clinicSlug, input.email);
+  const now = new Date().toISOString();
+  const existing = publicBookingPatientStore.get(key);
+  if (existing) {
+    const updated: PublicBookingPatientProfile = {
+      ...existing,
+      firstName: input.firstName,
+      lastName: input.lastName,
+      phone: input.phone,
+      updatedAt: now,
+    };
+    publicBookingPatientStore.set(key, updated);
+    return updated;
+  }
+
+  const created: PublicBookingPatientProfile = {
+    id: `pat_${crypto.randomUUID()}`,
+    clinicSlug: input.clinicSlug,
+    firstName: input.firstName,
+    lastName: input.lastName,
+    email: input.email.trim().toLowerCase(),
+    phone: input.phone,
+    createdAt: now,
+    updatedAt: now,
+  };
+  publicBookingPatientStore.set(key, created);
+  return created;
+}

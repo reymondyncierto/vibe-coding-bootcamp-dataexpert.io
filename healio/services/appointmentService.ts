@@ -63,6 +63,20 @@ export type PublicSlotsLookupResult =
     }
   | { ok: false; code: "CLINIC_NOT_FOUND" | "SERVICE_NOT_FOUND" };
 
+export type PublicBookingAppointmentRecord = {
+  id: string;
+  bookingId: string;
+  clinicSlug: string;
+  patientId: string;
+  serviceId: string;
+  serviceName: string;
+  slotStartTime: string;
+  slotEndTime: string;
+  status: "SCHEDULED";
+  patientEmail: string;
+  createdAt: string;
+};
+
 export const DEFAULT_BOOKING_RULES: SlotEngineBookingRules = {
   leadTimeMinutes: 60,
   maxAdvanceDays: 30,
@@ -78,6 +92,7 @@ const DEV_FALLBACK_OPERATING_HOURS: SlotEngineOperatingHours[] = [
   { dayOfWeek: 6, openTime: "09:00", closeTime: "12:00" },
   { dayOfWeek: 0, openTime: "00:00", closeTime: "00:00", isClosed: true },
 ];
+const publicBookingAppointmentStore: PublicBookingAppointmentRecord[] = [];
 
 type PrismaAppointmentRow = {
   startTime: Date;
@@ -217,7 +232,7 @@ export async function getPublicSlotsByClinicSlug(
   }
 
   let operatingHours = DEV_FALLBACK_OPERATING_HOURS;
-  let existingAppointments: PrismaAppointmentRow[] = [];
+  let existingAppointments: Array<PrismaAppointmentRow | SlotEngineAppointment> = [];
 
   const prisma = await getPrismaClient();
   if (prisma) {
@@ -266,6 +281,15 @@ export async function getPublicSlotsByClinicSlug(
     }
   }
 
+  const memoryAppointments = listPublicBookingRecordsForValidation(input.clinicSlug)
+    .filter((item) => item.serviceId === input.serviceId)
+    .map((item) => ({
+      startTime: item.slotStartTime,
+      endTime: item.slotEndTime,
+      status: item.status,
+    }));
+  existingAppointments = [...existingAppointments, ...memoryAppointments];
+
   const slots = generatePublicBookingSlots({
     date: input.date,
     timezone: clinic.timezone,
@@ -283,4 +307,35 @@ export async function getPublicSlotsByClinicSlug(
     timezone: clinic.timezone,
     slots,
   };
+}
+
+export function listPublicBookingRecordsForValidation(clinicSlug: string) {
+  return publicBookingAppointmentStore.filter((item) => item.clinicSlug === clinicSlug);
+}
+
+export async function createAppointmentFromPublicBooking(input: {
+  bookingId: string;
+  clinicSlug: string;
+  patientId: string;
+  patientEmail: string;
+  serviceId: string;
+  serviceName: string;
+  slotStartTime: string;
+  slotEndTime: string;
+}): Promise<PublicBookingAppointmentRecord> {
+  const record: PublicBookingAppointmentRecord = {
+    id: `appt_${crypto.randomUUID()}`,
+    bookingId: input.bookingId,
+    clinicSlug: input.clinicSlug,
+    patientId: input.patientId,
+    patientEmail: input.patientEmail.trim().toLowerCase(),
+    serviceId: input.serviceId,
+    serviceName: input.serviceName,
+    slotStartTime: input.slotStartTime,
+    slotEndTime: input.slotEndTime,
+    status: "SCHEDULED",
+    createdAt: new Date().toISOString(),
+  };
+  publicBookingAppointmentStore.push(record);
+  return record;
 }
