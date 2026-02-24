@@ -193,6 +193,7 @@ export function DailySchedule() {
                   <span className="healio-label">Date</span>
                   <Input
                     type="date"
+                    name="scheduleDate"
                     value={date}
                     onChange={(event) => setDate(event.target.value)}
                     aria-label="Schedule date"
@@ -201,6 +202,7 @@ export function DailySchedule() {
                 <label className="grid gap-1 text-sm">
                   <span className="healio-label">Status</span>
                   <Select
+                    name="scheduleStatus"
                     value={status}
                     onChange={(event) => setStatus(event.target.value as StatusFilter)}
                     aria-label="Filter appointments by status"
