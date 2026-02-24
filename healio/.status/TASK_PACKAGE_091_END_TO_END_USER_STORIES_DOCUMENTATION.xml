@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-091</id>
+            <title>Create End-to-End User Stories Guide for Healio Workflows</title>
+            <domain>Developer Documentation</domain>
+            <estimated_time>45 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-090</dependencies>
+            <prd_reference>Core clinic workflows: onboarding, booking, appointments, patient records, billing, reminders</prd_reference>
+        </metadata>
+        <context>
+            <background>User requested a detailed `USER-STORIES.md` with step-by-step user journeys (create clinic account, book appointment, check appointments, etc.) including exact pages and what to click.</background>
+            <files_involved>
+                <file>healio/USER-STORIES.md</file>
+            </files_involved>
+            <design_constraints>
+                <constraint>Document realistic Healio flows using current route names and visible CTA/button labels.</constraint>
+                <constraint>Be explicit about local vs production setup assumptions (auth, demo data, Supabase configuration).</constraint>
+                <constraint>Use actionable steps and expected outcomes, not only narrative descriptions.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Create `healio/USER-STORIES.md` with detailed end-to-end user stories for clinic owner, front desk, and patient/public booking flows.</step>
+            <step>Include exact routes, buttons/links to click, expected results, and troubleshooting notes for common auth/email issues.</step>
+            <step>Cover at minimum: clinic account creation, login, settings setup, public booking, checking appointments, patient chart access, and billing/payment flow.</step>
+            <validation_checklist>
+                <check>Guide references current Healio routes and labels (e.g., `/signup`, `/login`, `/settings`, `/book/[slug]`, `/appointments`, `/billing`).</check>
+                <check>Guide is step-by-step and detailed enough for manual QA/UAT execution.</check>
+                <check>File is committed and task XML is updated/renamed `DONE_`.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <acceptance_criteria>
+                <criterion>`healio/USER-STORIES.md` exists and provides detailed click-by-click user stories for major Healio workflows.</criterion>
+                <criterion>Task XML is updated with evidence and renamed `DONE_` on completion.</criterion>
+            </acceptance_criteria>
+            <commit_message>docs(healio): add end-to-end user stories guide</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>Record created doc file, route/button labels checked, and commit refs.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence is recorded.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>task-architect</agent_to_execute>
+            <estimated_complexity>low</estimated_complexity>
+            <task_slug>END_TO_END_USER_STORIES_DOCUMENTATION</task_slug>
+        </references>
+    </task_package>
+</task_packages>
