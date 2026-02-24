@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <task_packages>
     <task_package>
         <metadata>
@@ -7,9 +7,9 @@
             <domain>Public Booking API</domain>
             <estimated_time>35 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-019</dependencies>
             <prd_reference>Feature 1 API Endpoints</prd_reference>
         </metadata>
@@ -56,16 +56,22 @@
             <commit_message>feat(healio-booking): public slots route</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner></owner>
-            <started_at></started_at>
-            <completed_at></completed_at>
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command></verification_command>
-            <verification_notes></verification_notes>
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>public-booking</owner>
+            <started_at>2026-02-24T16:54:30+08:00</started_at>
+            <completed_at>2026-02-24T16:54:30+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; Chrome DevTools MCP GET /api/v1/public/clinics/northview-clinic/slots?date=2026-02-25&amp;serviceId=svc-general-consult (reqid=234); invalid query (reqid=235); unknown service (reqid=236)</verification_command>
+            <verification_notes>Implemented public slots API route with Zod query validation and standard envelopes, backed by the slot engine. Service layer resolves clinic/service via public booking services and uses fallback operating hours when Prisma is unavailable, with DB operating-hours/appointments support when available. Verified success and negative query/not-found cases via Chrome DevTools MCP.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
+                <item>Changed files: healio/app/api/v1/public/clinics/[slug]/slots/route.ts, healio/schemas/appointment.ts, healio/services/appointmentService.ts.</item>
+                <item>Typecheck: `npm run typecheck` passed.</item>
+                <item>Chrome DevTools MCP verification (reqid=234): valid slots query returned 200 with `{clinicSlug,date,timezone,service,slots[]}` envelope; slot labels/timezone conversion verified for Asia/Manila fallback schedule.</item>
+                <item>Chrome DevTools MCP verification (reqid=235): invalid query (`date=bad-date`, empty `serviceId`) returned 400 `INVALID_QUERY` with Zod field errors.</item>
+                <item>Chrome DevTools MCP verification (reqid=236): unknown `serviceId` returned 404 `SERVICE_NOT_FOUND`.</item>
+                <item>Implementation commit: 39bab49 (feat(healio-booking): add public slots route).</item>
             </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
