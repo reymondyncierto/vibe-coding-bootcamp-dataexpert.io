@@ -1,1 +1,101 @@
-// Prisma schema will be implemented in HEALIO-009 / HEALIO-010.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Currency {
+  USD
+  PHP
+}
+
+enum SubscriptionTier {
+  FREE
+  STARTER
+  CLINIC
+  ENTERPRISE
+}
+
+enum StaffRole {
+  OWNER
+  DOCTOR
+  RECEPTIONIST
+}
+
+enum PatientGender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+model Clinic {
+  id                   String            @id @default(uuid())
+  name                 String
+  slug                 String            @unique
+  logo                 String?
+  address              String?
+  phone                String?
+  email                String
+  timezone             String            @default("Asia/Manila")
+  currency             Currency          @default(USD)
+  subscriptionTier     SubscriptionTier  @default(FREE)
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  deletedAt            DateTime?
+
+  staff                Staff[]
+  patients             Patient[]
+}
+
+model Staff {
+  id             String    @id @default(uuid())
+  clinicId       String
+  supabaseUserId String    @unique
+  name           String
+  email          String
+  phone          String?
+  role           StaffRole
+  specialization String?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  clinic         Clinic    @relation(fields: [clinicId], references: [id])
+
+  @@index([clinicId])
+}
+
+model Patient {
+  id                    String        @id @default(uuid())
+  clinicId              String
+  firstName             String
+  lastName              String
+  dateOfBirth           DateTime?
+  gender                PatientGender?
+  phone                 String
+  email                 String?
+  address               String?
+  allergies             String?
+  chronicConditions     String?
+  currentMedications    String?
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  notes                 String?
+  noShowCount           Int           @default(0)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  deletedAt             DateTime?
+
+  clinic                Clinic        @relation(fields: [clinicId], references: [id])
+
+  @@index([clinicId])
+  @@index([clinicId, createdAt])
+}
