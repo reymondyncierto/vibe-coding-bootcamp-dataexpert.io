@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<task_packages>
+    <task_package>
+        <metadata>
+            <id>HEALIO-083</id>
+            <title>Production Content Cleanup for Public and Auth Pages (Remove Dev/Instructional Copy)</title>
+            <domain>Frontend Content Polish</domain>
+            <estimated_time>40 mins</estimated_time>
+            <priority>high</priority>
+            <status>NOT_STARTED</status>
+            <is_done>false</is_done>
+            <verification_status>NOT_RUN</verification_status>
+            <dependencies>HEALIO-082</dependencies>
+            <prd_reference>Production-ready UX presentation and trust-oriented messaging for public-facing surfaces</prd_reference>
+        </metadata>
+        <context>
+            <background>The site still contains development-facing and instructional copy on visible pages (for example preview/testing notes, implementation references, and internal workflow commentary). This task makes public/auth surfaces production-appropriate by retaining product information and user guidance while removing dev-meta commentary.</background>
+            <files_involved>
+                <file>healio/components/marketing/landing-page.tsx</file>
+                <file>healio/components/marketing/workflow-sequence.tsx</file>
+                <file>healio/app/(auth)/login/page.tsx</file>
+                <file>healio/app/(auth)/signup/page.tsx</file>
+            </files_involved>
+            <related_api_endpoints>
+                <endpoint>none</endpoint>
+            </related_api_endpoints>
+            <design_constraints>
+                <constraint>Retain site/product information and legitimate user guidance, but remove internal implementation notes, preview/testing messaging, and dev-meta commentary.</constraint>
+                <constraint>Do not break existing auth/provisioning functionality while simplifying the visible copy.</constraint>
+                <constraint>Keep the copy concise, trustworthy, and aligned with a production clinic SaaS presentation.</constraint>
+                <constraint>Verify visually on desktop/mobile after content updates to ensure no awkward spacing or empty panels remain.</constraint>
+            </design_constraints>
+        </context>
+        <instruction>
+            <step>Audit visible copy on landing, login, and signup pages for development-facing or internal explanatory text (preview/testing, implementation notes, internal workflow commentary, task references).</step>
+            <step>Rewrite or remove those blocks so the pages present only product-facing information, clear user guidance, and production-appropriate trust messaging.</step>
+            <step>Preserve essential UX clarity (what the page is for, what users can do next, and key security/auth notes) without exposing implementation-oriented commentary.</step>
+            <step>Run `npm run typecheck` after copy/UI changes.</step>
+            <step>Use Chrome DevTools MCP to verify the updated content on `/`, `/login`, and `/signup` (desktop/mobile snapshots + console review).</step>
+            <validation_checklist>
+                <check>Landing page no longer shows internal/explanatory commentary such as dev-style “workflow” notes that read like implementation guidance.</check>
+                <check>Login/signup pages no longer show preview/testing/dev-environment instructional copy to end users.</check>
+                <check>Typecheck passes after content cleanup.</check>
+                <check>Chrome DevTools MCP verification covers `/`, `/login`, and `/signup` with console review.</check>
+            </validation_checklist>
+        </instruction>
+        <output_spec>
+            <artifacts>
+                <artifact>Production-appropriate copy updates on public/auth pages</artifact>
+                <artifact>Chrome DevTools MCP verification evidence</artifact>
+            </artifacts>
+            <acceptance_criteria>
+                <criterion>Public-facing pages present product/user-facing content only and no longer expose development/instructional commentary.</criterion>
+                <criterion>Auth pages remain functional and understandable after copy cleanup.</criterion>
+                <criterion>Chrome DevTools MCP verification evidence is recorded before task completion.</criterion>
+                <criterion>Task XML is updated and renamed with `DONE_` prefix after completion.</criterion>
+            </acceptance_criteria>
+            <commit_message>refactor(healio-content): remove dev-facing copy from public auth pages</commit_message>
+        </output_spec>
+        <execution_tracking>
+            <state>NOT_STARTED</state>
+            <is_done>false</is_done>
+            <owner></owner>
+            <started_at></started_at>
+            <completed_at></completed_at>
+            <verification_status>NOT_RUN</verification_status>
+            <verification_command></verification_command>
+            <verification_notes></verification_notes>
+            <evidence>
+                <item>When work starts/completes, record changed files, typecheck command, Chrome DevTools MCP snapshots/notes, and commit references here.</item>
+                <item>Include Chrome DevTools MCP evidence for `/`, `/login`, and `/signup` (desktop/mobile + console review) before marking complete.</item>
+            </evidence>
+            <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/verification/commits as applicable.</completion_signal>
+        </execution_tracking>
+        <references>
+            <agent_to_execute>frontend-design-system-shell</agent_to_execute>
+            <estimated_complexity>medium</estimated_complexity>
+            <blocks_on>HEALIO-082</blocks_on>
+            <task_slug>PRODUCTION_CONTENT_COPY_CLEANUP_PUBLIC_AUTH</task_slug>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
+    </task_package>
+</task_packages>
