@@ -7,9 +7,9 @@
             <domain>Frontend Design System</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>BLOCKED</status>
-            <is_done>false</is_done>
-            <verification_status>BLOCKED</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-001</dependencies>
             <prd_reference>5 Frontend Design Guidelines + user Healio UI pillars</prd_reference>
         </metadata>
@@ -41,7 +41,8 @@
             <validation_checklist>
                 <check>Run lint/typecheck or the smallest relevant test suite for the files changed by this task.</check>
                 <check>Manually verify desktop and mobile layouts plus focus/keyboard behavior for the primary interaction path.</check>
-                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check><check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
+                <check>Use Chrome DevTools MCP to verify the implemented UI in-browser (desktop + mobile), check interactions, inspect console errors, and capture a validation snapshot before marking done.</check>
+                <check>Capture a screenshot or short note confirming empty/loading/error states are present where applicable.</check>
             </validation_checklist>
         </instruction>
         <output_spec>
@@ -57,17 +58,28 @@
             <commit_message>feat(healio): healio design tokens and global styles</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>BLOCKED</state>
-            <is_done>false</is_done>
+            <state>DONE</state>
+            <is_done>true</is_done>
             <owner>frontend-design-system-shell</owner>
             <started_at>2026-02-24T15:07:42+08:00</started_at>
-            <completed_at />
-            <verification_status>BLOCKED</verification_status>
+            <completed_at>2026-02-24T15:57:41+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
             <verification_command>npm run dev (approved); npm run typecheck; Chrome DevTools MCP new_page http://localhost:3000</verification_command>
-            <verification_notes>Implementation is committed and typecheck passes, but required Chrome DevTools MCP verification is blocked because the MCP tool cannot start a headful browser in this environment (missing X server).</verification_notes>
+            <verification_notes>Chrome DevTools MCP verification completed in headless mode after MCP configuration update. Verified desktop and mobile layouts, button click interactions, keyboard Tab focus visibility, and console clean state. Added app icon.svg to eliminate favicon 404 before final verification pass.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item><item>Implementation commit: 2a95b97 (feat(healio-ui): add design tokens and global styles)</item><item>Verification artifact: `npm run typecheck` passed.</item><item>Blocked verification: Chrome DevTools MCP `new_page` failed with Missing X server to start the headful browser.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Implementation commit: 2a95b97 (feat(healio-ui): add design tokens and global styles)</item>
+                <item>Verification artifact: `npm run typecheck` passed.</item>
+                <item>Blocked verification: Chrome DevTools MCP `new_page` failed with Missing X server to start the headful browser.</item>
+                <item>Chrome DevTools MCP new_page succeeded on http://localhost:3000 after restarting MCP with headless configuration.</item>
+                <item>Chrome DevTools MCP desktop verification: resize 1440x900, snapshot captured, full-page screenshot saved to /tmp/healio-healio004-desktop.png.</item>
+                <item>Chrome DevTools MCP mobile verification: resize 390x844, snapshot captured, full-page screenshot saved to /tmp/healio-healio004-mobile.png.</item>
+                <item>Chrome DevTools MCP interaction checks: clicked Primary Action + Secondary buttons; pressed Tab and confirmed visible focus on link control.</item>
+                <item>Chrome DevTools MCP console check after reload: no console messages.</item>
+                <item>Network verification after reload: /icon.svg served 200; prior /favicon.ico 404 resolved by adding healio/app/icon.svg.</item>
+                <item>Follow-up implementation commit for verification cleanup: daf4d7b (feat(healio-ui): add app icon for clean frontend verification).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
@@ -75,6 +87,8 @@
             <estimated_complexity>medium</estimated_complexity>
             <blocks_on>HEALIO-001</blocks_on>
             <task_slug>HEALIO_DESIGN_TOKENS_AND_GLOBAL_STYLES</task_slug>
-        <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool><verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref></references>
+            <verification_tool>Chrome DevTools MCP (required for frontend task verification)</verification_tool>
+            <verification_rules_ref>healio/.status/FRONTEND_VERIFICATION_RULES.xml</verification_rules_ref>
+        </references>
     </task_package>
 </task_packages>
