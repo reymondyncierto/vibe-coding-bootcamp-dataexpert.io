@@ -41,6 +41,11 @@ export type PatientDocumentRecord = {
   uploadedAt: string;
 };
 
+export type PatientDocumentListItem = PatientDocumentRecord & {
+  downloadUrl: string;
+  downloadUrlExpiresInSeconds: number;
+};
+
 export type DocumentServiceResult<T> =
   | { ok: true; data: T }
   | { ok: false; code: string; message: string; status: number; details?: unknown };
@@ -306,6 +311,36 @@ export async function createSignedPatientDocumentUrl(input: {
     expiresInSeconds,
   });
   return { ok: true, data: { signedUrl, expiresInSeconds } };
+}
+
+export async function listPatientDocumentsWithSignedUrlsForClinic(input: {
+  clinicId: string;
+  patientId: string;
+  expiresInSeconds?: number;
+}): Promise<DocumentServiceResult<PatientDocumentListItem[]>> {
+  const records = await listPatientDocumentsForClinic({
+    clinicId: input.clinicId,
+    patientId: input.patientId,
+  });
+
+  const enriched: PatientDocumentListItem[] = [];
+  for (const record of records) {
+    const signed = await createSignedPatientDocumentUrl({
+      clinicId: input.clinicId,
+      patientId: input.patientId,
+      documentId: record.id,
+      expiresInSeconds: input.expiresInSeconds,
+    });
+    if (!signed.ok) return signed;
+
+    enriched.push({
+      ...record,
+      downloadUrl: signed.data.signedUrl,
+      downloadUrlExpiresInSeconds: signed.data.expiresInSeconds,
+    });
+  }
+
+  return { ok: true, data: enriched };
 }
 
 export function resetDocumentStoresForTests() {
