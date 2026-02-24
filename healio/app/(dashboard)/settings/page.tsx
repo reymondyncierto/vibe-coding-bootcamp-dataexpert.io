@@ -14,6 +14,7 @@ import { OperatingHoursCard } from "@/components/settings/operating-hours-card";
 import { ServicesManagerCard } from "@/components/settings/services-manager-card";
 import { StaffManagerCard } from "@/components/settings/staff-manager-card";
 import { NotificationPreferencesCard } from "@/components/settings/notification-preferences-card";
+import { AuditLogCard } from "@/components/settings/audit-log-card";
 
 type ServiceItem = {
   id: string;
@@ -149,6 +150,7 @@ export default function SettingsPage() {
         <div className="space-y-6">
           <OperatingHoursCard rows={data.clinic?.operatingHours ?? []} loading={loading} onEdit={() => setDrawer("hours")} />
           <NotificationPreferencesCard items={notificationPrefs} onEdit={() => setDrawer("notifications")} />
+          <AuditLogCard />
           <div className="rounded-card border border-dashed border-border bg-app/40 p-4 text-sm">
             <p className="font-medium text-ink">Onboarding tip</p>
             <p className="mt-1 text-muted">Start by confirming clinic hours and services, then invite your first front desk staff member so scheduling and billing can happen in parallel.</p>
