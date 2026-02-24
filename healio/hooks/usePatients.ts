@@ -3,7 +3,7 @@
 import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
 
 import { patientsListSearchParams, queryKeys } from "@/lib/query-keys";
-import type { PatientListResponse } from "@/schemas/patient";
+import type { PatientDetail, PatientListResponse } from "@/schemas/patient";
 
 type ApiEnvelope<T> =
   | { success: true; data: T }
@@ -96,6 +96,21 @@ export function usePatientsList(
         `/api/v1/patients?${patientsListSearchParams(normalized).toString()}`,
       ),
     placeholderData: (previous) => previous,
+    ...options,
+  });
+}
+
+export function usePatientDetail(
+  id: string | null,
+  options?: Omit<
+    UseQueryOptions<PatientDetail, PatientsApiRequestError, PatientDetail>,
+    "queryKey" | "queryFn" | "enabled"
+  >,
+) {
+  return useQuery({
+    queryKey: queryKeys.patients.detail(id ?? "unknown"),
+    enabled: Boolean(id),
+    queryFn: () => requestJson<PatientDetail>(`/api/v1/patients/${id}`),
     ...options,
   });
 }
