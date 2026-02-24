@@ -7,9 +7,9 @@
             <domain>Patient Records Frontend</domain>
             <estimated_time>30 mins</estimated_time>
             <priority>medium</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-039, HEALIO-044, HEALIO-045</dependencies>
             <prd_reference>Feature 3 Billing Tab + Feature 4 Invoice List</prd_reference>
         </metadata>
@@ -59,17 +59,26 @@
             <commit_message>feat(healio-patients): patient billing tab ui</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>patient-records-lite-emr</owner>
+            <started_at>2026-02-24T18:47:58+08:00</started_at>
+            <completed_at>2026-02-24T18:47:58+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; Chrome DevTools MCP on http://localhost:4012/patients/:id (billing tab empty + invoice list states backed by GET /api/v1/invoices?patientId=:id)</verification_command>
+            <verification_notes>Added a patient-chart Billing tab and in-context billing card that queries related invoices via `GET /api/v1/invoices?patientId=:id`. The tab shows educational empty state, refresh action, status badges, balance summary, and a disabled Create Invoice CTA (explicitly deferred to billing dashboard tasks) while preserving the PRD's context-first workflow.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/components/patients/patient-billing-tab.tsx, healio/components/patients/patient-profile-tabs.tsx, healio/app/(dashboard)/patients/[id]/page.tsx, healio/tsconfig.tsbuildinfo.</item>
+                <item>Typecheck: `npm run typecheck` passed after adding Billing tab and invoice list integration.</item>
+                <item>Chrome DevTools MCP verification on `http://localhost:4012/patients/pat_0d410ad9-12f0-47ae-97a4-cb205177f559`: switched to the new Billing tab and confirmed the educational empty state (`No invoices yet`) with in-context refresh/create CTAs.</item>
+                <item>Chrome DevTools MCP API-backed list verification: created an invoice via in-page `fetch('/api/v1/invoices')` (`201`) for the patient, clicked `Refresh List`, and confirmed the Billing tab rendered `INV-2026-00001` with DRAFT status badge, due date, invoice id, total/paid amounts, and computed balance summary.</item>
+                <item>Chrome DevTools MCP responsive check: resized to mobile `390x844` and back to desktop `1280x900`; Billing tab content remained readable and mobile bottom navigation stayed visible.</item>
+                <item>Chrome DevTools MCP network checks (expected): GET `/api/v1/patients/:id` = 200; initial GET `/api/v1/invoices?patientId=:id` = 200; POST `/api/v1/invoices` = 201; refetch GET `/api/v1/invoices?patientId=:id` = 200.</item>
+                <item>Chrome DevTools MCP console check: only expected React DevTools informational message; no application errors during billing tab verification.</item>
+                <item>Implementation commit: f617a73 (feat(healio-patients): patient billing tab ui).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
