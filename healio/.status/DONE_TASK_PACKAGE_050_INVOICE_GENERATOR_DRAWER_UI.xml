@@ -7,9 +7,9 @@
             <domain>Billing Frontend</domain>
             <estimated_time>45 mins</estimated_time>
             <priority>high</priority>
-            <status>NOT_STARTED</status>
-            <is_done>false</is_done>
-            <verification_status>NOT_RUN</verification_status>
+            <status>DONE</status>
+            <is_done>true</is_done>
+            <verification_status>PASSED</verification_status>
             <dependencies>HEALIO-006, HEALIO-043, HEALIO-044, HEALIO-045, HEALIO-049</dependencies>
             <prd_reference>Feature 4 Invoice Generator + user Stripe workflow guidance</prd_reference>
         </metadata>
@@ -61,17 +61,26 @@
             <commit_message>feat(healio-billing): invoice generator drawer ui</commit_message>
         </output_spec>
         <execution_tracking>
-            <state>NOT_STARTED</state>
-            <is_done>false</is_done>
-            <owner />
-            <started_at />
-            <completed_at />
-            <verification_status>NOT_RUN</verification_status>
-            <verification_command />
-            <verification_notes />
+            <state>DONE</state>
+            <is_done>true</is_done>
+            <owner>billing-invoicing-payments</owner>
+            <started_at>2026-02-24T19:14:47+08:00</started_at>
+            <completed_at>2026-02-24T19:14:47+08:00</completed_at>
+            <verification_status>PASSED</verification_status>
+            <verification_command>npm run typecheck; Chrome DevTools MCP on http://localhost:4012/billing (create/edit invoice drawer flow, desktop/mobile, network, console)</verification_command>
+            <verification_notes>Implemented Stripe-style in-context invoice generator drawer and edit drawer flow on the billing dashboard. Chrome DevTools MCP verification covered create invoice (POST 201), edit invoice (PATCH 200), appointment autofill, toast feedback, mobile layout (390x844), and Escape-key drawer close. A runtime crash caused by reading pooled React event objects inside functional setState callbacks was discovered during MCP verification and fixed in invoice-form field handlers.</verification_notes>
             <evidence>
                 <item>When work starts/completes, record changed files, test commands, screenshots (UI tasks), and commit/PR references here.</item>
-            <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item></evidence>
+                <item>Include Chrome DevTools MCP evidence (snapshot/screenshot reference and notes on responsive + interaction checks) here before marking frontend tasks complete.</item>
+                <item>Changed files: healio/app/(dashboard)/billing/page.tsx, healio/components/billing/invoice-list.tsx, healio/hooks/useInvoices.ts, healio/components/billing/invoice-form.tsx, healio/components/billing/invoice-generator-drawer.tsx, healio/components/billing/invoice-line-items-editor.tsx.</item>
+                <item>Typecheck: `npm run typecheck` initially failed due invoice-form taxMode union inference; fixed by introducing explicit form-state typing and reran successfully.</item>
+                <item>Chrome DevTools MCP desktop verification on `http://localhost:4012/billing`: opened `New Invoice` drawer, filled patient/appointment, clicked `Autofill`, confirmed line item + notes/totals preview updates, submitted create flow, and observed invoice row + success toast.</item>
+                <item>Chrome DevTools MCP network verification: `POST /api/v1/invoices` returned 201 (reqid=601), `GET /api/v1/invoices/:id` returned 200 while opening edit (reqid=603/608), and `PATCH /api/v1/invoices/:id` returned 200 (reqid=606).</item>
+                <item>Chrome DevTools MCP edit verification: opened invoice edit drawer, changed status to Sent and paid amount to 100.00, saved successfully, and confirmed list row status/paid/balance values updated with toast feedback.</item>
+                <item>Chrome DevTools MCP console/runtime verification: initial test exposed `TypeError: Cannot read properties of null (reading 'value')` from pooled event access in `invoice-form.tsx`; patched handlers to capture values synchronously, reloaded page, then console returned no messages.</item>
+                <item>Chrome DevTools MCP mobile verification: resized to `390x844`, opened edit drawer, confirmed responsive layout and mobile nav visibility, then pressed `Escape` to close the drawer.</item>
+                <item>Feature commit: 8e2fb74 (feat(healio-billing): invoice generator drawer ui).</item>
+            </evidence>
             <completion_signal>Task is done only when state=DONE, is_done=true, completed_at is filled, verification_status=PASSED, and evidence records changed files/tests/screenshots as applicable.</completion_signal>
         </execution_tracking>
         <references>
